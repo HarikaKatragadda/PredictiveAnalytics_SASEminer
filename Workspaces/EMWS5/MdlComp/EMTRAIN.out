@@ -1,0 +1,126 @@
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Variable Summary
+
+          Measurement    Frequency
+ Role        Level         Count
+
+TARGET      BINARY           1    
+ 
+                                                                                               
+ 
+ 
+
+
+
+
+
+
+
+Fit Statistics
+Model Selection based on Valid: Misclassification Rate (_VMISC_)
+
+                                                        Train:                      Valid:
+                                          Valid:       Average        Train:       Average
+Selected  Model                     Misclassification  Squared  Misclassification  Squared
+ Model    Node   Model Description         Rate         Error          Rate         Error
+
+   Y      Tree2  Decision Tree (2)       0.18282       0.13934       0.18858       0.13846
+          Tree   Decision Tree           0.18334       0.14090       0.18380       0.14087
+ 
+                                                                                               
+ 
+ 
+
+
+
+
+
+
+
+Fit Statistics Table
+Target: TargetBuy
+
+Data Role=Train
+
+Statistics                                                           Tree2        Tree
+
+Train: Bin-Based Two-Way Kolmogorov-Smirnov Probability Cutoff        0.26        0.29
+Train: Kolmogorov-Smirnov Statistic                                   0.43        0.45
+Train: Average Squared Error                                          0.14        0.14
+Train: Roc Index                                                      0.78        0.75
+Train: Cumulative Percent Captured Response                          30.96       31.50
+Train: Percent Captured Response                                     13.70       15.33
+Selection Criterion: Valid: Misclassification Rate                    0.18        0.18
+Train: Total Degrees of Freedom                                   14445.00    14445.00
+Train: Divisor for ASE                                            28890.00    28890.00
+Train: Gain                                                         209.51      214.90
+Train: Gini Coefficient                                               0.55        0.50
+Train: Bin-Based Two-Way Kolmogorov-Smirnov Statistic                 0.43        0.44
+Train: Kolmogorov-Smirnov Probability Cutoff                          0.24        0.23
+Train: Cumulative Lift                                                3.10        3.15
+Train: Lift                                                           2.74        3.07
+Train: Maximum Absolute Error                                         0.96        0.93
+Train: Misclassification Rate                                         0.19        0.18
+Train: Sum of Frequencies                                         14445.00    14445.00
+Train: Root Average Squared Error                                     0.37        0.38
+Train: Cumulative Percent Response                                   76.66       78.00
+Train: Percent Response                                              67.92       75.99
+Train: Sum of Squared Errors                                       4025.42     4070.63
+
+
+Data Role=Valid
+
+Statistics                                                           Tree2        Tree
+
+Valid: Kolmogorov-Smirnov Statistic                                   0.45        0.45
+Valid: Average Squared Error                                          0.14        0.14
+Valid: Roc Index                                                      0.78        0.75
+Valid: Bin-Based Two-Way Kolmogorov-Smirnov Probability Cutoff        0.25        0.29
+Valid: Cumulative Percent Captured Response                          31.07       31.40
+Valid: Percent Captured Response                                     13.94       15.14
+Valid: Divisor for VASE                                           15556.00    15556.00
+Valid: Gain                                                         210.66      213.90
+Valid: Gini Coefficient                                               0.56        0.50
+Valid: Bin-Based Two-Way Kolmogorov-Smirnov Statistic                 0.45        0.44
+Valid: Kolmogorov-Smirnov Probability Cutoff                          0.24        0.23
+Valid: Cumulative Lift                                                3.11        3.14
+Valid: Lift                                                           2.79        3.03
+Valid: Maximum Absolute Error                                         0.96        0.93
+Valid: Misclassification Rate                                         0.18        0.18
+Valid: Sum of Frequencies                                          7778.00     7778.00
+Valid: Root Average Squared Error                                     0.37        0.38
+Valid: Cumulative Percent Response                                   76.97       77.77
+Valid: Percent Response                                              69.06       74.99
+Valid: Sum of Squared Errors                                       2153.89     2191.42
+ 
+                                                                                               
+ 
+ 
+
+
+
+
+
+
+
+Event Classification Table
+Model Selection based on Valid: Misclassification Rate (_VMISC_)
+
+Model                         Data
+Node     Model Description    Role         Target             Target Label
+
+Tree     Decision Tree        TRAIN       TargetBuy    Organics Purchase Indicator
+Tree     Decision Tree        VALIDATE    TargetBuy    Organics Purchase Indicator
+Tree2    Decision Tree (2)    TRAIN       TargetBuy    Organics Purchase Indicator
+Tree2    Decision Tree (2)    VALIDATE    TargetBuy    Organics Purchase Indicator
+
+  False       True        False       True
+Negative    Negative    Positive    Positive
+
+  2137        10349        518        1441  
+  1157         5582        269         770  
+  2001        10144        723        1577  
+  1064         5493        358         863  

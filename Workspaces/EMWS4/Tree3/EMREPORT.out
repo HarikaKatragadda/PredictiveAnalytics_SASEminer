@@ -1,0 +1,200 @@
+ 
+                                                                                                                                                                                                                                                                
+ 
+Variable Importance
+
+                                                                                           Ratio of
+                                 Number of                                               Validation
+Variable                         Splitting                            Validation        to Training
+Name         Label                 Rules           Importance         Importance         Importance
+
+DOLL24       $ last 24 months        2                 1.0000             1.0000             1.0000
+DTBUYORG                             1                 0.9680             0.8708             0.8996
+DEPT25       food                    2                 0.5852             0.2978             0.5088
+ACTBUY       num qrtrs w/buy         2                 0.4872             0.5005             1.0273
+DAYLAST      days since last         1                 0.4856             0.5348             1.1013
+FREQPRCH     lifetime orders         1                 0.4453             0.6211             1.3948
+TOTORDQ22    tot orders 98Q2         1                 0.3248             0.2640             0.8129
+DEPT04       womens hosiery          1                 0.2981             0.1528             0.5126
+DOLNETDT     avg $ net demand        1                 0.2334             0.0000             0.0000
+ 
+                                                                                                                                                                                                                                                                
+ 
+Tree Leaf Report
+
+                                 Training
+Node               Training       Percent     Validation     Validation
+ Id     Depth    Observations        1       Observations     Percent 1
+
+  7       3          16990         0.03          8387           0.04   
+ 18       5           3671         0.04          1969           0.05   
+ 30       6           3191         0.05          1621           0.05   
+ 32       6           2535         0.08          1198           0.08   
+ 14       4           1947         0.09          1007           0.08   
+ 31       6           1597         0.08           773           0.07   
+ 40       6           1124         0.14           560           0.16   
+ 33       6            507         0.13           257           0.14   
+ 41       6            404         0.23           233           0.20   
+ 21       5            139         0.22            66           0.17   
+  9       3             82         0.44            39           0.31   
+  3       1             27         1.00             8           1.00   
+ 27       5             21         0.52             3           0.67   
+ 
+                                                                                               
+ 
+ 
+Fit Statistics
+
+Target=RESPOND Target Label=response target
+
+   Fit
+Statistics    Statistics Label                 Train    Validation
+
+  _NOBS_      Sum of Frequencies            32235.00     16121.00 
+  _MISC_      Misclassification Rate            0.06         0.06 
+  _MAX_       Maximum Absolute Error            0.97         0.97 
+  _SSE_       Sum of Squared Errors          3279.10      1670.75 
+  _ASE_       Average Squared Error             0.05         0.05 
+  _RASE_      Root Average Squared Error        0.23         0.23 
+  _DIV_       Divisor for ASE               64470.00     32242.00 
+  _DFT_       Total Degrees of Freedom      32235.00          .   
+ 
+                                                                                               
+ 
+ 
+Classification Table
+
+Data Role=TRAIN Target Variable=RESPOND Target Label=response target
+
+                       Target        Outcome     Frequency       Total
+Target    Outcome    Percentage    Percentage      Count      Percentage
+
+  0          0         94.4481       99.9671       30400        94.3074 
+  1          0          5.5519       97.9178        1787         5.5437 
+  0          1         20.8333        0.0329          10         0.0310 
+  1          1         79.1667        2.0822          38         0.1179 
+
+
+Data Role=VALIDATE Target Variable=RESPOND Target Label=response target
+
+                       Target        Outcome     Frequency       Total
+Target    Outcome    Percentage    Percentage      Count      Percentage
+
+  0          0         94.3886       99.9934       15206        94.3242 
+  1          0          5.6114       98.9059         904         5.6076 
+  0          1          9.0909        0.0066           1         0.0062 
+  1          1         90.9091        1.0941          10         0.0620 
+ 
+                                                                                               
+ 
+ 
+Event Classification Table
+
+Data Role=TRAIN Target=RESPOND Target Label=response target
+
+  False       True        False       True
+Negative    Negative    Positive    Positive
+
+  1787        30400        10          38   
+
+
+Data Role=VALIDATE Target=RESPOND Target Label=response target
+
+  False       True        False       True
+Negative    Negative    Positive    Positive
+
+   904        15206         1          10   
+ 
+                                                                                               
+ 
+ 
+Assessment Score Rankings
+
+Data Role=TRAIN Target Variable=RESPOND Target Label=response target
+
+                                                                                    Mean
+                            Cumulative       %      Cumulative     Number of     Posterior
+Depth      Gain     Lift       Lift      Response   % Response   Observations   Probability
+
+   5    258.836   3.58836     3.58836     20.3157     20.3157        1612         0.20316  
+  10    176.211   1.93587     2.76211     10.9600     15.6378        1612         0.10960  
+  15    135.917   1.55328     2.35917      8.7940     13.3566        1612         0.08794  
+  20    113.877   1.47714     2.13877      8.3629     12.1087        1611         0.08363  
+  25    100.021   1.44609     2.00021      8.1871     11.3243        1612         0.08187  
+  30     83.957   1.03643     1.83957      5.8678     10.4148        1612         0.05868  
+  35     71.040   0.93546     1.71040      5.2961      9.6835        1612         0.05296  
+  40     58.381   0.69725     1.58381      3.9475      8.9668        1611         0.03948  
+  45     47.946   0.64474     1.47946      3.6502      8.3760        1612         0.03650  
+  50     39.388   0.62381     1.39388      3.5317      7.8915        1612         0.03532  
+  55     32.226   0.60609     1.32226      3.4314      7.4860        1612         0.03431  
+  60     26.260   0.60609     1.26260      3.4314      7.1483        1611         0.03431  
+  65     21.210   0.60609     1.21210      3.4314      6.8623        1612         0.03431  
+  70     16.880   0.60609     1.16880      3.4314      6.6172        1612         0.03431  
+  75     13.129   0.60609     1.13129      3.4314      6.4048        1612         0.03431  
+  80      9.848   0.60609     1.09848      3.4314      6.2191        1611         0.03431  
+  85      6.951   0.60609     1.06951      3.4314      6.0551        1612         0.03431  
+  90      4.376   0.60609     1.04376      3.4314      5.9093        1612         0.03431  
+  95      2.072   0.60609     1.02072      3.4314      5.7789        1612         0.03431  
+ 100      0.000   0.60609     1.00000      3.4314      5.6615        1611         0.03431  
+
+
+Data Role=VALIDATE Target Variable=RESPOND Target Label=response target
+
+                                                                                    Mean
+                            Cumulative       %      Cumulative     Number of     Posterior
+Depth      Gain     Lift       Lift      Response   % Response   Observations   Probability
+
+   5    230.362   3.30362     3.30362     18.7303     18.7303         807         0.19604  
+  10    161.901   1.93355     2.61901     10.9625     14.8488         806         0.11035  
+  15    120.700   1.38246     2.20700      7.8381     12.5129         806         0.08833  
+  20     99.026   1.33977     1.99026      7.5960     11.2840         806         0.08363  
+  25     84.631   1.27032     1.84631      7.2022     10.4679         806         0.08181  
+  30     70.516   0.99922     1.70516      5.6652      9.6676         806         0.05695  
+  35     59.837   0.95751     1.59837      5.4287      9.0621         806         0.05296  
+  40     50.603   0.85951     1.50603      4.8731      8.5386         806         0.03899  
+  45     43.226   0.84203     1.43226      4.7740      8.1204         806         0.03650  
+  50     36.485   0.75808     1.36485      4.2980      7.7382         806         0.03561  
+  55     29.852   0.63511     1.29852      3.6008      7.3621         806         0.03431  
+  60     24.324   0.63511     1.24324      3.6008      7.0487         806         0.03431  
+  65     19.646   0.63511     1.19646      3.6008      6.7835         806         0.03431  
+  70     15.637   0.63511     1.15637      3.6008      6.5562         806         0.03431  
+  75     12.162   0.63511     1.12162      3.6008      6.3592         806         0.03431  
+  80      9.122   0.63511     1.09122      3.6008      6.1868         806         0.03431  
+  85      6.439   0.63511     1.06439      3.6008      6.0347         806         0.03431  
+  90      4.054   0.63511     1.04054      3.6008      5.8995         806         0.03431  
+  95      1.920   0.63511     1.01920      3.6008      5.7785         806         0.03431  
+ 100      0.000   0.63511     1.00000      3.6008      5.6696         806         0.03431  
+ 
+                                                                                               
+ 
+ 
+Assessment Score Distribution
+
+Data Role=TRAIN Target Variable=RESPOND Target Label=response target
+
+ Posterior     Number                     Mean
+Probability      of      Number of     Posterior
+   Range       Events    Nonevents    Probability    Percentage
+
+ 0.95-1.00        27           0        1.00000         0.0838 
+ 0.50-0.55        11          10        0.52381         0.0651 
+ 0.40-0.45        36          46        0.43902         0.2544 
+ 0.20-0.25       124         419        0.22836         1.6845 
+ 0.10-0.15       223        1408        0.13673         5.0597 
+ 0.05-0.10       687        8583        0.07411        28.7576 
+ 0.00-0.05       717       19944        0.03470        64.0949 
+
+
+Data Role=VALIDATE Target Variable=RESPOND Target Label=response target
+
+ Posterior     Number                     Mean
+Probability      of      Number of     Posterior
+   Range       Events    Nonevents    Probability    Percentage
+
+ 0.95-1.00         8           0        1.00000         0.0496 
+ 0.50-0.55         2           1        0.52381         0.0186 
+ 0.40-0.45        12          27        0.43902         0.2419 
+ 0.20-0.25        58         241        0.22861         1.8547 
+ 0.10-0.15       124         693        0.13671         5.0679 
+ 0.05-0.10       314        4285        0.07393        28.5280 
+ 0.00-0.05       396        9960        0.03473        64.2392 

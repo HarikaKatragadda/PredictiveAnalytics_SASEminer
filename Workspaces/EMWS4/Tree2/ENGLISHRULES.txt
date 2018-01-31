@@ -1,0 +1,74 @@
+*------------------------------------------------------------*
+ Node = 3
+*------------------------------------------------------------*
+if DTBUYORG >= 17715.5
+then 
+ Tree Node Identifier   = 3
+ Number of Observations = 27
+ Predicted: RESPOND=1 = 1.00
+ Predicted: RESPOND=0 = 0.00
+ 
+*------------------------------------------------------------*
+ Node = 4
+*------------------------------------------------------------*
+if DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months < 119.975 or MISSING
+then 
+ Tree Node Identifier   = 4
+ Number of Observations = 28630
+ Predicted: RESPOND=1 = 0.05
+ Predicted: RESPOND=0 = 0.95
+ 
+*------------------------------------------------------------*
+ Node = 9
+*------------------------------------------------------------*
+if food >= 32.5
+AND DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months >= 119.975
+then 
+ Tree Node Identifier   = 9
+ Number of Observations = 82
+ Predicted: RESPOND=1 = 0.44
+ Predicted: RESPOND=0 = 0.56
+ 
+*------------------------------------------------------------*
+ Node = 14
+*------------------------------------------------------------*
+if lifetime orders < 6.5 or MISSING
+AND food < 32.5 or MISSING
+AND DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months >= 119.975
+then 
+ Tree Node Identifier   = 14
+ Number of Observations = 1947
+ Predicted: RESPOND=1 = 0.09
+ Predicted: RESPOND=0 = 0.91
+ 
+*------------------------------------------------------------*
+ Node = 26
+*------------------------------------------------------------*
+if tot orders 98Q2 < 2.5 or MISSING
+AND lifetime orders >= 6.5
+AND food < 32.5 or MISSING
+AND DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months >= 119.975
+then 
+ Tree Node Identifier   = 26
+ Number of Observations = 1528
+ Predicted: RESPOND=1 = 0.16
+ Predicted: RESPOND=0 = 0.84
+ 
+*------------------------------------------------------------*
+ Node = 27
+*------------------------------------------------------------*
+if tot orders 98Q2 >= 2.5
+AND lifetime orders >= 6.5
+AND food < 32.5 or MISSING
+AND DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months >= 119.975
+then 
+ Tree Node Identifier   = 27
+ Number of Observations = 21
+ Predicted: RESPOND=1 = 0.52
+ Predicted: RESPOND=0 = 0.48
+ 

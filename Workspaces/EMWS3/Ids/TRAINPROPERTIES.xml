@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?><_ROOT_  DataSource="bank" Scope="LOCAL" Role="TRANSACTION" Library="BIA" Table="BANK" NCols="3"
+ NObs="32367" NBytes="795648" Segment="" DataSourceRole="TRANSACTION" OutputType="VIEW"
+ ForceRun="N" ComputeStatistics="N" DataSelection="DATASOURCE" NewTable="" MetaAdvisor="BASIC"
+ ApplyIntervalLevelLowerLimit="Y" IntervalLowerLimit="20" ApplyMaxPercentMissing="Y"
+ MaxPercentMissing="50" ApplyMaxClassLevels="Y" MaxClassLevels="20" IdentifyEmptyColumns="Y"
+ VariableValidation="STRICT" NewVariableRole="REJECT" DropMapVariables="Y" DsId="bank"
+ DsSampleName="" DsSampleSizeType="" DsSampleSize="" DsCreatedBy="hkatrag1" DsCreateDate="1828049511.5"
+ DsModifiedBy="hkatrag1" DsModifyDate="1828049511.6" DsScope="LOCAL" Sample="D" SampleSizeType="PERCENT"
+ SampleSizePercent="20" SampleSizeObs="10000" DBPassThrough="Y" RunAction="Train"
+ Component="DataSource" RawCreateTime="1828049740.5" CreateTime="04DEC2017:23:35:41"
+ Description="" Data="BIA.BANK" CMeta="WORK.M3WMQ1C4" RunId="95c81078-53a7-49bf-a874-87224a0c5285"
+ RawLastTimeRun="1828050364.7" RawRunTime="3.1880002022" LastTimeRun="04DEC2017:23:46:05"
+ RunTime="0 Hr. 0 Min. 3.19 Sec.">
+<VARIABLEPROPERTIES/>
+<FILEPROPERTIES/>
+</_ROOT_>

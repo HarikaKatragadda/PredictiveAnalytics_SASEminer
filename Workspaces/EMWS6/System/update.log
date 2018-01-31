@@ -1,0 +1,84 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.18 seconds
+      cpu time            0.00 seconds
+      
+
+1 
+Traverser: Traverser invoked.  MPCONNECT command is sas. 
+Traverser: Beginning flow traversal 
+*------------------------------------------------------------* 
+* 
+* Ids : Beginning Update 
+* datetime : 11DEC2017:23:52:44 
+* 
+*------------------------------------------------------------* 
+51942      %let _HPDMGRIDHOST=;
+51943      %let _HPDMGRIDINSTALLLOC=;
+51944      %let _HPDMGRIDDATASERVER=;
+51945      %hpdm_gridSetOPtions;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+*------------------------------------------------------------* 
+* 
+* Ids : End Update 
+* datetime : 11DEC2017:23:52:56 
+* 
+*------------------------------------------------------------* 
+Traverser: WaitingNode "TRANS" 
+traverser_readyNode_note 
+*------------------------------------------------------------* 
+* 
+* Stat : Beginning Update 
+* datetime : 11DEC2017:23:52:57 
+* 
+*------------------------------------------------------------* 
+51966      %let _HPDMGRIDHOST=;
+51967      %let _HPDMGRIDINSTALLLOC=;
+51968      %let _HPDMGRIDDATASERVER=;
+51969      %hpdm_gridSetOPtions;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+*------------------------------------------------------------* 
+* 
+* Stat : End Update 
+* datetime : 11DEC2017:23:53:10 
+* 
+*------------------------------------------------------------* 
+traverser_readyNode_note 
+*------------------------------------------------------------* 
+* 
+* Trans : Beginning Update 
+* datetime : 11DEC2017:23:53:11 
+* 
+*------------------------------------------------------------* 
+51989      %let _HPDMGRIDHOST=;
+51990      %let _HPDMGRIDINSTALLLOC=;
+51991      %let _HPDMGRIDDATASERVER=;
+51992      %hpdm_gridSetOPtions;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+*------------------------------------------------------------* 
+* 
+* Trans : End Update 
+* datetime : 11DEC2017:23:53:23 
+* 
+*------------------------------------------------------------* 
+Traverser: Run Completed 
+51993      proc printto;
+51994      run;
+

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?><_ROOT_  DataSource="catalog" Scope="LOCAL" Role="RAW" Library="BIA" Table="CATALOG2010" NCols="98"
+ NObs="48356" NBytes="37749760" Segment="" DataSourceRole="RAW" OutputType="VIEW"
+ ForceRun="N" ComputeStatistics="N" DataSelection="DATASOURCE" NewTable="" MetaAdvisor="BASIC"
+ ApplyIntervalLevelLowerLimit="Y" IntervalLowerLimit="20" ApplyMaxPercentMissing="Y"
+ MaxPercentMissing="50" ApplyMaxClassLevels="Y" MaxClassLevels="20" IdentifyEmptyColumns="Y"
+ VariableValidation="STRICT" NewVariableRole="REJECT" DropMapVariables="Y" DsId="catalog"
+ DsSampleName="" DsSampleSizeType="" DsSampleSize="" DsCreatedBy="hkatrag1" DsCreateDate="1826201569"
+ DsModifiedBy="hkatrag1" DsModifyDate="1826201569.1" DsScope="LOCAL" Sample="D" SampleSizeType="PERCENT"
+ SampleSizePercent="20" SampleSizeObs="10000" DBPassThrough="Y" RunAction="Train"
+ Component="DataSource" RawCreateTime="1826201725.2" CreateTime="13NOV2017:14:15:25"
+ Description="" Data="BIA.CATALOG2010" CMeta="WORK.M28SU83F" RunId="e6259824-5621-4598-954c-0c4557557ed0"
+>
+<VARIABLEPROPERTIES/>
+<FILEPROPERTIES/>
+</_ROOT_>

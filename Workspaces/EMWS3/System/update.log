@@ -1,0 +1,198 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1 
+Traverser: Traverser invoked.  MPCONNECT command is sas. 
+Traverser: Beginning flow traversal 
+*------------------------------------------------------------* 
+* 
+* Ids : Beginning Update 
+* datetime : 05DEC2017:00:14:45 
+* 
+*------------------------------------------------------------* 
+10239      %let _HPDMGRIDHOST=;
+10240      %let _HPDMGRIDINSTALLLOC=;
+10241      %let _HPDMGRIDDATASERVER=;
+10242      %hpdm_gridSetOPtions;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+*------------------------------------------------------------* 
+* 
+* Ids : End Update 
+* datetime : 05DEC2017:00:14:45 
+* 
+*------------------------------------------------------------* 
+traverser_readyNode_note 
+*------------------------------------------------------------* 
+* 
+* Assoc2 : Beginning Update 
+* datetime : 05DEC2017:00:14:46 
+* 
+*------------------------------------------------------------* 
+10258      *------------------------------------------------------------*;
+10259      * Assoc2: Update Variables Set;
+10260      *------------------------------------------------------------*;
+
+10261      data EMWS3.Assoc2_VariableSet;
+10262      length USE $1;
+10263      label USE = "Use";
+10264      set EMWS3.Ids_CMeta_DATA;
+10265      where((ROLE ="TARGET" and level ne "INTERVAL" ) or role in("ID" "SEQUENCE"));
+10266      run;
+
+NOTE: Variable USE is uninitialized.
+NOTE: There were 3 observations read from the data set EMWS3.IDS_CMETA_DATA.
+      WHERE ((ROLE='TARGET') and (level not = 'INTERVAL')) or role in ('ID', 'SEQUENCE');
+NOTE: The data set EMWS3.ASSOC2_VARIABLESET has 3 observations and 21 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+10267      * Assoc2: End of Update Variables Set;
+10268      *------------------------------------------------------------*;
+
+10269      *------------------------------------------------------------*;
+10270      * Assoc2: Computing metadata for TRAIN data;
+10271      *------------------------------------------------------------*;
+
+10272      data EMWS3.Assoc2_EMINFO;
+10273      length TARGET KEY $32 DATA $43;
+10274      TARGET='';
+10275      KEY='ASSOCIATION';
+10276      DATA="Assoc2";
+10277      output;
+10278      run;
+
+NOTE: The data set EMWS3.ASSOC2_EMINFO has 1 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+10279      *------------------------------------------------------------*;
+10280      * Assoc2: Computing metadata for RULES data;
+10281      *------------------------------------------------------------*;
+
+10282      data EMWS3.Assoc2_EMINFO;
+10283      length TARGET KEY $32 DATA $43;
+10284      TARGET='';
+10285      KEY='ASSOCIATION';
+10286      DATA="Assoc2";
+10287      output;
+10288      run;
+
+NOTE: The data set EMWS3.ASSOC2_EMINFO has 1 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+10289      *------------------------------------------------------------*;
+10290      * Assoc2: Computing metadata for TRANSACTION data;
+10291      *------------------------------------------------------------*;
+
+10292      *------------------------------------------------------------*;
+10293      * Assoc2: Create Metadata;
+10294      *------------------------------------------------------------*;
+10295      data EMWS3.Assoc2_CMeta_TRANSACTION;
+10296      set EMWS3.Ids_CMeta_DATA;
+10297      run;
+
+NOTE: There were 3 observations read from the data set EMWS3.IDS_CMETA_DATA.
+NOTE: The data set EMWS3.ASSOC2_CMETA_TRANSACTION has 3 observations and 20 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+10298      data EMWS3.Assoc2_EMINFO;
+10299      length TARGET KEY $32 DATA $43;
+10300      TARGET='';
+10301      KEY='ASSOCIATION';
+10302      DATA="Assoc2";
+10303      output;
+10304      run;
+
+NOTE: The data set EMWS3.ASSOC2_EMINFO has 1 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+10305      proc sort data = EMWS3.Ids_EMINFO OUT=WORK.SORTEDEMINFO NOTHREADS;
+10306      by TARGET KEY;
+10307      run;
+
+NOTE: There were 1 observations read from the data set EMWS3.IDS_EMINFO.
+NOTE: The data set WORK.SORTEDEMINFO has 1 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+10308      proc sort data = EMWS3.Assoc2_EMINFO OUT=WORK.TEMP_INFO NOTHREADS;
+10309      by TARGET KEY;
+10310      run;
+
+NOTE: There were 1 observations read from the data set EMWS3.ASSOC2_EMINFO.
+NOTE: The data set WORK.TEMP_INFO has 1 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+10311      data EMWS3.Assoc2_EMINFO;
+10312      merge WORK.SORTEDEMINFO WORK.TEMP_INFO;
+10313      by TARGET KEY;
+10314      run;
+
+NOTE: There were 1 observations read from the data set WORK.SORTEDEMINFO.
+NOTE: There were 1 observations read from the data set WORK.TEMP_INFO.
+NOTE: The data set EMWS3.ASSOC2_EMINFO has 2 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+10315      proc datasets lib=work nolist;
+10316      delete TEMP_INFO SORTEDEMINFO;
+10317      run;
+
+NOTE: Deleting WORK.TEMP_INFO (memtype=DATA).
+NOTE: Deleting WORK.SORTEDEMINFO (memtype=DATA).
+10318      quit;
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+10320      %let _HPDMGRIDHOST=;
+10321      %let _HPDMGRIDINSTALLLOC=;
+10322      %let _HPDMGRIDDATASERVER=;
+10323      %hpdm_gridSetOPtions;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+*------------------------------------------------------------* 
+* 
+* Assoc2 : End Update 
+* datetime : 05DEC2017:00:14:46 
+* 
+*------------------------------------------------------------* 
+Traverser: Run Completed 
+10324      proc printto;
+10325      run;
+

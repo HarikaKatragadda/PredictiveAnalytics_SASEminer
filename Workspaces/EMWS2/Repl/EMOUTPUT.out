@@ -1,0 +1,50 @@
+*------------------------------------------------------------*
+User:                hkatrag1
+Date:                December 11, 2017
+Time:                23:08:28
+*------------------------------------------------------------*
+* Training Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Variable Summary
+ 
+          Measurement    Frequency
+ Role        Level         Count
+ 
+INPUT      BINARY             2
+INPUT      INTERVAL          20
+INPUT      NOMINAL            3
+TARGET     BINARY             1
+
+
+*------------------------------------------------------------*
+* Score Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Replacement Values for Class Variables
+ 
+                                   Character
+             Formatted            Unformatted    Numeric    Replacement
+Variable       Value      Type       Value        Value        Value       Label
+ 
+DemGender        U         C           U            .        _UNKNOWN_     Gender
+
+
+*------------------------------------------------------------*
+* Report Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Replacement Counts
+ 
+Obs    Variable     Role     Label     Train
+ 
+ 1     DemGender    INPUT    Gender     538

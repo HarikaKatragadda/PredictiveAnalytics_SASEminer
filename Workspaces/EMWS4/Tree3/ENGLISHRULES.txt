@@ -1,0 +1,175 @@
+*------------------------------------------------------------*
+ Node = 3
+*------------------------------------------------------------*
+if DTBUYORG >= 17715.5
+then 
+ Tree Node Identifier   = 3
+ Number of Observations = 27
+ Predicted: RESPOND=1 = 1.00
+ Predicted: RESPOND=0 = 0.00
+ 
+*------------------------------------------------------------*
+ Node = 7
+*------------------------------------------------------------*
+if days since last >= 684.5 or MISSING
+AND DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months < 119.975 or MISSING
+then 
+ Tree Node Identifier   = 7
+ Number of Observations = 16990
+ Predicted: RESPOND=1 = 0.03
+ Predicted: RESPOND=0 = 0.97
+ 
+*------------------------------------------------------------*
+ Node = 9
+*------------------------------------------------------------*
+if food >= 32.5
+AND DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months >= 119.975
+then 
+ Tree Node Identifier   = 9
+ Number of Observations = 82
+ Predicted: RESPOND=1 = 0.44
+ Predicted: RESPOND=0 = 0.56
+ 
+*------------------------------------------------------------*
+ Node = 14
+*------------------------------------------------------------*
+if lifetime orders < 6.5 or MISSING
+AND food < 32.5 or MISSING
+AND DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months >= 119.975
+then 
+ Tree Node Identifier   = 14
+ Number of Observations = 1947
+ Predicted: RESPOND=1 = 0.09
+ Predicted: RESPOND=0 = 0.91
+ 
+*------------------------------------------------------------*
+ Node = 18
+*------------------------------------------------------------*
+if num qrtrs w/buy < 1.5 or MISSING
+AND days since last < 684.5
+AND avg $ net demand < 52.675
+AND DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months < 119.975 or MISSING
+then 
+ Tree Node Identifier   = 18
+ Number of Observations = 3671
+ Predicted: RESPOND=1 = 0.04
+ Predicted: RESPOND=0 = 0.96
+ 
+*------------------------------------------------------------*
+ Node = 21
+*------------------------------------------------------------*
+if womens hosiery >= 8.5
+AND num qrtrs w/buy >= 1.5
+AND days since last < 684.5
+AND DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months < 119.975 or MISSING
+then 
+ Tree Node Identifier   = 21
+ Number of Observations = 139
+ Predicted: RESPOND=1 = 0.22
+ Predicted: RESPOND=0 = 0.78
+ 
+*------------------------------------------------------------*
+ Node = 27
+*------------------------------------------------------------*
+if tot orders 98Q2 >= 2.5
+AND lifetime orders >= 6.5
+AND food < 32.5 or MISSING
+AND DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months >= 119.975
+then 
+ Tree Node Identifier   = 27
+ Number of Observations = 21
+ Predicted: RESPOND=1 = 0.52
+ Predicted: RESPOND=0 = 0.48
+ 
+*------------------------------------------------------------*
+ Node = 30
+*------------------------------------------------------------*
+if num qrtrs w/buy < 1.5 or MISSING
+AND food < 1.5 or MISSING
+AND days since last < 684.5
+AND avg $ net demand >= 52.675 or MISSING
+AND DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months < 119.975 or MISSING
+then 
+ Tree Node Identifier   = 30
+ Number of Observations = 3191
+ Predicted: RESPOND=1 = 0.05
+ Predicted: RESPOND=0 = 0.95
+ 
+*------------------------------------------------------------*
+ Node = 31
+*------------------------------------------------------------*
+if num qrtrs w/buy < 1.5 or MISSING
+AND food >= 1.5
+AND days since last < 684.5
+AND avg $ net demand >= 52.675 or MISSING
+AND DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months < 119.975 or MISSING
+then 
+ Tree Node Identifier   = 31
+ Number of Observations = 1597
+ Predicted: RESPOND=1 = 0.08
+ Predicted: RESPOND=0 = 0.92
+ 
+*------------------------------------------------------------*
+ Node = 32
+*------------------------------------------------------------*
+if womens hosiery < 8.5 or MISSING
+AND num qrtrs w/buy < 3.5 AND num qrtrs w/buy >= 1.5 or MISSING
+AND days since last < 684.5
+AND DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months < 119.975 or MISSING
+then 
+ Tree Node Identifier   = 32
+ Number of Observations = 2535
+ Predicted: RESPOND=1 = 0.08
+ Predicted: RESPOND=0 = 0.92
+ 
+*------------------------------------------------------------*
+ Node = 33
+*------------------------------------------------------------*
+if womens hosiery < 8.5 or MISSING
+AND num qrtrs w/buy >= 3.5
+AND days since last < 684.5
+AND DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months < 119.975 or MISSING
+then 
+ Tree Node Identifier   = 33
+ Number of Observations = 507
+ Predicted: RESPOND=1 = 0.13
+ Predicted: RESPOND=0 = 0.87
+ 
+*------------------------------------------------------------*
+ Node = 40
+*------------------------------------------------------------*
+if tot orders 98Q2 < 2.5 or MISSING
+AND lifetime orders >= 6.5
+AND food < 32.5 or MISSING
+AND DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months < 293.525 AND $ last 24 months >= 119.975 or MISSING
+then 
+ Tree Node Identifier   = 40
+ Number of Observations = 1124
+ Predicted: RESPOND=1 = 0.14
+ Predicted: RESPOND=0 = 0.86
+ 
+*------------------------------------------------------------*
+ Node = 41
+*------------------------------------------------------------*
+if tot orders 98Q2 < 2.5 or MISSING
+AND lifetime orders >= 6.5
+AND food < 32.5 or MISSING
+AND DTBUYORG < 17715.5 or MISSING
+AND $ last 24 months >= 293.525
+then 
+ Tree Node Identifier   = 41
+ Number of Observations = 404
+ Predicted: RESPOND=1 = 0.23
+ Predicted: RESPOND=0 = 0.77
+ 

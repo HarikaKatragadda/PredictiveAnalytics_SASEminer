@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?><_ROOT_  DataSource="catalog" Scope="LOCAL" Role="RAW" Library="BIA" Table="CATALOG2010" NCols="98"
+ NObs="48356" NBytes="37749760" Segment="" DataSourceRole="RAW" OutputType="VIEW"
+ ForceRun="N" ComputeStatistics="N" DataSelection="DATASOURCE" NewTable="" MetaAdvisor="BASIC"
+ ApplyIntervalLevelLowerLimit="Y" IntervalLowerLimit="20" ApplyMaxPercentMissing="Y"
+ MaxPercentMissing="50" ApplyMaxClassLevels="Y" MaxClassLevels="20" IdentifyEmptyColumns="Y"
+ VariableValidation="STRICT" NewVariableRole="REJECT" DropMapVariables="Y" DsId="catalog"
+ DsSampleName="" DsSampleSizeType="" DsSampleSize="" DsCreatedBy="hkatrag1" DsCreateDate="1826201569"
+ DsModifiedBy="hkatrag1" DsModifyDate="1826201569.1" DsScope="LOCAL" Sample="D" SampleSizeType="PERCENT"
+ SampleSizePercent="20" SampleSizeObs="10000" DBPassThrough="Y" RunAction="Train"
+ Component="DataSource" RawCreateTime="1827014642.8" CreateTime="23NOV2017:00:04:03"
+ Description="" Data="BIA.CATALOG2010" CMeta="WORK.M3HANU7Q" RunId="96810054-2dec-49b7-9f87-48d89703b19d"
+ RawLastTimeRun="1827496149.1" RawRunTime="4.3279998302" LastTimeRun="28NOV2017:13:49:09"
+ RunTime="0 Hr. 0 Min. 4.33 Sec.">
+<VARIABLEPROPERTIES/>
+<FILEPROPERTIES ><![CDATA[
+EMNOTES
+]]>
+</FILEPROPERTIES></_ROOT_>

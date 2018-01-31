@@ -1,0 +1,21 @@
+                                                                                                                                                                                                                            01:01 Tuesday, December 12, 2017   1
+
+Obs    NAME         LABEL               NRULES    IMPORTANCE    VIMPORTANCE     RATIO
+
+  1    DOLL24       $ last 24 months       2        1.00000       1.00000      1.00000
+  2    TENURE       months since 1st       2        0.78232       0.48988      0.62619
+  3    DAYLAST      days since last        2        0.63155       0.84426      1.33680
+  4    DEPT25       food                   3        0.57185       0.45513      0.79589
+  5    TOTORDQ22    tot orders 98Q2        1        0.45242       0.34956      0.77263
+  6    TOTORDQ12    tot orders 95Q4        2        0.33311       0.26205      0.78667
+  7    DOLINDEA     avg $ demand           2        0.32964       0.18213      0.55250
+  8    BUYPROP      % quarters w/buy       1        0.29547       0.00000      0.00000
+  9    DOLLARQ10    tot $ 95Q2             1        0.24137       0.00000      0.00000
+ 10    DOLLARQ13    tot $ 96Q1             1        0.23829       0.19949      0.83715
+ 11    DEPT02       womens sleepwear       1        0.19352       0.00000      0.00000
+ 12    DEPT09       mens underwear         1        0.18664       0.00000      0.00000
+ 13    DEPT03       womens underwear       1        0.17585       0.00000      0.00000
+ 14    DOLLARQ02    tot $ 93Q2             1        0.14409       0.09468      0.65708
+ 15    DOLINDET     total $ demand         1        0.11070       0.00000      0.00000
+ 16    DEPT11       mens footware          1        0.10596       0.00000      0.00000
+ 17    DEPT10       mens hosiery           1        0.06523       0.00000      0.00000

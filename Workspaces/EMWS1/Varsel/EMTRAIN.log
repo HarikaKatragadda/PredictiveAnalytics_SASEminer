@@ -1,0 +1,299 @@
+*------------------------------------------------------------*
+* Training Log
+Date:                November 28, 2017
+Time:                14:12:17
+*------------------------------------------------------------*
+10867  proc freq data=EMWS1.Varsel_VariableSet noprint;
+10868  table ROLE*LEVEL/out=WORK.VarselMETA;
+10869  run;
+
+NOTE: There were 97 observations read from the data set EMWS1.VARSEL_VARIABLESET.
+NOTE: The data set WORK.VARSELMETA has 4 observations and 4 variables.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+10870  proc print data=WORK.VarselMETA label noobs;
+10871  var ROLE LEVEL COUNT;
+10872  label ROLE = "%sysfunc(sasmsg(sashelp.dmine, meta_role_vlabel, NOQUOTE))" LEVEL = "%sysfunc(sasmsg(sashelp.dmine, meta_level_vlabel, NOQUOTE))" COUNT = "%sysfunc(sasmsg(sashelp.dmine, rpt_count_vlabel, NOQUOTE))";
+10873  title9 ' ';
+10874  title10 "%sysfunc(sasmsg(sashelp.dmine, rpt_varSummary_title  , NOQUOTE))";
+10875  run;
+
+NOTE: There were 4 observations read from the data set WORK.VARSELMETA.
+NOTE: The PROCEDURE PRINT printed page 1.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+10876  title10;
+
+10877  data WORK.M208UKN3;
+10878  set WORK.M208UKN3;
+10879  if role = 'TARGET' and use = 'Y' then do;
+10880  role = 'TARGET';
+10881  output;
+10882  end;
+10883  if role = 'INPUT' and use in ('Y','D','N') then do;
+10884  role = 'INPUT';
+10885  output;
+10886  end;
+10887  if role = 'REJECTED' and use = 'Y' then do;
+10888  role = 'INPUT';
+10889  output;
+10890  end;
+10891  if role = 'FREQ' and use in ('Y', 'D') then do;
+10892  role = 'FREQ';
+10893  output;
+10894  end;
+10895  if role = 'REJECTED' and use in ('N', 'D') then do;
+10896  role = 'REJECTED';
+10897  output;
+10898  end;
+10899  run;
+
+NOTE: There were 97 observations read from the data set WORK.M208UKN3.
+NOTE: The data set WORK.M208UKN3 has 96 observations and 21 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+10900  /*by pass cmeta */
+10901  data WORK.M208UKN3;
+10902  set WORK.M208UKN3;
+10903  run;
+
+NOTE: There were 96 observations read from the data set WORK.M208UKN3.
+NOTE: The data set WORK.M208UKN3 has 96 observations and 21 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+10904  data WORK.M15TQ8R_;
+10905  set WORK.M15TQ8R_;
+10906  if role = 'INPUT' and use in ('N') then delete;
+10907  if role = 'REJECTED' and use in ('N', 'D') then delete;
+10908  run;
+
+NOTE: There were 96 observations read from the data set WORK.M15TQ8R_.
+NOTE: The data set WORK.M15TQ8R_ has 94 observations and 21 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: Run proc dmdb with the specified maxlevel criterion. 
+10909  *------------------------------------------------------------* ;
+10910  * EM: DMDBClass Macro ;
+10911  *------------------------------------------------------------* ;
+10912  %macro DMDBClass;
+10913      BOTHPAYM(ASC) CCPAYM(ASC) METHPAYM(ASC) PCPAYM(ASC)
+10914  %mend DMDBClass;
+10915  *------------------------------------------------------------* ;
+10916  * EM: DMDBVar Macro ;
+10917  *------------------------------------------------------------* ;
+10918  %macro DMDBVar;
+10919      ACTBUY BUYPROP CATALOGCNT COUNTY DAYLAST DEPT01 DEPT02 DEPT03 DEPT04 DEPT05
+10920     DEPT06 DEPT07 DEPT08 DEPT09 DEPT10 DEPT11 DEPT12 DEPT13 DEPT14 DEPT15 DEPT16
+10921     DEPT17 DEPT18 DEPT19 DEPT20 DEPT21 DEPT22 DEPT23 DEPT24 DEPT25 DEPT26 DEPT27
+10922     DOLINDEA DOLINDET DOLL24 DOLLARQ01 DOLLARQ02 DOLLARQ03 DOLLARQ04 DOLLARQ05
+10923     DOLLARQ06 DOLLARQ07 DOLLARQ08 DOLLARQ09 DOLLARQ10 DOLLARQ11 DOLLARQ12 DOLLARQ13
+10924     DOLLARQ14 DOLLARQ15 DOLLARQ16 DOLLARQ17 DOLLARQ18 DOLLARQ19 DOLLARQ20 DOLLARQ21
+10925     DOLLARQ22 DOLNETDA DOLNETDT DTBUYLST DTBUYORG FREQPRCH MONLAST ORDERSIZE TENURE
+10926     TOTORDQ01 TOTORDQ02 TOTORDQ03 TOTORDQ04 TOTORDQ05 TOTORDQ06 TOTORDQ07 TOTORDQ08
+10927     TOTORDQ09 TOTORDQ10 TOTORDQ11 TOTORDQ12 TOTORDQ13 TOTORDQ14 TOTORDQ15 TOTORDQ16
+10928     TOTORDQ17 TOTORDQ18 TOTORDQ19 TOTORDQ20 TOTORDQ21 TOTORDQ22 UNITSIDD UNITSLAP
+10929     UNTLANPO
+10930  %mend DMDBVar;
+10931  *------------------------------------------------------------*;
+10932  * EM: Create DMDB;
+10933  *------------------------------------------------------------*;
+10934  libname _spdslib SPDE "C:\Users\hkatrag1\AppData\Local\Temp\117\SAS Temporary Files\_TD12716_UPITSCTXSH013_";
+NOTE: Libref _SPDSLIB was successfully assigned as follows: 
+      Engine:        SPDE 
+      Physical Name: C:\Users\hkatrag1\AppData\Local\Temp\117\SAS Temporary Files\_TD12716_UPITSCTXSH013_\
+10935  proc dmdb batch data=EMWS1.Ids2_DATA
+10936  dmdbcat=WORK.EM_DMDB
+10937  maxlevel = 101
+10938  out=_spdslib.EM_DMDB
+10939  ;
+10940  class %DMDBClass;
+10941  var %DMDBVar;
+10942  target
+10943  ORDERSIZE
+10944  ;
+10945  run;
+
+NOTE: Records processed = 48356   Memory used = 511K.
+NOTE: View EMWS1.IDS2_DATA.VIEW used (Total process time):
+      real time           0.67 seconds
+      cpu time            0.20 seconds
+      
+NOTE: There were 48356 observations read from the data set BIA.CATALOG2010.
+NOTE: There were 48356 observations read from the data set EMWS1.IDS2_DATA.
+NOTE: The data set _SPDSLIB.EM_DMDB has 48356 observations and 94 variables.
+NOTE: PROCEDURE DMDB used (Total process time):
+      real time           0.87 seconds
+      cpu time            0.21 seconds
+      
+
+10946  quit;
+
+10947  *------------------------------------------------------------* ;
+10948  * Varsel: Input Variables Macro ;
+10949  *------------------------------------------------------------* ;
+10950  %macro INPUTS;
+10951                 ACTBUY BOTHPAYM BUYPROP CATALOGCNT CCPAYM COUNTY DAYLAST DEPT01 DEPT02 DEPT03
+10952                DEPT04 DEPT05 DEPT06 DEPT07 DEPT08 DEPT09 DEPT10 DEPT11 DEPT12 DEPT13 DEPT14
+10953                DEPT15 DEPT16 DEPT17 DEPT18 DEPT19 DEPT20 DEPT21 DEPT22 DEPT23 DEPT24 DEPT25
+10954                DEPT26 DEPT27 DOLINDEA DOLINDET DOLL24 DOLLARQ01 DOLLARQ02 DOLLARQ03 DOLLARQ04
+10955                DOLLARQ05 DOLLARQ06 DOLLARQ07 DOLLARQ08 DOLLARQ09 DOLLARQ10 DOLLARQ11 DOLLARQ12
+10956                DOLLARQ13 DOLLARQ14 DOLLARQ15 DOLLARQ16 DOLLARQ17 DOLLARQ18 DOLLARQ19 DOLLARQ20
+10957                DOLLARQ21 DOLLARQ22 DOLNETDA DOLNETDT DTBUYLST DTBUYORG FREQPRCH METHPAYM
+10958                MONLAST PCPAYM TENURE TOTORDQ01 TOTORDQ02 TOTORDQ03 TOTORDQ04 TOTORDQ05
+10959                TOTORDQ06 TOTORDQ07 TOTORDQ08 TOTORDQ09 TOTORDQ10 TOTORDQ11 TOTORDQ12 TOTORDQ13
+10960                TOTORDQ14 TOTORDQ15 TOTORDQ16 TOTORDQ17 TOTORDQ18 TOTORDQ19 TOTORDQ20 TOTORDQ21
+10961     TOTORDQ22 UNITSIDD UNITSLAP UNTLANPO
+10962  %mend INPUTS;
+10963  proc dmine data=_spdslib.EM_DMDB dmdbcat=WORK.EM_DMDB
+10964  minr2=0.005 maxrows=3000 stopr2=0.0005 NOAOV16 NOINTER USEGROUPS OUTGROUP=EMWS1.Varsel_OUTGROUP outest=EMWS1.Varsel_OUTESTDMINE outeffect=EMWS1.Varsel_OUTEFFECT outrsquare =EMWS1.Varsel_OUTRSQUARE
+10965  NOMONITOR
+10966  PSHORT
+10967  ;
+10968  var %INPUTS;
+10969  target ORDERSIZE;
+10970  code file="\\filer.uncc.edu\home\hkatrag1\Project_lab\Predictive Analytics\Workspaces\EMWS1\Varsel\EMFLOWSCORE.sas";
+10971  code file="\\filer.uncc.edu\home\hkatrag1\Project_lab\Predictive Analytics\Workspaces\EMWS1\Varsel\EMPUBLISHSCORE.sas";
+10972  run;
+
+NOTE: Checking database engine with sqluse...
+NOTE: Number of threads reset to 1 because of fewer partitions.
+
+Initial pass to compute R2s for all targets
+48356 records read
+NOTE: The full X'X matrix has 25 rows and columns.
+
+Building X'X  for target: ORDERSIZE rows=26 memory=0.00 meg.
+48356 records read
+NOTE: External file \\filer.uncc.edu\home\hkatrag1\Project_lab\Predictive Analytics\Workspaces\EMWS1\Varsel\EMFLOWSCORE.sas opened.
+NOTE: External file \\filer.uncc.edu\home\hkatrag1\Project_lab\Predictive Analytics\Workspaces\EMWS1\Varsel\EMPUBLISHSCORE.sas opened.
+NOTE: There were 48356 observations read from the data set _SPDSLIB.EM_DMDB.
+NOTE: The data set EMWS1.VARSEL_OUTGROUP has 0 observations and 8 variables.
+NOTE: The data set EMWS1.VARSEL_OUTESTDMINE has 8 observations and 23 variables.
+NOTE: The data set EMWS1.VARSEL_OUTEFFECT has 7 observations and 6 variables.
+NOTE: The data set EMWS1.VARSEL_OUTRSQUARE has 192 observations and 4 variables.
+NOTE: The PROCEDURE DMINE printed pages 2-5.
+NOTE: PROCEDURE DMINE used (Total process time):
+      real time           0.73 seconds
+      cpu time            0.46 seconds
+      
+
+10973  quit;
+10974  /*      proc print data =EMWS1.Varsel_OUTEFFECT;      proc print data =EMWS1.Varsel_OUTRSQUARE;      */
+10975  run;
+
+10976  data EMWS1.Varsel_OUTESTDMINE;
+10977  set EMWS1.Varsel_OUTESTDMINE;
+10978  _uname_=upcase(_name_);
+10979  run;
+
+NOTE: There were 8 observations read from the data set EMWS1.VARSEL_OUTESTDMINE.
+NOTE: The data set EMWS1.VARSEL_OUTESTDMINE has 8 observations and 24 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+10980  proc sql;
+10981  create table _tmpoutgroup as select distinct VARIABLE from EMWS1.Varsel_OUTGROUP where VARTYPE='GROUP';
+NOTE: Table WORK._TMPOUTGROUP created, with 0 rows and 1 columns.
+
+10982  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+10983  run;
+
+10984  data EMWS1.Varsel_OUTAOV16;
+10985  set EMWS1.Varsel_OUTGROUP;
+10986  if STRIP(VARTYPE) eq 'AOV16' then output;
+10987  DROP VARTYPE LEVEL LEVEL2 VARIABLE2;
+10988  label NAME= "Name";
+10989  label GROUP = "Group";
+10990  label VARIABLE = "Variable";
+10991  label BIN = "Bin Cutoff";
+10992  run;
+
+NOTE: There were 0 observations read from the data set EMWS1.VARSEL_OUTGROUP.
+NOTE: The data set EMWS1.VARSEL_OUTAOV16 has 0 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.00 seconds
+      
+
+10993  data EMWS1.Varsel_OUTGINT;
+10994  set EMWS1.Varsel_OUTGROUP;
+10995  if STRIP(VARTYPE) eq 'GINTER' then output;
+10996  DROP VARTYPE BIN;
+10997  label NAME= "Name";
+10998  label GROUP = "Group";
+10999  label VARIABLE = "Variable 1";
+11000  label VARIABLE2 = "Variable 2";
+11001  label LEVEL = "Level 1";
+11002  label LEVEL2 = "Level 2";
+11003  run;
+
+NOTE: There were 0 observations read from the data set EMWS1.VARSEL_OUTGROUP.
+NOTE: The data set EMWS1.VARSEL_OUTGINT has 0 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+11004  data EMWS1.Varsel_OUTGVAR;
+11005  set EMWS1.Varsel_OUTGROUP;
+11006  if STRIP(VARTYPE) eq 'GROUP' then output;
+11007  DROP VARTYPE BIN VARIABLE2 LEVEL2;
+11008  label NAME= "Name";
+11009  label GROUP = "Group";
+11010  label VARIABLE = "Variable";
+11011  label LEVEL = "Level";
+11012  run;
+
+NOTE: There were 0 observations read from the data set EMWS1.VARSEL_OUTGROUP.
+NOTE: The data set EMWS1.VARSEL_OUTGVAR has 0 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+      
+
+11013  quit;
+
+11014  options nonotes nosource;
+11039  run;
+
+NOTE: 14 lines were written to file PRINT.
+NOTE: The DATA step printed page 6.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+11040  data EMWS1.Varsel_RESULTEDVARS;
+11041  run;
+
+NOTE: The data set EMWS1.VARSEL_RESULTEDVARS has 1 observations and 0 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+11042  libname _spdslib;
+NOTE: Libref _SPDSLIB has been deassigned.
+

@@ -1,0 +1,3258 @@
+*------------------------------------------------------------*
+* Training Log
+Date:                December 12, 2017
+Time:                12:42:34
+*------------------------------------------------------------*
+14715  proc freq data=EMWS4.VarClus_VariableSet noprint;
+14716  table ROLE*LEVEL/out=WORK.VarClusMETA;
+14717  run;
+
+NOTE: There were 99 observations read from the data set EMWS4.VARCLUS_VARIABLESET.
+NOTE: The data set WORK.VARCLUSMETA has 8 observations and 4 variables.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+14718  proc print data=WORK.VarClusMETA label noobs;
+14719  var ROLE LEVEL COUNT;
+14720  label ROLE = "%sysfunc(sasmsg(sashelp.dmine, meta_role_vlabel, NOQUOTE))" LEVEL = "%sysfunc(sasmsg(sashelp.dmine, meta_level_vlabel, NOQUOTE))" COUNT = "%sysfunc(sasmsg(sashelp.dmine, rpt_count_vlabel, NOQUOTE))";
+14721  title9 ' ';
+14722  title10 "%sysfunc(sasmsg(sashelp.dmine, rpt_varSummary_title  , NOQUOTE))";
+14723  run;
+
+NOTE: There were 8 observations read from the data set WORK.VARCLUSMETA.
+NOTE: The PROCEDURE PRINT printed page 1.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+14724  title10;
+
+14725  %let EMEXCEPTIONSTRING=;
+PERFORMANCE  DETAILS
+15122  *------------------------------------------------------------*;
+15123  * VarClus: Generation of macros and macro variables;
+15124  * To see the code generated, set the EM_DEBUG macro variable to SOURCE or _ALL_;
+15125  *------------------------------------------------------------*;
+
+15126  %let EMEXCEPTIONSTRING=;
+15127  *------------------------------------------------------------*;
+15128  * TRAIN: VarClus;
+15129  *------------------------------------------------------------*;
+15130  %let EM_ACTION = TRAIN;
+15131  %let syscc = 0;
+15132  
+15133  %macro main;
+15134  
+15135     filename temp catalog 'sashelp.emexpl.variableclustering_macros.source';
+15136     %include temp;
+15137     filename temp catalog 'sashelp.emexpl.variableclustering_macros2.source';
+15138     %include temp;
+15139     filename temp;
+15140  
+15141    %SetProperties;
+15142  
+15143     %if %upcase(&EM_ACTION) = CREATE %then %do;
+15144         filename temp catalog 'sashelp.emexpl.variableclustering_create.source';
+15145         %include temp;
+15146         filename temp;
+15147         %create;
+15148     %end;
+15149     %else
+15150     %if %upcase(&EM_ACTION) = TRAIN %then %do;
+15151          filename temp catalog 'sashelp.emexpl.variableclustering_train.source';
+15152             %include temp;
+15153             filename temp;
+15154             %train;
+15155     %end;
+15156     %else
+15157     %if %upcase(&EM_ACTION) = SCORE %then %do;
+15158             filename temp catalog 'sashelp.emexpl.variableclustering_score.source';
+15159             %include temp;
+15160             filename temp;
+15161             %score;
+15162     %end;
+15163     %else
+15164     %if %upcase(&EM_ACTION) = REPORT %then %do;
+15165             filename temp catalog 'sashelp.emexpl.variableclustering_report.source';
+15166             %include temp;
+15167             filename temp;
+15168             %report;
+15169     %end;
+15170     /*
+15171     %if %upcase(&EM_ACTION) = OPENTESTTABLE %then %do;
+15172         %put 'OPENING TABLE';
+15173     %end;
+15174     %if %upcase(&EM_ACTION) = CLOSETESTTABLE %then %do;
+15175         %put 'CLOSE TABLE';
+15176     %end;
+15177     */
+15178  %mend main;
+15179  %main;
+NOTE: %INCLUDE (level 1) file TEMP is file SASHELP.EMEXPL.VARIABLECLUSTERING_MACROS.SOURCE.
+15180 +
+15181 +/* Initialize property macro variables */
+15182 +%macro SetProperties;
+15183 +   %em_checkmacro(name=EM_PROPERTY_MAXCLUS,       global=Y, value=DEFAULT);
+15184 +   %em_checkmacro(name=EM_PROPERTY_HIDEVARIABLE,  global=Y, value=Y);
+15185 +   %em_checkmacro(name=EM_PROPERTY_PRINTOPTION,   global=Y, value=SHORT);
+15186 +   %em_checkmacro(name=EM_PROPERTY_CLUSSOURCE,    global=Y, value=CORR);
+15187 +   %em_checkmacro(name=EM_PROPERTY_CLUSCOMP,      global=Y, value=PRINCIPAL);
+15188 +   %em_checkmacro(name=EM_PROPERTY_CLUSHIERACHY,      global=Y, value=Y);
+15189 +   %em_checkmacro(name=EM_PROPERTY_INCLUDECLASSVAR,      global=Y, value=N);
+15190 +   %em_checkmacro(name=EM_PROPERTY_EXPORTEDCOMP,      global=Y, value=CLUSTERCOMP);
+15191 +   %em_checkmacro(name=EM_PROPERTY_MAXEIGEN,         global=Y, value=DEFAULT);
+15192 +   %em_checkmacro(name=EM_PROPERTY_PROPORTION,      global=Y, value=DEFAULT);
+15193 +   %em_checkmacro(name=EM_PROPERTY_PRINTOPTION,      global=Y, value=SHORT);
+15194 +   %em_checkmacro(name=EM_PROPERTY_TWOSTAGECLUS,      global=Y, value=AUTO);
+15195 +   %em_checkmacro(name=EM_PROPERTY_SUPPRESSSAMPWARN,      global=Y, value=N);
+15196 +
+15197 +%mend SetProperties;
+15198 +
+15199 +%Macro MakeDummyVariables(indata=,
+15200 +                          outvar=,
+15201 +                          outdata=,
+15202 +                          fileref=,
+15203 +                          recreatecmeta=N, /* optional */
+15204 +                          incmeta=,     /* optional */
+15205 +                          outcmeta=,    /* optional */
+15206 +                          ndummyvars=_ndummyvars
+15207 +                          );
+15208 +    %global &ndummyvars;
+15209 +
+15210 +    proc dmdb batch data=&indata out=_dmdbdat dmdbcat=_dmdbcat classout=_classout;;
+15211 +       class
+15212 +       %EM_BINARY_INPUT %EM_NOMINAL_INPUT %EM_ORDINAL_INPUT
+15213 +       %EM_BINARY_REJECTED %EM_NOMINAL_REJECTED %EM_ORDINAL_REJECTED
+15214 +    ;
+15215 +    run;
+15216 +    %let &ndummyvars = 0;
+15217 +    data _null_;
+15218 +    %let dsid = %sysfunc(open(work._classout));
+15219 +      %let &ndummyvars = %sysfunc(attrn(&dsid, NOBS));
+15220 +    %let dsid = %sysfunc(close(&dsid));
+15221 +    run;
+15222 +
+15223 +    proc dmzip data=_dmdbdat dmdbcat=_dmdbcat;
+15224 +       input
+15225 +       %EM_BINARY_INPUT %EM_NOMINAL_INPUT %EM_ORDINAL_INPUT
+15226 +       %EM_BINARY_REJECTED %EM_NOMINAL_REJECTED %EM_ORDINAL_REJECTED
+15227 +        / level=nominal stdize=no;
+15228 +       make outvar = &outvar;
+15229 +       score data = &indata out =&outdata;
+15230 +       code  file=  "&fileref";
+15231 +    run;
+15232 +    %if &recreatecmeta eq Y %then %do;
+15233 +    proc contents data =&outvar out=_tmpds(keep=NAME LABEL);
+15234 +    data _tmpds;
+15235 +        set _tmpds;
+15236 +           ROLE = 'INPUT';
+15237 +           LEVEL = 'INTERVAL';
+15238 +           CREATOR='DMZIP';
+15239 +           if NAME = '_TYPE_' then delete;
+15240 +    run;
+15241 +    data &outcmeta;
+15242 +         set &incmeta _tmpds;
+15243 +    run;
+15244 +    %end;
+15245 +    proc datasets lib=work nolist;
+15246 +      delete  _dmdbdat _dmdbcat _classout
+15247 +    %if &recreatecmeta eq Y %then %do;
+15248 +    _tmpds
+15249 +    %end;
+15250 +    ;
+15251 +    quit;
+15252 +%Mend MakeDummyVariables;
+15253 +
+15254 +/*--- Determine Optimal Number of Cluster ----
+15255 +%macro FindClusNum(statds=, groupds=, minvariation=);
+15256 +   %global optnclus;
+15257 +   data varclus_tmp(drop=_NAME_);
+15258 +      set &statDs;
+15259 +      where _type_ ='PROPOR';
+15260 +   run;
+15261 +   proc sort data=varclus_tmp;
+15262 +      by _NCL_;
+15263 +   run;
+15264 +   proc transpose data=varclus_tmp out=varclus_tmp;
+15265 +      by _NCL_;
+15266 +      var %EM_INTERVAL_INPUT
+15267 +      %if &EM_PROPERTY_INCLUDECLASSVAR eq Y %then %do;
+15268 +      %let dsid = %sysfunc(open(&EM_USER_OUTDUMMY));
+15269 +      %let nvar = %sysfunc(attrn(&dsid, NVAR));
+15270 +          %do i = 2 %to &nvar;
+15271 +          %let varname = %sysfunc(varname(&dsid, &i));
+15272 +          &varname
+15273 +          %end;
+15274 +      %end;
+15275 +   ;
+15276 +   run;
+15277 +
+15278 +   %if &minVariation eq %then %do;
+15279 +       %let minVariation = &EM_PROPERTY_MINVARIATION;
+15280 +   %end;
+15281 +   %if ^(0<&minVariation<100) %then %do;
+15282 +       %let minVariation = 90;
+15283 +   %end;
+15284 +
+15285 +   data _null_;
+15286 +      set varclus_tmp end=eof;
+15287 +      by _NCL_;
+15288 +      retain flag 0;
+15289 +      if first._ncl_ then flag=0;
+15290 +      if .<col1 < &minVariation then flag=1;
+15291 +      if last._ncl_ and ^flag then do;
+15292 +         call symput('OPTNCL', _ncl_);
+15293 +         stop;
+15294 +      end;
+15295 +     if eof then call symput('OPTNCL', _ncl_);
+15296 +   run;
+15297 +
+15298 +   %let optnclus = &OPTNCL;
+15299 +
+15300 +   data varclus_tmp(drop=_NCL_ _NAME_);
+15301 +      set &statDs;
+15302 +      where _type_ in('RSQUARED' 'GROUP') and _NCL_=&OPTNCL;
+15303 +   run;
+15304 +   proc sort data=varclus_tmp;
+15305 +      by _TYPE_;
+15306 +   run;
+15307 +   proc transpose data=varclus_tmp out=varclus_tmp;
+15308 +      by _TYPE_;
+15309 +   run;
+15310 +   proc sort data=varclus_tmp;
+15311 +      by _name_ _type_;
+15312 +   run;
+15313 +
+15314 +  proc transpose data=varclus_tmp out=&groupds;
+15315 +      by _NAME_;
+15316 +   run;
+15317 +   proc sort data=&groupDs(rename=(col1=Cluster col2=Rsquare _NAME_=VARIABLE));
+15318 +      by Cluster descending Rsquare;
+15319 +      where Cluster ne 0;
+15320 +   run;
+15321 +   proc datasets lib=work nolist mt=(DATA VIEW);
+15322 +      delete varclus_tmp;
+15323 +   run;
+15324 +   quit;
+15325 +%mend findClusNum;
+15326 +*/
+15327 +
+15328 +%macro getNclusfromTrain(inoutstat=, nc=);
+15329 +%global &nc;
+15330 +data _null_;
+15331 +    set &inoutstat end=eof;
+15332 +    if eof then do;
+15333 +    call symput("&nc", _ncl_);
+15334 +    end;
+15335 +run;
+15336 +%mend  getNclusfromTrain;
+15337 +
+15338 +%macro MakeDeltaCode(groupds=, outstatscore=, deltacodefile=);
+15339 +
+15340 +     *--- Build Code to Modify Metadata ---*;
+15341 +     filename X "&deltacodefile";
+15342 +     data _null_;
+15343 +        FILE X;
+15344 +        set &groupds end=eof;
+15345 +        /*by Cluster;*/
+15346 +         if _N_=1 then do;
+15347 +           %if &EM_PROPERTY_INCLUDECLASSVAR eq Y %then %do;
+15348 +            put "if upcase(strip(ROLE)) ='INPUT' and upcase(strip(LEVEL)) ^='INTERVAL' then ROLE ='REJECTED' ;";
+15349 +           %end;
+15350 +           put "if upcase(strip(ROLE))='INPUT' and upcase(strip(LEVEL))='INTERVAL' then do;";
+15351 +           put "if upcase(strip(NAME)) in (";
+15352 +        end;
+15353 +        if Strip(upcase(Selected)) eq 'YES' then do;
+15354 +           string = '"'!!trim(left(VARIABLE))!!'"';
+15355 +           put string;
+15356 +        end;
+15357 +        if eof then do;
+15358 +           put ') then ROLE="INPUT";';
+15359 +           put 'else ROLE="REJECTED";';
+15360 +           put 'end;';
+15361 +
+15362 +           %if %upcase(&EM_PROPERTY_HIDEVARIABLE) eq Y %then %do;
+15363 +             put 'if upcase(strip(ROLE)) = "REJECTED" then delete ;';
+15364 +           %end;
+15365 +        end;
+15366 +     run;
+15367 +     quit;
+15368 +
+15369 +     filename X;
+15370 +
+15371 +     quit;
+15372 +%mend MakeDeltaCode;
+15373 +
+15374 +%macro MakeVarClusCorrData(statds=, corrds=, corrplotds= );
+15375 +    %if ^%sysfunc(exist(&statds)) %then %do;
+15376 +         %goto doendc;
+15377 +    %end;
+15378 +
+15379 +    data &corrds(drop=_TYPE_ _NCL_) ;
+15380 +       set &statds;
+15381 +       where _type_ eq 'CORR' ;
+15382 +    run ;
+15383 +    proc sort data=&corrds;
+15384 +       by _NAME_ ;
+15385 +    run ;
+15386 +    proc transpose data=&corrds out=&corrplotds name=_TMP_;
+15387 +      BY _NAME_ ;
+15388 +    run ;
+15389 +    data &corrplotds;
+15390 +       length _Y_ $100;
+15391 +       set &corrplotDs;
+15392 +       if _LABEL_ ne '' then _Y_=_LABEL_ ; else _Y_=_TMP_ ;
+15393 +    run ;
+15394 +    data varclus_match(rename=(_TMP_= _NAME_ _LABEL_=_X_));
+15395 +       set &corrplotds;
+15396 +       where _LABEL_ ne '' ;
+15397 +       keep _TMP_ _LABEL_ ;
+15398 +    run ;
+15399 +    data _null_;
+15400 +       nobs=0;
+15401 +       dsid = open('varclus_match');
+15402 +       if dsid then do;
+15403 +          nobs = attrn(dsid, 'NOBS');
+15404 +          dsid = close(dsid);
+15405 +       end;
+15406 +       call symput ('CORR_NOBS', nobs);
+15407 +    run;
+15408 +    %if &corr_nobs %then %do;
+15409 +        proc sort data=varclus_match;
+15410 +           by _name_;
+15411 +        run ;
+15412 +        proc sort data=&corrplotds;
+15413 +           by _name_;
+15414 +        run ;
+15415 +        data &corrplotds(keep= _X_ _Y_ col1 rename=(col1=Correlation)) ;
+15416 +           merge varclus_match &corrplotds;
+15417 +           by _NAME_ ;
+15418 +           if _X_ eq '' then _X_=_NAME_ ;
+15419 +           label _X_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_variable, noquote))";
+15420 +           label _Y_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_variable, noquote))";
+15421 +           label col1 = "%sysfunc(sasmsg(sashelp.dmine, rpt_correlation_vlabel, noquote))";
+15422 +
+15423 +       run ;
+15424 +    %end;
+15425 +    %else %do;
+15426 +        proc sort data=&corrplotds;
+15427 +           by _name_;
+15428 +        run ;
+15429 +        data &corrplotds(keep= _NAME_ _Y_ col1 rename=(_NAME_=_X_ col1=Correlation)) ;
+15430 +           set &corrplotds;
+15431 +           label _NAME_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_variable, noquote))" ;
+15432 +           label _Y_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_variable, noquote))" ;
+15433 +           label col1 = "%sysfunc(sasmsg(sashelp.dmine, rpt_correlation_vlabel, noquote))";
+15434 +
+15435 +        run ;
+15436 +    %end;
+15437 +    proc sort data=&corrplotds;
+15438 +       by _X_ _Y_;
+15439 +    run ;
+15440 +    proc datasets lib=work nolist mt=(DATA VIEW);
+15441 +       delete varclus_match;
+15442 +    run;
+15443 +    quit;
+15444 +
+15445 +%doendc:
+15446 +
+15447 +%mend MakeVarClusCorrData;
+15448 +
+15449 +%macro MakeStatPlotData(statds= , outstatplotds=);
+15450 +   %if %sysfunc(exist(&statds)) %then %do;
+15451 +
+15452 +       data varclus_tmp(drop=_NAME_ _NCL_) ;
+15453 +          set &statDs;
+15454 +          where _type_ in('MEAN', 'STD', 'N');
+15455 +       run ;
+15456 +       proc transpose data=varclus_tmp out=&outstatplotds;
+15457 +          id _TYPE_ ;
+15458 +       run ;
+15459 +       data &outstatplotds;
+15460 +          set &outstatplotds(obs=1000);
+15461 +          label _name_= "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_name, noquote))";
+15462 +          label _label_="%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_label, noquote))" ;
+15463 +          if MEAN ne 0 then SCALEDSTD= STD / MEAN ;
+15464 +          else SCALEDSTD= STD ;
+15465 +          label SCALEDSTD = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_scaledstd, noquote))";
+15466 +       run ;
+15467 +       proc sort data=&outstatplotds;
+15468 +          by descending SCALEDSTD ;
+15469 +       run ;
+15470 +       proc datasets lib=work nolist mt=(DATA VIEW);
+15471 +          delete varclus_tmp;
+15472 +       run;
+15473 +       quit;
+15474 +    %end;
+15475 +
+15476 +%mend MakeStatPlotData;
+15477 +
+15478 +
+15479 +%macro CreateScoreCode(indata=, ncluscomp=, fileref=);
+15480 +     %EM_GETNAME(KEY=OUTSTATSCORE, type=DATA);
+15481 +    data &EM_USER_OUTSTATSCORE;
+15482 +          set &indata;
+15483 +          if (_TYPE_ in ('SCORE' 'MEAN' 'STD') and _NCL_ = &ncluscomp ) or (_TYPE_ in ('MEAN' 'STD'));
+15484 +          if _TYPE_ = 'MEAN' then _NAME_='MEAN';
+15485 +          if _TYPE_ = 'STD' then _NAME_='STD';
+15486 +          DROP _TYPE_ _NCL_;
+15487 +     run;
+15488 +
+15489 +     filename _file_  "&fileRef";
+15490 +
+15491 +     data _null_;
+15492 +        FILE _file_ MOD;
+15493 +        put ' ';
+15494 +        put '/*-------------------------------------------------*/';
+15495 +        put '/* ' "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_score_title_begin , noquote))" '*/';
+15496 +        put '/*-------------------------------------------------*/';
+15497 +        put ' ';
+15498 +        %let dsid = %sysfunc(open(&EM_USER_OUTSTATSCORE));
+15499 +
+15500 +        %let nvar = %sysfunc(attrn(&dsid, NVAR));
+15501 +        %let vn_name =%sysfunc(varnum(&dsid, _NAME_));
+15502 +
+15503 +        %let k = 1;
+15504 +        %do %while(^%sysfunc(fetch(&dsid)));
+15505 +                %let _name = %sysfunc(getvarc(&dsid, &vn_name));
+15506 +                %if &k > 2 %then %do;
+15507 +                 %let cn = %eval(&k-2);
+15508 +                 put "&_name = 0 ; /*---" "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_score_cluscompnum, noquote, &cn))"  "------ */";
+15509 +                %end;
+15510 +                %let k = %eval(&k+1);
+15511 +        %end;
+15512 +
+15513 +        %let rc = %sysfunc(rewind(&dsid));
+15514 +
+15515 +        %do i= 2 %to &nvar;
+15516 +            %let _varname =  %sysfunc(varname(&dsid, &i));
+15517 +            %do %while(^%sysfunc(fetch(&dsid)));
+15518 +                %let _name = %sysfunc(getvarc(&dsid, &vn_name));
+15519 +                %if &_name = MEAN %then
+15520 +                %let _mean = %sysfunc(getvarn(&dsid, &i));
+15521 +                %else %if &_name = STD %then
+15522 +                %let _std = %sysfunc(getvarn(&dsid, &i));
+15523 +                %else %do;
+15524 +                      %let coeff =  %sysfunc(getvarn(&dsid, &i));
+15525 +                      %let abscoeff = %sysfunc(abs(&coeff));
+15526 +                          %if &abscoeff >  0 %then %do;
+15527 +                       put "&_name = &_name+&coeff * (&_varname - &_mean)/&_std;";
+15528 +                           %end;
+15529 +                 %end;
+15530 +             %end;
+15531 +             %let rc = %sysfunc(rewind(&dsid));
+15532 +         %end;
+15533 +
+15534 +        %let dsid= %sysfunc(close(&dsid));
+15535 +       run;
+15536 +%mend CreateScoreCode;
+15537 +
+15538 +
+15539 +
+15540 +/*----------------------------------------------------------
+15541 +    Instead of using %MakeRSquareData,
+15542 +    %MakeVarClusResultTable at macro2.source is used
+15543 + +----------------------------------------------------------*/
+15544 +
+15545 +
+15546 +%macro MakeRSquareData(indata=, inClusRSquare=, outdata=, ncluster=);
+15547 +
+15548 +/* modifying  from ods rsquare = data */
+15549 +
+15550 +data &outdata(drop= ControlVar  NumberOfClusters CurrentCluster);
+15551 +    Length Cluster $16;
+15552 +    length Variable $32;
+15553 +    Length VariableLabel $64;
+15554 +    set &indata; retain CurrentCluster;
+15555 +    if NumberOfClusters ^= &ncluster then delete;
+15556 +    if strip(Cluster) eq '' then Cluster = CurrentCluster;
+15557 +    CurrentCluster = Cluster;
+15558 +   run;
+15559 +proc sort data =&outdata ;
+15560 +     by Cluster RsquareRatio;
+15561 +run;
+15562 +data _tmprsq(drop=index);
+15563 +     set &outdata; by Cluster;
+15564 +     if first.Cluster then do;
+15565 +     index = strip(scan(Cluster,2 ));
+15566 +     Variable = "Clus"||index;
+15567 +     VariableLabel = "Cluster Component "||index;
+15568 +     OwnCluster = 1;
+15569 +     NextClosest = .;
+15570 +     RsquareRatio = 0;
+15571 +     output;
+15572 +     end;
+15573 +run;
+15574 +
+15575 +proc sort data = _tmprsq ;
+15576 +     by Cluster RsquareRatio;
+15577 +run;
+15578 +data &outdata;
+15579 +     set &outdata _tmprsq;
+15580 +by Cluster;
+15581 +run;
+15582 +
+15583 +
+15584 +/* Just create the Selected variable with all YES */
+15585 +
+15586 +data &outdata;
+15587 +    set &outdata; by cluster;
+15588 +    length Selected $8;
+15589 +    Selected = 'YES';
+15590 +    label  OwnCluster = 'R-Sqaure with Cluster Component';
+15591 +    label  NextClosest = 'R-Sqaure with Next Cluster Component';
+15592 +    rename OwnCluster = RSqWithClusterComp;
+15593 +    rename NextClosest = RSqWithNextClusComp;
+15594 +run;
+15595 +
+15596 +
+15597 +/* Selected = Y/N will be done %score section -----
+15598 +
+15599 +%if &EM_PROPERTY_EXPORTEDCOMP ne CLUSTERCOMP %then %do;
+15600 +data &outdata;
+15601 +    set &outdata; by cluster;
+15602 +    length Selected $8;
+15603 +    if first.Cluster then Selected = 'YES';
+15604 +    else Selected = 'NO';
+15605 +    label  OwnCluster = 'R-Sqaure with Cluster Component';
+15606 +    label  NextClosest = 'R-Sqaure with Next Cluster Component';
+15607 +    rename OwnCluster = RSqWithClusterComp;
+15608 +    rename NextClosest = RSqWithNextClusComp;
+15609 +run;
+15610 +%end;
+15611 +%else %do;
+15612 +data &outdata;
+15613 +    set &outdata; by cluster;
+15614 +    if last.Cluster then Selected = 'YES';
+15615 +    else Selected = 'NO';
+15616 +    label  OwnCluster = 'R-Sqaure with Cluster Component';
+15617 +    label  NextClosest = 'R-Sqaure with Next Cluster Component';
+15618 +    rename OwnCluster = RSqWithClusterComp;
+15619 +    rename NextClosest = RSqWithNextClusComp;
+15620 +run;
+15621 +%end;
+15622 +---------------------------------------------------------------*/
+15623 +
+15624 +%if %sysfunc(exist(&inClusRSquare)) %then %do;
+15625 +/* to calculate NextClosestClusRsq */
+15626 +proc transpose data = &inClusRSquare  out=_clusRsq;
+15627 +      by cluster;
+15628 +      run;
+15629 +data _clusRsq;
+15630 +     set _clusRsq;
+15631 +     if strip(upcase(Cluster)) eq strip(upcase(_NAME_)) then delete;
+15632 +run;
+15633 +
+15634 +proc sort data=_clusRsq;
+15635 +    by cluster col1;
+15636 +    run;
+15637 +data _clusRsq(drop=_NAME_ _LABEL_);
+15638 +     set _clusRsq; by cluster;
+15639 +     if last.Cluster then output;
+15640 +     label  COL1 = 'R-Sqaure with Next Cluster Component';
+15641 +     rename COL1 = RSqWithNextClusComp;
+15642 +     rename Cluster = Variable;
+15643 +     label  Cluster = "Variable";
+15644 +run;
+15645 +
+15646 +proc sort data =&outdata;
+15647 +     by Variable;
+15648 +run;
+15649 +data &outdata;
+15650 +    merge &outdata _clusRsq;
+15651 +    by Variable;
+15652 +run;
+15653 +proc sort data =&outdata;
+15654 +by Cluster  RsquareRatio;
+15655 +run;
+15656 +quit;
+15657 +%end;
+15658 +
+15659 +proc datasets lib = work nolist;
+15660 +     delete _tmprsq _clusRsq;
+15661 +     run;
+15662 +quit;
+15663 +
+15664 +%mend MakeRSquareData;
+15665 +
+15666 +
+15667 +/*-------------------------------------------------------------------------*/
+15668 +
+15669 +
+15670 +
+15671 +%macro ModifyCorr(indata=,
+15672 +                  outdata=,
+15673 +                  rsquare = Y
+15674 +                  );
+15675 +    data corr_tmp;
+15676 +        set &indata;
+15677 +    run;
+15678 +     proc sql;
+15679 +           update &indata
+15680 +           set
+15681 +     %let dsid = %sysfunc(open(work.corr_tmp));
+15682 +     %let nvar = %sysfunc(attrn(&dsid, NVAR));
+15683 +          %do i = 4 %to &nvar;
+15684 +          %let _name = %sysfunc(varname(&dsid, &i));
+15685 +             %if &rsquare eq Y %then %let _name_md = &_name.**2;
+15686 +            %else  %let _name_md = &_name;
+15687 +            %if &i < &nvar %then %do;
+15688 +               &_name = 1- &_name_md ,
+15689 +            %end;
+15690 +            %else %do;
+15691 +               &_name = &_name_md where _TYPE_ contains 'CORR' ;
+15692 +            %end;
+15693 +          %end;
+15694 +      %let dsid= %sysfunc(close(&dsid));
+15695 +
+15696 +      select * from &indata;
+15697 +      run;
+15698 +      proc datasets lib = work nolist;
+15699 +           delete corr_tmp;
+15700 +      run;
+15701 +      quit;
+15702 +
+15703 + %mend ModifyCorr;
+15704 +
+15705 + %macro MakeClusStructCorrData(indata=,outdata=, ncluster=, Rsquare=N);
+15706 +    data &outdata(drop= _NCL_  _TYPE_);
+15707 +       set &indata;
+15708 +       if ^(strip(_NCL_) eq &ncluster and strip(_TYPE_) eq 'STRUCTUR') then delete;
+15709 +       rename _NAME_ = Cluster;
+15710 +       label _NAME_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_clustername,  noquote))";
+15711 +    run;
+15712 +    %if &RSquare eq Y %then %do;
+15713 +     data corr_tmp;
+15714 +        set &outdata;
+15715 +     run;
+15716 +
+15717 +     data &outdata(drop=i);
+15718 +          set &outdata;
+15719 +          %let dsid = %sysfunc(open(work.corr_tmp));
+15720 +          %let nvar = %sysfunc(attrn(&dsid, NVAR));
+15721 +          %do i = 2 %to &nvar;
+15722 +            %let _name = %sysfunc(varname(&dsid, &i));
+15723 +            %let _name_md = &_name.**2;
+15724 +                &_name = &_name_md;
+15725 +          %end;
+15726 +      %let dsid= %sysfunc(close(&dsid));
+15727 +      run;
+15728 +      proc datasets lib = work nolist;
+15729 +           delete corr_tmp;
+15730 +      run;
+15731 +
+15732 +    %end;
+15733 +     quit;
+15734 +%mend MakeClusStructCorrData;
+15735 +
+15736 +%macro MakeInterClusCorrData(indata=, outdata=, ncluster=, RSquare=N, makeplotds=N, plotds=);
+15737 +    data &outdata(drop= _NCL_  _TYPE_);
+15738 +       set &indata;
+15739 +       if ^(strip(_NCL_) eq &ncluster and strip(_TYPE_) eq 'CCORR') then delete;
+15740 +       rename _NAME_ = Cluster;
+15741 +       label _NAME_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_clustername,  noquote))";
+15742 +    run;
+15743 +    data corr_tmp;
+15744 +        set &outdata;
+15745 +    run;
+15746 +
+15747 +    %let dsid = %sysfunc(open(work.corr_tmp));
+15748 +    %let nclus2= %eval(&ncluster+1);
+15749 +    data &outdata;
+15750 +         set &outdata;
+15751 +          %do i = 2 %to &nclus2;
+15752 +          %let i_1 = %eval(&i-1);
+15753 +            %let _name = %sysfunc(varname(&dsid, &i));
+15754 +            %let _newName = Clus&i_1;
+15755 +                rename &_name = &_newName; ;
+15756 +                *label &_name ="Cluster &i_1";
+15757 +                label &_name = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_clusternum, noquote,  &i_1))";
+15758 +          %end;
+15759 +          keep Cluster
+15760 +          %do i = 2 %to &nclus2;
+15761 +                %let _name = %sysfunc(varname(&dsid, &i));
+15762 +                &_name
+15763 +          %end;
+15764 +          ;
+15765 +    %let dsid= %sysfunc(close(&dsid));
+15766 +     run;
+15767 +     quit;
+15768 +
+15769 +    %if &RSquare eq Y %then %do;
+15770 +
+15771 +       data corr_tmp;
+15772 +        set &outdata;
+15773 +     run;
+15774 +
+15775 +     data &outdata(drop=i);
+15776 +          set &outdata;
+15777 +          %let dsid = %sysfunc(open(work.corr_tmp));
+15778 +          %let nvar = %sysfunc(attrn(&dsid, NVAR));
+15779 +          %do i = 2 %to &nvar;
+15780 +            %let _name = %sysfunc(varname(&dsid, &i));
+15781 +            %let _name_md = &_name.**2;
+15782 +                &_name = &_name_md;
+15783 +          %end;
+15784 +      %let dsid= %sysfunc(close(&dsid));
+15785 +      run;
+15786 +    %end;
+15787 +
+15788 +    %if &makeplotds eq Y %then %do;
+15789 +     proc transpose data = &outdata
+15790 +          out=&plotds(drop=_LABEL_ rename=(_NAME_ = Y Cluster=X Col1= Correlation));
+15791 +          by cluster;
+15792 +     run;
+15793 +     data &plotds;
+15794 +          set  &plotds;
+15795 +          label x="%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_cluster, noquote))";
+15796 +          label Y="%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_cluster, noquote))";
+15797 +     run;
+15798 +     %end;
+15799 +     proc datasets lib = work nolist;
+15800 +           delete corr_tmp;
+15801 +     run;
+15802 +     quit;
+15803 +%mend MakeInterClusCorrData;
+15804 +
+15805 +
+15806 +%macro MakeClusConstellData(indata=, outlink=, outnode=);
+15807 +
+15808 +data &outlink(drop = Selected);
+15809 +     set &indata;
+15810 +     LINKID = _N_;
+15811 +     label LINKID = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_linkid,  noquote))";
+15812 +     if strip(upcase(Cluster)) eq strip(upcase(Variable)) then Variable = ClosestCluster;
+15813 +run;
+15814 +data &outnode(keep=NODEID TYPE LABEL);
+15815 +    set &indata;
+15816 +    length TYPE $16;
+15817 +    rename Variable = NODEID;
+15818 +    label  Variable= "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_nodeidvar, noquote))";
+15819 +    if strip(upcase(Cluster)) eq strip(upcase(Variable))
+15820 +    then  TYPE = "CLUSTER";
+15821 +    else  TYPE="VARIABLE";
+15822 +    label TYPE = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_nodetype, noquote))";
+15823 +run;
+15824 +quit;
+15825 +%mend MakeClusConstellData;
+15826 +
+15827 +
+15828 +
+15829 +%macro MakeClusConstellData(indata=, outlink=, outnode=);
+15830 +
+15831 +data &outlink(drop = Selected);
+15832 +     set &indata;
+15833 +     LINKID = _N_;
+15834 +     label LINKID = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_linkid,  noquote))";
+15835 +     if strip(upcase(Cluster)) eq strip(upcase(Variable)) then Variable = ClosestCluster;
+15836 +run;
+15837 +data &outnode(keep=NODEID TYPE LABEL);
+15838 +    set &indata;
+15839 +    length TYPE $16;
+15840 +    rename Variable = NODEID;
+15841 +    label  Variable= "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_nodeidvar, noquote))";
+15842 +    if strip(upcase(Cluster)) eq strip(upcase(Variable))
+15843 +    then  TYPE = "CLUSTER";
+15844 +    else  TYPE="VARIABLE";
+15845 +    label TYPE = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_nodetype, noquote))";
+15846 +run;
+15847 +quit;
+15848 +%mend MakeClusConstellData;
+15849 +
+15850 +
+15851 +/*--- This will work only when inds is not a view data -------
+15852 +
+15853 +%macro getNVarNObs(inds=, nvar=, nobs=);
+15854 +
+15855 +    %global &nvar;
+15856 +    %global &nobs;
+15857 +    data _null_;
+15858 +         dsid = open("&inds");
+15859 +         nv = attrn(dsid, 'NVAR');
+15860 +         no = attrn(dsid, 'NOBS');
+15861 +         dsid = close(dsid);
+15862 +         call symput("&nvar", nv);
+15863 +         call symput("&nobs", no);
+15864 +    run;
+15865 +    quit;
+15866 +%mend  getNVarNObs;
+15867 +
+15868 ++---------------------------------------------------------------*/
+15869 +
+15870 +
+15871 +%macro getNVar(inds=, nvar=);
+15872 +    %global &nvar;
+15873 +    data _null_;
+15874 +         dsid = open("&inds");
+15875 +         nv = attrn(dsid, 'NVAR');
+15876 +         dsid = close(dsid);
+15877 +         call symput("&nvar", nv);
+15878 +    run;
+15879 +    quit;
+15880 +%mend  getNVar;
+15881 +
+15882 +
+15883 +
+15884 +%macro getNObs(inds=, nobs=);
+15885 +    %global &nobs;
+15886 +    data _null_;
+15887 +        set &inds end=eof;
+15888 +        if eof then call symput("&nobs", _N_);
+15889 +    run;
+15890 +    quit;
+15891 +%mend  getNObs;
+15892 +
+15893 +%Macro CreateVarclusMeta(trainnum=);
+15894 +   %EM_GETNAME(KEY=VARCLUSMETA, TYPE=DATA);
+15895 +    data &EM_USER_VARCLUSMETA;
+15896 +         length TrainNum 8.;
+15897 +         length NewTrain $8;
+15898 +         length NGCluster 8.;
+15899 +         length ExportedComp $16;
+15900 +         length HideVariable $8;
+15901 +         TrainNum = &trainnum;
+15902 +         NewTrain = "Y";
+15903 +         ExportedComp = "&EM_PROPERTY_EXPORTEDCOMP";
+15904 +         HideVariable = "&EM_PROPERTY_HIDEVARIABLE";
+15905 +         NGCluster = 0; /* zero means no twostage */
+15906 +   run;
+15907 +   quit;
+15908 +%mend CreateVarclusMeta;
+NOTE: %INCLUDE (level 1) ending.
+NOTE: %INCLUDE (level 1) file TEMP is file SASHELP.EMEXPL.VARIABLECLUSTERING_MACROS2.SOURCE.
+15909 +
+15910 +%macro MakeInterClusCorrData(indata=, outdata=, ncluster=, globalclusid=, RSquare=N, makeplotds=N, plotds=);
+15911 +    data &outdata(drop= _NCL_  _TYPE_);
+15912 +       set &indata;
+15913 +       if ^(strip(_NCL_) eq &ncluster and strip(_TYPE_) eq 'CCORR') then delete;
+15914 +       %if &globalclusid ne %then %do;
+15915 +       _NAME_ = "GC&globalclusid._"||upcase(_NAME_);
+15916 +       rename _NAME_ = Cluster;
+15917 +       %end;
+15918 +       %else %do;
+15919 +        _NAME_ = upcase(_NAME_);
+15920 +       rename _NAME_ = Cluster;
+15921 +       %end;
+15922 +       label _NAME_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_clustername,  noquote))";
+15923 +    run;
+15924 +    data corr_tmp;
+15925 +        set &outdata;
+15926 +    run;
+15927 +
+15928 +    %let dsid = %sysfunc(open(work.corr_tmp));
+15929 +    %let nclus2= %eval(&ncluster+1);
+15930 +    data &outdata;
+15931 +         set &outdata;
+15932 +          %do i = 2 %to &nclus2;
+15933 +          %let i_1 = %eval(&i-1);
+15934 +            %let _name = %sysfunc(varname(&dsid, &i));
+15935 +            %if &globalclusid ne %then
+15936 +                %do; %let _newName = GC&globalclusid._CLUS&i_1;
+15937 +                     rename &_name = &_newName;
+15938 +                     *label &_name ="GC &globalclusid : Cluster &i_1";
+15939 +                     label &_name = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_gc_clusternum, noquote,  &globalclusid, &i_1))";
+15940 +                %end;
+15941 +            %else
+15942 +                %do; %let _newName = CLUS&i_1;
+15943 +                     rename &_name = &_newName;
+15944 +                     *label &_name ="Cluster &i_1";
+15945 +                     label &_name = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_clusternum, noquote,  &i_1))";
+15946 +                %end;
+15947 +          %end;
+15948 +          keep Cluster
+15949 +          %do i = 2 %to &nclus2;
+15950 +                %let _name = %sysfunc(varname(&dsid, &i));
+15951 +                &_name
+15952 +          %end;
+15953 +          ;
+15954 +    %let dsid= %sysfunc(close(&dsid));
+15955 +     run;
+15956 +     quit;
+15957 +
+15958 +    %if &RSquare eq Y %then %do;
+15959 +
+15960 +       data corr_tmp;
+15961 +        set &outdata;
+15962 +     run;
+15963 +
+15964 +     data &outdata;
+15965 +          set &outdata;
+15966 +          %let dsid = %sysfunc(open(work.corr_tmp));
+15967 +          %let nvar = %sysfunc(attrn(&dsid, NVAR));
+15968 +          %do i = 2 %to &nvar;
+15969 +            %let _name = %sysfunc(varname(&dsid, &i));
+15970 +            %let _name_md = &_name.**2;
+15971 +                &_name = &_name_md;
+15972 +          %end;
+15973 +      %let dsid= %sysfunc(close(&dsid));
+15974 +      run;
+15975 +    %end;
+15976 +
+15977 +    %if &makeplotds eq Y %then %do;
+15978 +     proc transpose data = &outdata
+15979 +          out=&plotds(drop=_LABEL_ rename=(_NAME_ = Y Cluster=X Col1= Correlation));
+15980 +          by cluster;
+15981 +     run;
+15982 +     data &plotds;
+15983 +          set  &plotds;
+15984 +          label x="%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_cluster, noquote))";
+15985 +          label Y="%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_cluster, noquote))";
+15986 +          label  Correlation="%sysfunc(sasmsg(sashelp.dmine, rpt_correlation_vlabel, noquote))";
+15987 +     run;
+15988 +     %end;
+15989 +     proc datasets lib = work nolist;
+15990 +           delete corr_tmp;
+15991 +     run;
+15992 +     quit;
+15993 +%mend MakeInterClusCorrData;
+15994 +
+15995 +%macro MakeOwnRSquare(indata=, outdata=, ncluster=, globalclusid=);
+15996 +    data _tmpds(drop= _NCL_);
+15997 +       set &indata;
+15998 +       if ^(strip(_NCL_) eq &ncluster and strip(_TYPE_) in ('GROUP','RSQUARED')) then delete;
+15999 +       %if &globalclusid ne %then %do;
+16000 +           _NAME_ = "GC&globalclusid.";
+16001 +       rename _NAME_ = Cluster;
+16002 +       %end;
+16003 +       %else %do;
+16004 +        _NAME_ = "CLUS";
+16005 +        rename _NAME_ = Cluster;
+16006 +       %end;
+16007 +       label _NAME_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_clustername,  noquote))";
+16008 +    run;
+16009 +    proc transpose data =_tmpds out =&outdata;
+16010 +    run;
+16011 +
+16012 +    data &outdata(drop=COL1);
+16013 +        %if &globalclusid ne %then %do;
+16014 +        length GCluster $16;
+16015 +        %end;
+16016 +        length Cluster $32;
+16017 +        length _NAME_ $32;
+16018 +         set &outdata;
+16019 +         _NAME_ = upcase(_NAME_);
+16020 +         rename _NAME_=Variable;
+16021 +         *label _NAME_="Variable";
+16022 +         label _NAME_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_variable, noquote))" ;
+16023 +         label Cluster = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_cluster, noquote))" ;
+16024 +         label GCluster = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_gcluster, noquote))" ;
+16025 +
+16026 +         %if &globalclusid ne %then %do;
+16027 +          GCluster = "GC&globalclusid";
+16028 +          Cluster = "GC&globalclusid._CLUS"||strip(COL1);
+16029 +         %end;
+16030 +         %else %do;
+16031 +         Cluster = "CLUS"||strip(COL1);
+16032 +        %end;
+16033 +         rename COL2 = RSqWithOwnClusComp;
+16034 +         *label COL2 = "R-Square With Own Cluster Component";
+16035 +         label COL2 = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_ownrsq, noquote))" ;
+16036 +
+16037 +   run;
+16038 +   proc sort data =&outdata;
+16039 +        by Cluster RSqWithOwnClusComp;
+16040 +   run;
+16041 +   proc datasets lib = work nolist;
+16042 +           delete _tmpds;
+16043 +   run;
+16044 +   quit;
+16045 +%mend MakeOwnRSquare;
+16046 +
+16047 +%macro MakeClusStructCorrData(indata=, outdata=, globalclusid=, ncluster=, Rsquare=N);
+16048 +    data &outdata(drop= _NCL_  _TYPE_);
+16049 +       %if &globalclusid ne %then %do;
+16050 +        length GCluster $16;
+16051 +        %end;
+16052 +       set &indata;
+16053 +       if ^(strip(_NCL_) eq &ncluster and strip(_TYPE_) eq 'STRUCTUR') then delete;
+16054 +       %if &globalclusid ne %then %do;
+16055 +         GCluster = "GC&globalclusid";
+16056 +         _NAME_ = "GC&globalclusid._"||upcase(_NAME_);
+16057 +         rename _NAME_ = Cluster;
+16058 +         label _NAME_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_cluster, noquote))" ;
+16059 +         label GCluster = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_gcluster, noquote))" ;
+16060 +
+16061 +       %end;
+16062 +       %else %do;
+16063 +         _NAME_ = upcase(_NAME_);
+16064 +         rename _NAME_ = Cluster;
+16065 +         label _NAME_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_cluster, noquote))" ;
+16066 +         label GCluster = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_gcluster, noquote))" ;
+16067 +
+16068 +       %end;
+16069 +     run;
+16070 +    %if &RSquare eq Y %then %do;
+16071 +     data corr_tmp;
+16072 +          set &outdata;
+16073 +     run;
+16074 +     %let istart = 2;
+16075 +     %if &globalclusid ne %then %let istart = 3;
+16076 +     data &outdata;
+16077 +          set &outdata;
+16078 +          %let dsid = %sysfunc(open(work.corr_tmp));
+16079 +          %let nvar = %sysfunc(attrn(&dsid, NVAR));
+16080 +          %do i =&istart %to &nvar;
+16081 +            %let _name = %sysfunc(varname(&dsid, &i));
+16082 +            %let _name_md = &_name.**2;
+16083 +                &_name = &_name_md;
+16084 +          %end;
+16085 +      %let dsid= %sysfunc(close(&dsid));
+16086 +      run;
+16087 +      proc datasets lib = work nolist;
+16088 +           delete corr_tmp;
+16089 +      run;
+16090 +    %end;
+16091 +     quit;
+16092 +%mend MakeClusStructCorrData;
+16093 +
+16094 +/*
+16095 +%MakeClusStructCorrData(indata=playpen._outstat, outdata=_structrsq , ncluster=7, Rsquare=Y);
+16096 +*/
+16097 +
+16098 +%macro FindNextClosestClusByVar(indata=, outdata=, globalclusid=, ncluster=);
+16099 +
+16100 +     /* The indata should be the outdata
+16101 +        from %MakeClusStructCorrData(indata=, outdata=, ); */
+16102 +
+16103 +     proc sort data =&indata out=_tmpclusRsq;
+16104 +     by cluster;
+16105 +     run;
+16106 +
+16107 +     proc transpose data =_tmpclusRsq out=_tmpclusRsq;
+16108 +      by cluster;
+16109 +     run;
+16110 +
+16111 +     proc sort data=_tmpclusRsq;
+16112 +        by _NAME_ COL1;
+16113 +     run;
+16114 +
+16115 +     data _tmpclusRsq;
+16116 +         length _NAME_ $32;
+16117 +         set _tmpclusRsq; by _NAME_;
+16118 +          _NAME_ = upcase(_NAME_);
+16119 +          %if &ncluster ne 1 %then %do;
+16120 +             if last._NAME_ then delete;
+16121 +          %end;
+16122 +          %else %do;
+16123 +             COL1 = 0;
+16124 +          %end;
+16125 +     run;
+16126 +     /* need to sort again */
+16127 +     proc sort data=_tmpclusRsq;
+16128 +        by _NAME_ COL1;
+16129 +     run;
+16130 +
+16131 +     data &outdata;
+16132 +         set _tmpclusRsq; by _NAME_;
+16133 +         Cluster = upcase(Cluster);
+16134 +         if last._NAME_ then output;
+16135 +         *label  COL1 = 'R-Sqaure with Next Cluster Component';
+16136 +         label COL1 = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_nextrsq, noquote))" ;
+16137 +         rename COL1 = RSqWithNextClusComp;
+16138 +         Cluster = upcase(Cluster);
+16139 +         rename Cluster = ClosestCluster;
+16140 +         *label  Cluster = "Next Closest Cluster";
+16141 +         label Cluster = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_nextclus, noquote))" ;
+16142 +         rename _NAME_ = Variable;
+16143 +         label  _NAME_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_variable, noquote))" ;
+16144 +    run;
+16145 +
+16146 +
+16147 +    %if &globalclusid ne %then %do;
+16148 +    data &outdata;
+16149 +       length GCluster $16;
+16150 +       set &outdata;
+16151 +       GCluster = "GC&globalclusid";
+16152 +       run;
+16153 +    %end;
+16154 +    proc datasets lib = work nolist;
+16155 +           delete _tmpclusRsq;
+16156 +    run;
+16157 +    quit;
+16158 +%mend FindNextClosestClusByVar;
+16159 +
+16160 +
+16161 +%macro FindNextClosestClusByCluster(indata=, outdata=, globalclusid=, ncluster=);
+16162 +     /* The indata should be the outdata from %MakeInterClusCorrData(indata=, outdata=, ); */
+16163 +     proc sort data =&indata out=_tmpclusRsq;
+16164 +     by cluster;
+16165 +     run;
+16166 +     proc transpose data =_tmpclusRsq out=_tmpclusRsq;
+16167 +     by cluster;
+16168 +     run;
+16169 +     proc sort data=_tmpclusRsq;
+16170 +        by _NAME_ col1;
+16171 +     run;
+16172 +     data _tmpclusRsq;
+16173 +         length _NAME_ $32;
+16174 +         set _tmpclusRsq; by _NAME_;
+16175 +          _NAME_ = upcase(_NAME_);
+16176 +          %if &ncluster ne 1 %then %do;
+16177 +             if last._NAME_ then delete;
+16178 +          %end;
+16179 +          %else %do;
+16180 +             COL1 = 0;
+16181 +          %end;
+16182 +     run;
+16183 +     data &outdata;
+16184 +         set _tmpclusRsq; by _NAME_;
+16185 +         Cluster = upcase(Cluster);
+16186 +         if last._NAME_ then output;
+16187 +         *label  COL1 = 'R-Sqaure with Next Cluster Component';
+16188 +         label COL1 = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_nextrsq, noquote))" ;
+16189 +         rename COL1 = RSqWithNextClusComp;
+16190 +         Cluster = upcase(Cluster);
+16191 +         rename Cluster = ClosestCluster;
+16192 +         *label  Cluster = "Next Closest Cluster";
+16193 +         label Cluster = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_nextclus, noquote))" ;
+16194 +         rename _NAME_ = Variable;
+16195 +         *label  _NAME_ = "Variable";
+16196 +         label  _NAME_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_variable, noquote))" ;
+16197 +
+16198 +    run;
+16199 +    %if &globalclusid ne %then %do;
+16200 +    data &outdata;
+16201 +       length GCluster $16;
+16202 +       set &outdata;
+16203 +       GCluster = "GC&globalclusid";
+16204 +       run;
+16205 +    %end;
+16206 +
+16207 +    proc datasets lib = work nolist;
+16208 +           delete _tmpclusRsq;
+16209 +    run;
+16210 +
+16211 +    quit;
+16212 +%mend FindNextClosestClusByCluster;
+16213 +
+16214 +%macro MakeVarClusResultTable(indata1=, indata2=, indata3=, outdata=, globalclusid=, ncluster=, selectedcomp=clustercomp);
+16215 +/*----
+16216 +  indata1=_ownRsq, indata2=_nextVarRsq, indata3=_nextClusRSq,
+16217 +-----------*/
+16218 +
+16219 +proc sort data =&indata1;
+16220 +    by Variable;
+16221 +run;
+16222 +proc sort data =&indata2;
+16223 +    by Variable;
+16224 +run;
+16225 +data &outdata;
+16226 +    merge &indata1 &indata2;
+16227 +    by Variable;
+16228 +    length Type $16;
+16229 +    Type = 'Variable';
+16230 +    *label Type ='Type';
+16231 +    label Type = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_type, noquote))" ;
+16232 +run;
+16233 +
+16234 +
+16235 +data &indata3;
+16236 +    set  &indata3 ;
+16237 +    length RSqWithOwnClusComp 8.;
+16238 +    Cluster = Variable;
+16239 +    RSqWithOwnClusComp = 1;
+16240 +    *label RSqWithOwnClusComp = "R-Square With Own Cluster Component";
+16241 +    label RSqWithOwnClusComp = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_ownrsq, noquote))" ;
+16242 +    length Type $16;
+16243 +    Type = 'ClusterComp';
+16244 +    label Type = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_type, noquote))" ;
+16245 +
+16246 +;
+16247 +run;
+16248 +
+16249 +proc sort data=&outdata;
+16250 +    by Cluster;
+16251 +run;
+16252 +proc sort data =&indata3;
+16253 +    by Cluster;
+16254 +run;
+16255 +
+16256 +data &outdata;
+16257 +     set &outdata &indata3;
+16258 +     by Cluster;
+16259 +run;
+16260 +
+16261 +
+16262 +/* Create the Selected variable with all YES */
+16263 +
+16264 +data &outdata;
+16265 +     set &outdata;
+16266 +     length RsqRatio 8.;
+16267 +     length Selected $8;
+16268 +     *label RSqRatio = "1-R**2 Ratio";
+16269 +     label RSqRatio =  "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_oneminusrsq, noquote))" ;
+16270 +     *label Selected = "Variable Selected";
+16271 +     label Selected = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_varselected, noquote))" ;
+16272 +     RsqRatio = (1-RSqWithOwnClusComp)/(1-RSqWithNextClusComp);
+16273 +     Selected ='YES';
+16274 +     rename _LABEL_ = Label;
+16275 +     label _LABEL_ =  "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_label, noquote))" ;
+16276 +run;
+16277 +
+16278 +
+16279 +/*----  Selected = Y/N will be assigened at the %score                   -------+
+16280 +        Just create the Selected variable with all YES at the step above
+16281 + +------------------------------------------------------------------------------+
+16282 +
+16283 +proc sort data=&outdata;
+16284 +    by Cluster RsqRatio;
+16285 +run;
+16286 +
+16287 +%if &selectedcomp eq CLUSTERCOMP %then %do;
+16288 +data &outdata;
+16289 +     set &outdata; by Cluster;
+16290 +     length Selected $8;
+16291 +     label Selected = "Variable Selected";
+16292 +     if  first.Cluster then Selected ='Yes';
+16293 +     else Selected = 'No';
+16294 +    run;
+16295 +%end;
+16296 +%else %do;
+16297 +data &outdata(drop = _var _varchange);
+16298 +     set &outdata; retain _var 0; by Cluster;
+16299 +     length Selected $8;
+16300 +     label Selected = "Variable Selected";
+16301 +     if first.Cluster then  _varchange = 0;
+16302 +     else _varchange =1;
+16303 +     if _var ne _varchange then  Selected  = 'Yes';
+16304 +     else Selected = 'No';
+16305 +     if last.cluster then  _var = 0;
+16306 +     else _var = _varchange;
+16307 +run;
+16308 +%end;
+16309 +
+16310 +--------------------------------------------------------------*/
+16311 +
+16312 +quit;
+16313 +%mend MakeVarClusResultTable;
+16314 +
+16315 +%Macro MakePlotDataFromCorrTable(indata=, outdata=, globalclusid=);
+16316 +     proc sort data =&indata;
+16317 +        by cluster;
+16318 +     run;
+16319 +     proc transpose data =&indata
+16320 +          out=&outdata(drop=_LABEL_ rename=(_NAME_ = Y Cluster=X Col1= Correlation));
+16321 +          by cluster;
+16322 +     run;
+16323 +     data &outdata;
+16324 +          set  &outdata;
+16325 +          label x= "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_cluster, noquote))" ;
+16326 +          label Y= "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_cluster, noquote))" ;
+16327 +          label Correlation = "%sysfunc(sasmsg(sashelp.dmine, rpt_correlation_vlabel, noquote))" ;
+16328 +     run;
+16329 +     %if &globalclusid ne %then %do;
+16330 +     data &outdata;
+16331 +          Length GCluster $16;
+16332 +          label GCluster = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_gcluster, noquote))" ;
+16333 +          set  &outdata;
+16334 +          GCluster ="GC&globalclusid.";
+16335 +          run;
+16336 +     %end;
+16337 +
+16338 +%Mend MakePlotDataFromCorrTable;
+16339 +
+16340 +
+16341 +%macro MakeCorrelation(indata=,
+16342 +                       outstat=_tmpoutstat,
+16343 +                       corrmatrix=N,
+16344 +                       outcorr=_tmpoutcorr,
+16345 +                       includeclassvar=N,
+16346 +                       target=,
+16347 +                       freq=,
+16348 +                       weight=);
+16349 +   %if &target eq  %then %do;
+16350 +
+16351 +       proc varclus data=&indata outstat=&outstat hi maxclusters=1 noprint;
+16352 +            var %EM_INTERVAL_INPUT %EM_INTERVAL_REJECTED
+16353 +       %if &includeclassvar eq Y %then %do;
+16354 +          %let dsid = %sysfunc(open(&EM_USER_OUTDUMMY));
+16355 +          %let nvar = %sysfunc(attrn(&dsid, NVAR));
+16356 +          %do i = 2 %to &nvar;
+16357 +          %let varname = %sysfunc(varname(&dsid, &i));
+16358 +          &varname
+16359 +          %end;
+16360 +       %end;
+16361 +       ;
+16362 +      %if &freq ne  %then %do;
+16363 +          freq &freq;
+16364 +      %end;
+16365 +      %if &weight ne  %then %do;
+16366 +          weight &weight;
+16367 +      %end;
+16368 +
+16369 +      run;
+16370 +      %if &corrmatrix eq Y %then %do;
+16371 +      data  &outcorr (drop = _NCL_ _TYPE_);
+16372 +           set  &outstat ;
+16373 +           if _TYPE_ ='CORR' then output;
+16374 +      run;
+16375 +      %end;
+16376 +    %end;
+16377 +    %else %do;
+16378 +       proc corr data=&indata outp=&outstat noprint;
+16379 +            var
+16380 +       %let dsid = %sysfunc(open(&indata));
+16381 +       %let nvar = %sysfunc(attrn(&dsid, NVAR));
+16382 +          %do i = 1 %to &nvar;
+16383 +              %let _name = %sysfunc(varname(&dsid, &i));
+16384 +              %if &_name ne &target %then;
+16385 +              &_name
+16386 +           %end;
+16387 +        %let dsid= %sysfunc(close(&dsid));
+16388 +        ;
+16389 +        with &target;
+16390 +        run;
+16391 +    %end;
+16392 +    quit;
+16393 +%mend MakeCorrelation;
+16394 +
+16395 +
+16396 +%macro MakeCorrelationDistance(indata=,
+16397 +                               outdata=,
+16398 +                               rsquare = N
+16399 +                               );
+16400 +    data corr_tmp;
+16401 +        set &indata;
+16402 +        if _N_ = 1 then do;
+16403 +           output;
+16404 +           stop;
+16405 +         end;
+16406 +    run;
+16407 +    %if &outdata ne  %then %let  _outdata = &outdata;
+16408 +    %else %let _outdata = &indata;
+16409 +
+16410 +    data &_outdata;
+16411 +         set &indata;
+16412 +
+16413 +         %let dsid = %sysfunc(open(work.corr_tmp));
+16414 +         %let nvar = %sysfunc(attrn(&dsid, NVAR));
+16415 +          %do i = 2 %to &nvar;
+16416 +              %let _name = %sysfunc(varname(&dsid, &i));
+16417 +              %if &rsquare eq Y %then %let _name_md = &_name.**2;
+16418 +              %else  %let _name_md = &_name;
+16419 +              &_name = 1- &_name_md;
+16420 +          %end;
+16421 +      %let dsid= %sysfunc(close(&dsid));
+16422 +      run;
+16423 +      proc datasets lib = work nolist;
+16424 +           delete corr_tmp;
+16425 +      run;
+16426 +      quit;
+16427 +  %mend MakeCorrelationDistance;
+16428 +
+16429 +
+16430 +%macro UpdateOutStatCorrToDistance(indata=, /* indata should be a outstat from proc varclus */
+16431 +                                   rsquare = N
+16432 +                                   );
+16433 +    data corr_tmp;
+16434 +        set &indata;
+16435 +    run;
+16436 +    proc sql noprint;
+16437 +           update &indata
+16438 +           set
+16439 +     %let dsid = %sysfunc(open(work.corr_tmp));
+16440 +     %let nvar = %sysfunc(attrn(&dsid, NVAR));
+16441 +          %do i = 4 %to &nvar;
+16442 +          %let _name = %sysfunc(varname(&dsid, &i));
+16443 +             %if &rsquare eq Y %then %let _name_md = &_name.**2;
+16444 +            %else  %let _name_md = &_name;
+16445 +            %if &i < &nvar %then %do;
+16446 +               &_name = 1- &_name_md ,
+16447 +            %end;
+16448 +            %else %do;
+16449 +               &_name = &_name_md where _TYPE_ eq 'CORR' ;
+16450 +            %end;
+16451 +          %end;
+16452 +      %let dsid= %sysfunc(close(&dsid));
+16453 +
+16454 +      select * from &indata;
+16455 +      run;
+16456 +     data &indata( drop = _NCL_);
+16457 +           set &indata;
+16458 +           if _TYPE_ not in ('CORR', 'STD', 'N', 'MEAN') then delete;
+16459 +           if _TYPE_ ='CORR' then _TYPE_ ='DISTANCE';
+16460 +     run;
+16461 +     data &indata(DROP = _NCL_);
+16462 +           set &indata;
+16463 +           if _TYPE_ = 'CORR' then _TYPE_ ='DISTANCE';
+16464 +           if _TYPE_ not in ('DISTANCE', 'N', 'STD', 'MEAN') then delete;
+16465 +           rename _NAME_ = _VAR_;
+16466 +     run;
+16467 +     proc datasets lib = work nolist;
+16468 +           delete corr_tmp;
+16469 +     run;
+16470 +     quit;
+16471 + %mend UpdateOutStatCorrToDistance;
+16472 +
+16473 +
+16474 +%macro HierClusWithCorr(indata= ,
+16475 +                        ncluster=,
+16476 +                        method = Ward,
+16477 +                        outtree = _outtree,
+16478 +                        idvar =_VAR_,
+16479 +                        outdata=,
+16480 +                        rescore = N,
+16481 +                        newncluster=
+16482 +                        );
+16483 +      %global &newncluster;
+16484 +      %if &rescore ne Y %then %do;
+16485 +      proc cluster data=&indata(type=Distance where=(upcase(strip(_TYPE_)) = "DISTANCE"))
+16486 +                   method=&method outtree=&outtree noprint;
+16487 +           id &idvar;
+16488 +      run;
+16489 +      %end;
+16490 +      proc tree data=&outtree nclusters = &ncluster out=&outdata noprint;
+16491 +      run;
+16492 +      /* ----- Check some variables like CL1, CL5..., remove them ----*/
+16493 +      proc contents data =&indata out=_outcontent(keep=NAME) noprint;
+16494 +      run;
+16495 +      data _outcontent;
+16496 +          set _outcontent;
+16497 +          if NAME in ('_TYPE_' , '_VAR_') then delete;
+16498 +          index = 1;
+16499 +          rename NAME = _NAME_;
+16500 +      run;
+16501 +      proc sort data=_outcontent;
+16502 +          by _NAME_;
+16503 +      run;
+16504 +      proc sort data =&outdata;
+16505 +           by _NAME_;
+16506 +      run;
+16507 +      data &outdata(drop=index);
+16508 +          merge &outdata _outcontent;
+16509 +          by _NAME_;
+16510 +          if index = . then delete;
+16511 +      run;
+16512 +      /*-----------------------------------------------------------*/
+16513 +      data &outdata;
+16514 +           length CLUSNAME $16;
+16515 +           set &outdata;
+16516 +           if CLUSTER > &ncluster then delete;
+16517 +           CLUSNAME='GC'||strip(CLUSTER);
+16518 +           *label CLUSNAME = "Cluster Name";
+16519 +           label CLUSNAME  = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_clustername, noquote))" ;
+16520 +           rename _NAME_ = VARIABLE ;
+16521 +           *label _NAME_ = "Variable";
+16522 +           *label CLUSTER = "Cluster";
+16523 +           label _NAME_ ="%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_variable, noquote))" ;
+16524 +           label CLUSTER ="%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_cluster, noquote))" ;
+16525 +      run;
+16526 +      proc sort data=&outdata out=&outdata;
+16527 +           by CLUSTER;
+16528 +      run;
+16529 +      proc means data =&outdata noprint;
+16530 +           output out=_meanout;
+16531 +      run;
+16532 +      data _null_;
+16533 +            set _meanout;
+16534 +            if strip(_STAT_) eq 'MAX' then do;
+16535 +            call symput("&newncluster", CLUSTER);
+16536 +            stop;
+16537 +            end;
+16538 +      run;
+16539 +
+16540 +      proc datasets lib = work nolist;
+16541 +           delete _outcontent _meanout;
+16542 +      run;
+16543 +      quit;
+16544 +%mend  HierClusWithCorr;
+16545 +
+16546 +%macro CreateScoreCode2(indata=, ncluscomp=, globalclusid=, fileref=);
+16547 +
+16548 +     data _tmpindata;
+16549 +          set &indata;
+16550 +          if (_TYPE_ in ('SCORE' 'MEAN' 'STD') and _NCL_ = &ncluscomp ) or (_TYPE_ in ('MEAN' 'STD'));
+16551 +          if _TYPE_ = 'MEAN' then _NAME_='MEAN';
+16552 +          if _TYPE_ = 'STD' then _NAME_='STD';
+16553 +          if _TYPE_ = 'SCORE' then _NAME_=upcase("GC&globalclusid._"||_NAME_);
+16554 +          DROP _TYPE_ _NCL_;
+16555 +     run;
+16556 +
+16557 +     filename _file_  "&fileRef";
+16558 +
+16559 +     data _null_;
+16560 +        FILE _file_ MOD;
+16561 +        put ' ';
+16562 +        put "/*-------------------------------------------------*/";
+16563 +        put '/* ' "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_score_title_gclus, noquote, &globalclusid))" '*/';
+16564 +        put "/*-------------------------------------------------*/";
+16565 +        put ' ';
+16566 +        %let dsid = %sysfunc(open(work._tmpindata));
+16567 +
+16568 +        %let nvar = %sysfunc(attrn(&dsid, NVAR));
+16569 +        %let vn_name =%sysfunc(varnum(&dsid, _NAME_));
+16570 +        %let k = 1;
+16571 +        %do %while(^%sysfunc(fetch(&dsid)));
+16572 +               %let _name = %sysfunc(getvarc(&dsid, &vn_name));
+16573 +               %if &k > 2 %then %do;
+16574 +                %let cn = %eval(&k-2);
+16575 +                 put "&_name = 0 ; /*---" "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_score_gcluscompnum, noquote, &globalclusid, &cn))" "------ */";
+16576 +                %end;
+16577 +                %let k = %eval(&k+1);
+16578 +
+16579 +        %end;
+16580 +        %let rc = %sysfunc(rewind(&dsid));
+16581 +
+16582 +        %do j= 2 %to &nvar;
+16583 +            %let _varname = %sysfunc(varname(&dsid, &j));
+16584 +            %do %while(^%sysfunc(fetch(&dsid)));
+16585 +                %let _name = %sysfunc(getvarc(&dsid, &vn_name));
+16586 +                %if &_name = MEAN %then
+16587 +                %let _mean = %sysfunc(getvarn(&dsid, &j));
+16588 +                %else %if &_name = STD %then
+16589 +                %let _std = %sysfunc(getvarn(&dsid, &j));
+16590 +                %else %do;
+16591 +                      %let coeff =  %sysfunc(getvarn(&dsid, &j));
+16592 +                      %let abscoeff = %sysfunc(abs(&coeff));
+16593 +                          %if &abscoeff >  0 %then %do;
+16594 +                       put "&_name = &_name+&coeff * (&_varname - &_mean)/&_std;";
+16595 +                           %end;
+16596 +                 %end;
+16597 +             %end;
+16598 +             %let rc = %sysfunc(rewind(&dsid));
+16599 +         %end;
+16600 +
+16601 +        %let dsid= %sysfunc(close(&dsid));
+16602 +
+16603 +     run;
+16604 +
+16605 +     filename _file_;
+16606 +     proc datasets lib = work nolist;
+16607 +           delete _tmpindata;
+16608 +     run;
+16609 +     quit;
+16610 +%mend CreateScoreCode2;
+16611 +
+16612 +
+16613 +%macro MakeDeltaCode2(groupds=,deltacodefile=);
+16614 +
+16615 +     /*--- Build Code to Modify Metadata ---*/
+16616 +     filename X "&deltacodefile";
+16617 +     data _null_;
+16618 +        FILE X;
+16619 +        set &groupds end=eof;
+16620 +        if _N_=1 then do;
+16621 +           %if &EM_PROPERTY_INCLUDECLASSVAR eq Y %then %do;
+16622 +            put "if upcase(strip(ROLE)) ='INPUT' and upcase(strip(LEVEL)) ^='INTERVAL' then ROLE ='REJECTED' ;";
+16623 +           %end;
+16624 +           put "if upcase(strip(ROLE))='INPUT' and upcase(strip(LEVEL))='INTERVAL' then do;";
+16625 +           put "if upcase(strip(NAME)) in (";
+16626 +        end;
+16627 +        if Strip(upcase(Selected)) eq 'YES' then do;
+16628 +           string = '"'!!trim(left(VARIABLE))!!'"';
+16629 +           put string;
+16630 +        end;
+16631 +        if eof then do;
+16632 +           put ') then ROLE="INPUT";';
+16633 +           put 'else ROLE="REJECTED";';
+16634 +           put 'end;';
+16635 +
+16636 +           %if %upcase(&EM_PROPERTY_HIDEVARIABLE) eq Y %then %do;
+16637 +             put 'if upcase(strip(ROLE)) = "REJECTED" then delete ;';
+16638 +           %end;
+16639 +        end;
+16640 +     run;
+16641 +     quit;
+16642 +
+16643 +     filename X;
+16644 +     quit;
+16645 +%mend MakeDeltaCode2;
+16646 +
+16647 +%macro getInitialGClusterNumber(indata=, ninput=, ndummy=0, div=100, ngc=);
+16648 +  %global &ngc;
+16649 +  data _null_;
+16650 +  %if &indata ne %then %do;
+16651 +      %let dsid = %sysfunc(open(&indata));
+16652 +           %let nvar = %sysfunc(attrn(&dsid, NVAR));
+16653 +      %let dsid = %sysfunc(close(&dsid));
+16654 +  %end;
+16655 +  %else %do;
+16656 +       %let nvar = %eval(&ninput+&ndummy); ;
+16657 +  %end;
+16658 +  %let numgc = %eval(&nvar/&div+2);
+16659 +  %let &ngc = &numgc;
+16660 +   run;
+16661 +  quit;
+16662 +%mend getInitialGClusterNumber;
+16663 +
+16664 +
+16665 +%macro MakeGobalConstellData(indata=, outlink=, outnode=);
+16666 +data &outlink(drop = Selected);
+16667 +     set &indata;
+16668 +     LINKID = _N_;
+16669 +     label LINKID = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_linkid, noquote))" ;
+16670 +run;
+16671 +data &outnode(keep=NODEID TYPE LABEL);
+16672 +    set &indata;
+16673 +    length TYPE $16;
+16674 +    rename VARIABLE = NODEID;
+16675 +    *label  CLUSNAME="Node ID";
+16676 +    label CLUSNAME= "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_nodeidvar, noquote))" ;
+16677 +    TYPE = "VARIABLE";
+16678 +    *label TYPE = "Node Type";
+16679 +    label TYPE =  "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_nodetype, noquote))" ;
+16680 +    run;
+16681 +data _tmp(keep=NODEID TYPE LABEL);
+16682 +    set &indata;
+16683 +    length TYPE $16;
+16684 +    rename CLUSNAME = NODEID;
+16685 +    label  CLUSNAME= "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_nodeidvar, noquote))" ;
+16686 +    TYPE = "GCLUSTER";
+16687 +    label TYPE = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_nodetype, noquote))" ;
+16688 +    run;
+16689 +proc sort data=_tmp;
+16690 +    by NODEID;
+16691 +run;
+16692 +data _tmp;
+16693 +    set _tmp; by NODEID;
+16694 +    if first.NODEID then output;
+16695 +run;
+16696 +proc sort data=&outnode;
+16697 +    by NODEID;
+16698 +run;
+16699 +data  &outnode;
+16700 +    set _tmp &outnode;
+16701 +run;
+16702 +proc datasets lib = work nolist;
+16703 +     delete _tmp;
+16704 +run;
+16705 +quit;
+16706 +%mend MakeGobalConstellData;
+16707 +
+16708 +/* Make contellation plot data among GCLUSTERS */
+16709 +
+16710 +%Macro MakeGClusterConstData(indata=, inoutrsq=, outnode=, outlink=);
+16711 +
+16712 +data &outlink(keep = _NAME_ _PARENT_ _LABEL_ LINKID);
+16713 +     set &indata;
+16714 +     LINKID = _N_;
+16715 +     if upcase(substr(strip(_NAME_),1, 2))="CL" then do;
+16716 +        _NAME_ = "ROOT"||upcase(substr(strip(_NAME_),5));
+16717 +     end;
+16718 +     if _PARENT_ ne " " and upcase(substr(strip(_PARENT_),1, 2))="CL" then do;
+16719 +        _PARENT_ = "ROOT"||upcase(substr(strip(_PARENT_),5));
+16720 +     end;
+16721 +     if upcase(substr(strip(_LABEL_),1, 2))="CL" then do;
+16722 +        _LABEL_ = "ROOT"||upcase(substr(strip(_LABEL_),5));
+16723 +    end;
+16724 +run;
+16725 +
+16726 +data _tmp_outrsquare;
+16727 +        set &inoutrsq;
+16728 +        if upcase(strip(TYPE)) = 'CLUSTERCOMP' then delete;
+16729 +run;
+16730 +
+16731 +proc freq data =_tmp_outrsquare noprint;
+16732 +         tables GCluster/out=_tmp_GCLUSFREQ(rename=(GCLUSTER=_NAME_));
+16733 +run;
+16734 +
+16735 +data &outnode(keep=_NAME_ TYPE LABEL);
+16736 +    set &outlink;
+16737 +    length TYPE $16;
+16738 +    length LABEL $100;
+16739 +    /*label CLUSNAME= "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_nodeidvar, noquote))" ;*/
+16740 +
+16741 +    if upcase(substr(strip(_NAME_),1, 2))='GC' then do;
+16742 +    TYPE = "GCLUSTER";
+16743 +    LABEL = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_gcluster, noquote)):"||_NAME_;
+16744 +    end;
+16745 +    else do;
+16746 +    TYPE= "ROOT";
+16747 +    LABEL= _NAME_;
+16748 +    end;
+16749 +    label TYPE  =  "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_nodetype, noquote))" ;
+16750 +    label LABEL =  "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_label, noquote))" ;
+16751 +    label _NAME_ =  "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_nodeidvar, noquote))" ;
+16752 +    run;
+16753 +
+16754 +proc sort data=&outnode;
+16755 +     by _NAME_;
+16756 +proc sort data=_tmp_GCLUSFREQ;
+16757 +     by _NAME_;
+16758 +run;
+16759 +
+16760 +data  &outnode;
+16761 +     merge &outnode _tmp_GCLUSFREQ; by _NAME_;
+16762 +     if COUNT=. then COUNT=1;
+16763 +run;
+16764 +
+16765 +proc datasets lib = work nolist;
+16766 +     delete _tmp_outrsquare _tmp_GCLUSFREQ;
+16767 +run;
+16768 +
+16769 +quit;
+16770 +%Mend MakeGClusterConstData;
+16771 +
+16772 +
+16773 +%macro CreateGClusterScoreCode(indata=,  globalclusid=, fileref=);
+16774 +
+16775 +    data _gscoretmpds;
+16776 +          set &indata;
+16777 +          if (_TYPE_ in ('SCORE' 'MEAN' 'STD') and _NCL_ = 1 ) or (_TYPE_ in ('MEAN' 'STD'));
+16778 +          if _TYPE_ = 'MEAN' then _NAME_='MEAN';
+16779 +          if _TYPE_ = 'STD' then _NAME_='STD';
+16780 +          if _TYPE_ = 'SCORE' then _NAME_ = "GC"||strip(&globalclusid);
+16781 +          DROP _TYPE_ _NCL_;
+16782 +     run;
+16783 +
+16784 +    /*  %let gscorefile =  %bquote(&EM_NODEDIR)&EM_DSEP.gclusterscore.sas;
+16785 +        GCluster Component &globalclusid ------ */
+16786 +
+16787 +    filename _file_  "&fileref";
+16788 +
+16789 +    data _null_;
+16790 +        %if &globalclusid eq 1 %then %do;
+16791 +          FILE _file_;
+16792 +        %end;
+16793 +        %else %do;
+16794 +          FILE _file_ MOD;
+16795 +        %end;
+16796 +
+16797 +        %let dsid = %sysfunc(open(work._gscoretmpds));
+16798 +        %let nvar = %sysfunc(attrn(&dsid, NVAR));
+16799 +        %let vn_name =%sysfunc(varnum(&dsid, _NAME_));
+16800 +
+16801 +        %let k = 1;
+16802 +        %do %while(^%sysfunc(fetch(&dsid)));
+16803 +                %let _name = %sysfunc(getvarc(&dsid, &vn_name));
+16804 +                %if &k > 2 %then %do;
+16805 +                put "&_name = 0 ; ";
+16806 +                %end;
+16807 +                %let k = %eval(&k+1);
+16808 +        %end;
+16809 +
+16810 +        %let rc = %sysfunc(rewind(&dsid));
+16811 +        %do i= 2 %to &nvar;
+16812 +            %let _varname =  %sysfunc(varname(&dsid, &i));
+16813 +            %do %while(^%sysfunc(fetch(&dsid)));
+16814 +                %let _name = %sysfunc(getvarc(&dsid, &vn_name));
+16815 +                %if &_name = MEAN %then
+16816 +                %let _mean = %sysfunc(getvarn(&dsid, &i));
+16817 +                %else %if &_name = STD %then
+16818 +                %let _std = %sysfunc(getvarn(&dsid, &i));
+16819 +                %else %do;
+16820 +                      %let coeff =  %sysfunc(getvarn(&dsid, &i));
+16821 +                      %let abscoeff = %sysfunc(abs(&coeff));
+16822 +                          %if &abscoeff >  0 %then %do;
+16823 +                       put "&_name = &_name+&coeff * (&_varname - &_mean)/&_std;";
+16824 +                           %end;
+16825 +                 %end;
+16826 +             %end;
+16827 +             %let rc = %sysfunc(rewind(&dsid));
+16828 +
+16829 +         %end;
+16830 +
+16831 +        %let dsid= %sysfunc(close(&dsid));
+16832 +       run;
+16833 +
+16834 +
+16835 +       proc datasets lib=work nolist;
+16836 +            delete _gscoretmpds;
+16837 +       run;
+16838 +      quit;
+16839 +
+16840 +%mend CreateGClusterScoreCode;
+16841 +
+16842 +
+16843 +%macro MakeGClusterCorrelation(Indata=, ngcluster=, gscorecode=, outrsquare=);
+16844 +
+16845 +   %EM_REGISTER(KEY=GSCORE, TYPE=DATA);
+16846 +   %EM_GETNAME(KEY=GSCORE, TYPE=DATA);
+16847 +   %EM_REGISTER(KEY=GSCORESTAT, TYPE=DATA);
+16848 +   %EM_GETNAME(KEY=GSCORESTAT, TYPE=DATA);
+16849 +   %EM_REGISTER(KEY=GSCORETREE, TYPE=DATA);
+16850 +   %EM_GETNAME(KEY=GSCORETREE, TYPE=DATA);
+16851 +   %EM_REGISTER(KEY=GSCORECORR, TYPE=DATA);
+16852 +   %EM_GETNAME(KEY=GSCORECORR, TYPE=DATA);
+16853 +   %EM_REGISTER(KEY=GSCORECORRPLOT, TYPE=DATA);
+16854 +   %EM_GETNAME(KEY=GSCORECORRPLOT, TYPE=DATA);
+16855 +   %EM_REGISTER(KEY=GCLUSLINK, TYPE=DATA);
+16856 +   %EM_GETNAME(KEY=GCLUSLINK, TYPE=DATA);
+16857 +   %EM_REGISTER(KEY=GCLUSNODE, TYPE=DATA);
+16858 +   %EM_GETNAME(KEY=GCLUSNODE, TYPE=DATA);
+16859 +
+16860 +   filename gsfile "&gscorecode";
+16861 +
+16862 +   data &EM_USER_GSCORE;
+16863 +             set &indata;
+16864 +             %include  gsfile;
+16865 +        keep
+16866 +        %do i=1 %to &ngcluster;
+16867 +         %let gcvarname = GC&i;
+16868 +         &gcvarname
+16869 +        %end;
+16870 +     ;
+16871 +   run;
+16872 +
+16873 +   proc varclus data=&EM_USER_GSCORE outstat=&EM_USER_GSCORESTAT outtree=&EM_USER_GSCORETREE
+16874 +    %if %upcase(&EM_PROPERTY_CLUSCOMP) eq CENTROID %then %do; centroid %end;
+16875 +    %if %upcase(&EM_PROPERTY_CLUSSOURCE) eq COV %then %do; cov %end;
+16876 +    %if %upcase(&EM_PROPERTY_CLUSHIERACHY) eq Y %then %do; hi %end;
+16877 +    noprint  ;
+16878 +     var
+16879 +       %do i=1 %to &ngcluster;
+16880 +         %let gcvarname = GC&i;
+16881 +         &gcvarname
+16882 +        %end;
+16883 +   ;
+16884 +   run;
+16885 +
+16886 +
+16887 +   %MakeVarClusCorrData(statds=&EM_USER_GSCORESTAT, corrds=&EM_USER_GSCORECORR, corrplotds=&EM_USER_GSCORECORRPLOT );
+16888 +   data &EM_USER_GSCORECORRPLOT ;
+16889 +        set &EM_USER_GSCORECORRPLOT;
+16890 +        rename _X_ = X;
+16891 +        rename _Y_ = Y;
+16892 +        label _X_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_gcluster, noquote))" ;
+16893 +        label _Y_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_gcluster, noquote))" ;
+16894 +   run;
+16895 +
+16896 +   %MakeGClusterConstData(indata=&EM_USER_GSCORETREE, inoutrsq=&outrsquare, outnode=&EM_USER_GCLUSNODE, outlink=&EM_USER_GCLUSLINK);
+16897 +
+16898 +   data &EM_USER_GSCORETREE;
+16899 +        length _NAME_ $32;
+16900 +        length _LABEL_ $100;
+16901 +        set &EM_USER_GSCORETREE(DROP=_LABEL_);
+16902 +        if upcase(substr(strip(_NAME_),1, 2))='GC' then do;
+16903 +         _LABEL_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_gcluster, noquote)):"||_NAME_;
+16904 +        end;else do;
+16905 +         _LABEL_ = _NAME_;
+16906 +        end;
+16907 +       label _LABEL_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_varclus_label_variable, noquote))";
+16908 +
+16909 +   run;
+16910 +
+16911 +   quit;
+16912 +
+16913 +%mend MakeGClusterCorrelation;
+16914 +
+16915 +
+NOTE: %INCLUDE (level 1) ending.
+NOTE: Fileref TEMP has been deassigned.
+NOTE: %INCLUDE (level 1) file TEMP is file SASHELP.EMEXPL.VARIABLECLUSTERING_TRAIN.SOURCE.
+16916 +
+16917 +
+16918 +%macro train;
+16919 +
+16920 +   filename temp catalog 'sashelp.emexpl.variableclustering_train1.source';
+16921 +   %include temp;
+16922 +   filename temp catalog 'sashelp.emexpl.variableclustering_train2.source';
+16923 +   %include temp;
+16924 +   filename temp catalog 'sashelp.emutil.em_copyfile.source';
+16925 +   %include temp;
+16926 +   filename temp;
+16927 +
+16928 +   %let VARCLUS_MAXNUMOBS = 100000;
+16929 +   %let VARCLUS_MAXNUMVAR = 200;
+16930 +   %let trainnum = 0;
+16931 +   %let error = 0;
+16932 +
+16933 +   %if &EM_IMPORT_DATA eq %then %do;
+16934 +       %let  EMEXCEPTIONSTRING = exception.server.IMPORT.NOTRAIN,1;
+16935 +       %let  error = 1;
+16936 +       %goto endtrain;
+16937 +   %end;
+16938 +
+16939 +    %if (%sysfunc(exist(&EM_IMPORT_DATA)) or %sysfunc(exist(&EM_IMPORT_DATA, VIEW))) < 1 %then %do;
+16940 +        %let  EMEXCEPTIONSTRING = exception.server.IMPORT.NOTRAIN,1;
+16941 +        %let  error = 1;
+16942 +        %goto endline;
+16943 +    %end;
+16944 +
+16945 +   %let _num_input_interval = %eval(&EM_NUM_INTERVAL_INPUT+&EM_NUM_INTERVAL_REJECTED);
+16946 +   %let _num_input_binary = %eval(&EM_NUM_BINARY_INPUT+&EM_NUM_BINARY_REJECTED);
+16947 +   %let _num_input_nominal = %eval(&EM_NUM_NOMINAL_INPUT+&EM_NUM_NOMINAL_REJECTED);
+16948 +   %let _num_input_ordinal = %eval(&EM_NUM_ORDINAL_INPUT+&EM_NUM_ORDINAL_REJECTED);
+16949 +   %let _num_input_class = %eval(&_num_input_binary+&_num_input_nominal+&_num_input_ordinal);
+16950 +   %let _num_input_total = %eval(&_num_input_interval+&_num_input_class);
+16951 +
+16952 +   %if (&EM_PROPERTY_INCLUDECLASSVAR eq Y) %then %do;
+16953 +        %if  &_num_input_total < 2 %then %do;
+16954 +            %let  EMEXCEPTIONSTRING = exception.server.METADATA.USEATLEAST2INPUTREJECT;
+16955 +            %let error = 2;
+16956 +            %goto endtrain;
+16957 +        %end;
+16958 +   %end;
+16959 +   %else %do;
+16960 +         %if  &_num_input_interval < 2 %then %do;
+16961 +         %let  EMEXCEPTIONSTRING = exception.server.METADATA.USEATLEAST2INPUTREJECT;
+16962 +         %let error = 2;
+16963 +         %goto endtrain;
+16964 +         %end;
+16965 +   %end;
+16966 +
+16967 +   %em_checkerror();
+16968 +
+16969 +   %if &EMEXCEPTIONSTRING ne %then %do;
+16970 +       %goto endtrain;
+16971 +   %end;
+16972 +
+16973 +   %if (&EM_PROPERTY_INCLUDECLASSVAR eq Y) and (&_num_input_class > 0) %then %do;
+16974 +
+16975 +        %EM_GETNAME(key=OUTDUMMY, type=DATA);
+16976 +        %MakeDummyVariables( indata=&EM_IMPORT_DATA,
+16977 +                             outvar=&EM_USER_OUTDUMMY,
+16978 +                             outdata=_newtrainds,
+16979 +                             fileref=&EM_FILE_EMFLOWSCORECODE);
+16980 +
+16981 +       %if &EM_PROPERTY_SUPPRESSSAMPWARN eq N %then %do;
+16982 +           %getNObs(inds=_newtrainds, nobs=_varclus_nobs);
+16983 +            %if &_varclus_nobs > &VARCLUS_MAXNUMOBS  %then %do;
+16984 +                proc datasets lib=work nolist;
+16985 +                delete  _newtrainds;
+16986 +                run;
+16987 +                quit;
+16988 +                %let  EMEXCEPTIONSTRING = exception.server.varclus.sample.warning;
+16989 +                %let error = 3;
+16990 +               %goto endtrain;
+16991 +            %end;
+16992 +        %end;
+16993 +
+16994 +        %if &EM_PROPERTY_TWOSTAGECLUS eq AUTO %then %do;
+16995 +             %getNVar(inds=_newtrainds, nvar=_nvar);
+16996 +
+16997 +            %if &_nvar > &VARCLUS_MAXNUMVAR %then %do;
+16998 +                %let trainnum = 2;
+16999 +            %end;
+17000 +            %else %do;
+17001 +                %let trainnum = 1;
+17002 +            %end;
+17003 +        %end;
+17004 +    %end;
+17005 +    %else %do;
+17006 +
+17007 +          %if &EM_PROPERTY_SUPPRESSSAMPWARN eq N %then %do;
+17008 +
+17009 +            %getNObs(inds=&EM_IMPORT_DATA, nobs=_varclus_nobs);
+17010 +
+17011 +            %if &_varclus_nobs > &VARCLUS_MAXNUMOBS  %then %do;
+17012 +
+17013 +                 %let  EMEXCEPTIONSTRING = exception.server.varclus.sample.warning;
+17014 +                  %let error = 3;
+17015 +                 %goto endtrain;
+17016 +            %end;
+17017 +        %end;
+17018 +
+17019 +
+17020 +         %if &EM_PROPERTY_TWOSTAGECLUS eq AUTO %then %do;
+17021 +            /*%getNVar(inds=&EM_IMPORT_DATA, nvar=_nvar);
+17022 +              %if &_nvar > &VARCLUS_MAXNUMVAR %then %do;*/
+17023 +            %if &EM_NUM_INTERVAL_INPUT > &VARCLUS_MAXNUMVAR %then %do;
+17024 +                %let trainnum = 2;
+17025 +            %end;
+17026 +            %else %do;
+17027 +                %let trainnum = 1;
+17028 +            %end;
+17029 +        %end;
+17030 +
+17031 +   %end;
+17032 +
+17033 +    %em_checkerror();
+17034 +
+17035 +    %if &EMEXCEPTIONSTRING ne %then %do;
+17036 +       %let error = 4;
+17037 +       %goto endtrain;
+17038 +    %end;
+17039 +
+17040 +    %CreateVarclusMeta(trainnum=&trainnum);
+17041 +
+17042 +    %if &error > 0 %then  %goto endtrain;
+17043 +
+17044 +       /* when only EM_PROPERTY_TWOSTAGECLUS eq AUTO &_triannum will be 1 or 2  */
+17045 +
+17046 +       %if (&trainnum = 1 ) or %upcase(&EM_PROPERTY_TWOSTAGECLUS) = NO %then %do;
+17047 +           %train1;
+17048 +       %end;
+17049 +       %if (&trainnum = 2 ) or %upcase(&EM_PROPERTY_TWOSTAGECLUS) = YES %then %do;
+17050 +           %train2;
+17051 +       %end;
+17052 +
+17053 +      filename _in  "&EM_FILE_EMFLOWSCORECODE";
+17054 +      filename _out "&EM_FILE_EMPUBLISHSCORECODE";
+17055 +      %em_copyfile(infref=_in, outfref=_out);
+17056 +      filename _in;
+17057 +      filename _out;
+17058 +
+17059 +
+17060 +   %endtrain:
+17061 +
+17062 +
+17063 +%mend train;
+NOTE: %INCLUDE (level 1) ending.
+NOTE: Fileref TEMP has been deassigned.
+NOTE: %INCLUDE (level 1) file TEMP is file SASHELP.EMEXPL.VARIABLECLUSTERING_TRAIN1.SOURCE.
+17065 +%macro VarClus(indata=,
+17066 +               outstat=,
+17067 +               outtree=,
+17068 +               vars=,
+17069 +               freq=,
+17070 +               weight=,
+17071 +               includeclassvar=
+17072 +               );
+17074 +   %if &vars eq %then
+17075 +       %let vars = %EM_INTERVAL_INPUT %EM_INTERVAL_REJECTED;
+17077 +        /*Add by ruzhan, May 28, 2013*/
+17078 +        ods graphics on;
+17079 +        %let odspath =;
+17080 +        data _null_;
+17081 +            path = pathname('WORK');
+17082 +            call symput('odspath', path);
+17083 +        run;
+17084 +        ods listing gpath="&odspath";
+17085 +        ods output DENDROGRAM=&outtree;
+17086 +       proc varclus data = &indata outstat= &outstat
+17087 +        %if %upcase(&EM_PROPERTY_CLUSCOMP) eq CENTROID %then %do; centroid %end;
+17088 +        %if %upcase(&EM_PROPERTY_CLUSSOURCE) eq COV %then %do; cov %end;
+17089 +        %if %upcase(&EM_PROPERTY_CLUSHIERACHY) eq Y %then %do; hi %end;
+17090 +        /*-----------------------
+17091 +        %if %upcase(&EM_PROPERTY_MAXCLUS) ne DEFAULT %then %do;
+17092 +            %let maxc = %sysevalf(&EM_PROPERTY_MAXCLUS, int);
+17093 +            %if &maxc > 1 %then %do;     maxc=&maxc %end;
+17094 +       %end;
+17095 +       -------------------------*/
+17096 +       %if (&EM_PROPERTY_MAXCLUS ne . )  and (%upcase(&EM_PROPERTY_MAXCLUS) ne DEFAULT) %then %do;
+17097 +            maxc = &EM_PROPERTY_MAXCLUS
+17098 +       %end;
+17100 +       /*------------------------------------------------------------------------------------------------------
+17101 +        (%upcase(&EM_PROPERTY_MAXCLUS) ne DEFAULT) is needed because of diagram conversion from Em12.1 to 12.3
+17102 +        ------------------------------------------------------------------------------------------------------*/
+17104 +       %if (%upcase(&EM_PROPERTY_CLUSCOMP) ne CENTROID) and
+17105 +           ( ( &EM_PROPERTY_MAXEIGEN ne . )  and (%upcase(&EM_PROPERTY_MAXEIGEN) ne DEFAULT) ) %then %do;
+17106 +            maxeigen = &EM_PROPERTY_MAXEIGEN
+17107 +       %end;
+17109 +       %if &EM_PROPERTY_PROPORTION ne 0  and (%upcase(&EM_PROPERTY_PROPORTION) ne DEFAULT) %then %do;
+17110 +            proportion = &EM_PROPERTY_PROPORTION
+17111 +       %end;
+17112 +       %if %upcase(&EM_PROPERTY_PRINTOPTION) eq SUMMARY %then %do;
+17113 +               summary
+17114 +       %end;
+17116 +       %if %upcase(&EM_PROPERTY_PRINTOPTION) eq SHORT %then %do;
+17117 +           short
+17118 +       %end;
+17119 +        %if %upcase(&EM_PROPERTY_PRINTOPTION) eq ALL %then %do;
+17120 +           corr trace simple
+17121 +       %end;
+17122 +       %if %upcase(&EM_PROPERTY_PRINTOPTION) eq NONE %then %do;
+17123 +          noprint
+17124 +       %end;
+17125 +        /*Comment out by ruzhan, May 28, 2013*/
+17126 +       /*       outtree=&outtree*/
+17127 +       ;
+17128 +        var %EM_INTERVAL_INPUT %EM_INTERVAL_REJECTED
+17130 +      %if &includeclassvar eq Y %then %do;
+17131 +          %let dsid = %sysfunc(open(&EM_USER_OUTDUMMY));
+17132 +          %if &dsid > 0 %then %do;
+17133 +             %let nvar = %sysfunc(attrn(&dsid, NVAR));
+17134 +              %do i = 2 %to &nvar;
+17135 +                  %let varname = %sysfunc(varname(&dsid, &i));
+17136 +                   &varname
+17137 +              %end;
+17139 +          %end;
+17140 +      %end;
+17142 +      ;
+17143 +      /*------------------------
+17144 +      %if &freq ne  %then %do;
+17145 +          freq &freq;
+17146 +      %end;
+17147 +      %if &weight ne  %then %do;
+17148 +          weight &weight;
+17149 +      %end;
+17150 +      ----------------------------*/
+17151 +      %if %EM_FREQ ne %then %do;
+17152 +           Freq %EM_FREQ;
+17153 +      %end;
+17154 +      ;
+17155 +    run;
+17156 +    ods graphics off;
+17157 +    %endline:
+17158 +    quit;
+17159 +%mend VarClus;
+17161 +%macro Train1;
+17163 +   %EM_GETNAME(key=OUTCORRPLOT, type=DATA) ;
+17164 +   %EM_GETNAME(key=OUTCORR, type=DATA) ;
+17165 +   %EM_GETNAME(key=OUTSTAT, type=DATA) ;
+17166 +   %EM_GETNAME(key=OUTGROUP, type=DATA) ;
+17167 +   %EM_GETNAME(key=OUTSTATPLOT, type=DATA) ;
+17168 +   %EM_GETNAME(key=OUTTREE, type=DATA) ;
+17169 +   %EM_GETNAME(key=OUTRSQUARE, type=DATA) ;
+17170 +   %EM_GETNAME(key=OUTCLUSSTRUCT, type=DATA) ;
+17171 +   %EM_GETNAME(key=OUTCLUSCORR, type=DATA) ;
+17172 +   %EM_GETNAME(key=OUTCLUSCORRPLOT, type=DATA) ;
+17173 +   %EM_GETNAME(key=OUTCLUSRSQUARE, type=DATA) ;
+17174 +   %EM_GETNAME(key=OUTLINK, type=DATA) ;
+17175 +   %EM_GETNAME(key=OUTNODE, type=DATA) ;
+17177 +   /*
+17178 +     %let VARCLUS_MAXNUMOBS = 100;
+17179 +     %let VARCLUS_MAXNUMVAR = 200;
+17180 +   */
+17182 +   /* Train
+17184 +   %if &EM_IMPORT_DATA eq %then %do;
+17185 +       %let  EMEXCEPTIONSTRING = exception.server.IMPORT.NOTRAIN,1;
+17186 +       %goto endtrain1;
+17187 +   %end;
+17189 +   %if  &EM_NUM_INTERVAL_INPUT < 2 %then %do;
+17190 +        %let  EMEXCEPTIONSTRING = exception.server.METADATA.USEATLEAST2INPUTREJECT;
+17191 +        %goto endtrain1;
+17192 +   %end;
+17193 +   */
+17194 +   %if &EM_PROPERTY_INCLUDECLASSVAR eq Y %then %do;
+17195 +       /* moved this to pretrain ------------
+17197 +        %EM_GETNAME(key=OUTDUMMY, type=DATA);
+17198 +        %MakeDummyVariables( indata=&EM_IMPORT_DATA,
+17199 +                             outvar=&EM_USER_OUTDUMMY,
+17200 +                             outdata=_newtrainds,
+17201 +                             fileref=&EM_FILE_EMFLOWSCORECODE);
+17203 +        %if &EM_PROPERTY_SUPPRESSSAMPWARN eq N %then %do;
+17204 +            %getNVarNObs(inds=_newtrainds, nvar=_nvar, nobs=_nobs);
+17205 +            %if &_nobs > &VARCLUS_MAXNUMOBS ne %then %do;
+17206 +                %let  EMEXCEPTIONSTRING = exception.server.varclus.sample.warning
+17207 +                %goto endtrain;
+17208 +            %end;
+17209 +        %end;
+17211 +        +-------------------------------------*/
+17213 +        %if (%sysfunc(exist(_newtrainds)) or %sysfunc(exist(_newtrainds, VIEW))) < 1 %then %do;
+17214 +        /*when there is no class var and &EM_PROPERTY_INCLUDECLASSVAR eq Y
+17215 +          There is no _newtrainds */
+17216 +         %VarClus( indata=&EM_IMPORT_DATA,
+17217 +                  outstat=&EM_USER_OUTSTAT,
+17218 +                  outtree = &EM_USER_OUTTREE,
+17219 +                  includeclassvar=N
+17220 +                 );
+17221 +        %end;
+17222 +        %else %do;
+17223 +        %VarClus( indata=_newtrainds,
+17224 +                  outstat=&EM_USER_OUTSTAT,
+17225 +                  outtree = &EM_USER_OUTTREE,
+17226 +                  includeclassvar=Y
+17227 +                 );
+17228 +         proc datasets lib=work nolist;
+17229 +              delete  _newtrainds;
+17230 +         run;
+17231 +         %end;
+17232 +    %end;
+17233 +    %else %do;
+17235 +        /*----- moved this to pretrain ------------
+17236 +        %if &EM_PROPERTY_SUPPRESSSAMPWARN eq N %then %do;
+17237 +            %getNVarNObs(inds=&EM_IMPORT_DATA, nvar=_nvar, nobs=_nobs);
+17238 +            %if &_nobs > &VARCLUS_MAXNUMOBS ne %then %do;
+17239 +                 %let  EMEXCEPTIONSTRING = exception.server.varclus.sample.warning;
+17240 +                 %goto endtrain;
+17241 +            %end;
+17242 +        %end;
+17243 +        +-------------------------------------*/
+17245 +        %VarClus(indata=&EM_IMPORT_DATA,
+17246 +                  outstat=&EM_USER_OUTSTAT,
+17247 +                  outtree =&EM_USER_OUTTREE,
+17248 +                  includeclassvar=N
+17249 +               );
+17251 +   %end;
+17253 +   %em_checkerror();
+17255 +   %if &EMEXCEPTIONSTRING ne %then %do;
+17256 +       %goto endtrain1;
+17257 +   %end;
+17258 +    /*
+17259 +    %FindClusNum(statds=&EM_USER_OUTSTAT, groupds=&EM_USER_OUTGROUP, minvariation=&EM_PROPERTY_MINVARIATION);
+17260 +    */
+17262 +    %getNclusfromTrain(inoutstat=&EM_USER_OUTSTAT, nc=_nclus);
+17264 +    %let gid=;
+17266 +    /*--- To make the main result table ----------------------*/
+17268 +    %MakeInterClusCorrData(indata=&EM_USER_OUTSTAT, globalclusid=&gid, outdata=&EM_USER_OUTCLUSCORR, ncluster=&_nclus, RSquare=Y);
+17269 +    %FindNextClosestClusByCluster(indata=&EM_USER_OUTCLUSCORR, outdata=_nextClusRSq, globalclusid=&gid, ncluster=&_nclus);
+17270 +    %MakeOwnRSquare(indata=&EM_USER_OUTSTAT, globalclusid=&gid, outdata=_ownRsq, ncluster=&_nclus);
+17271 +    %MakeClusStructCorrData(indata=&EM_USER_OUTSTAT, globalclusid=&gid, outdata=&EM_USER_OUTCLUSSTRUCT , ncluster=&_nclus, Rsquare=Y);
+17272 +    %FindNextClosestClusByVar(indata=&EM_USER_OUTCLUSSTRUCT, outdata=_nextVarRSq, globalclusid=&gid, ncluster=&_nclus);
+17273 +    %MakeVarClusResultTable(indata1=_ownRsq, indata2=_nextVarRsq, indata3=_nextClusRSq, outdata=&EM_USER_OUTRSQUARE, globalclusid=&gid, ncluster=&_nclus, selectedcomp=&EM_PROPERTY_EXPORTEDCOMP);
+17275 +   /* Inter Cluster Correlation Plot ------------------------*/
+17277 +    %MakeInterClusCorrData(indata=&EM_USER_OUTSTAT, globalclusid=&gid, outdata=&EM_USER_OUTCLUSCORRPLOT, ncluster=&_nclus, RSquare=N);
+17278 +    %MakePlotDataFromCorrTable(indata=&EM_USER_OUTCLUSCORRPLOT, outdata=&EM_USER_OUTCLUSCORRPLOT, globalclusid=&gid);
+17280 +   /* Create some other data sets for results ----*/
+17282 +   %MakeStatPlotData(statds=&EM_USER_OUTSTAT , outstatplotds=&EM_USER_OUTSTATPLOT);
+17283 +   %MakeVarClusCorrData(statds=&EM_USER_OUTSTAT, corrds=&EM_USER_OUTCORR, corrplotds=&EM_USER_OUTCORRPLOT);
+17284 +   %MakeClusConstellData(indata=&EM_USER_OUTRSQUARE, outlink=&EM_USER_OUTLINK, outnode=&EM_USER_OUTNODE);
+17286 +  /*---- move this to Score action ------------
+17287 +   %MakeDeltaCode(groupds=&EM_USER_OUTRSQUARE, DeltaCodeFile=&EM_FILE_CDELTA_TRAIN);
+17288 +   */
+17290 +   /* create score code at training time */
+17291 +   %CreateScoreCode(indata=&EM_USER_OUTSTAT, ncluscomp=&_nclus, fileref=&EM_FILE_EMFLOWSCORECODE);
+17292 +   %endtrain1:
+17293 +%mend Train1;
+NOTE: %INCLUDE (level 1) ending.
+NOTE: %INCLUDE (level 1) file TEMP is file SASHELP.EMEXPL.VARIABLECLUSTERING_TRAIN2.SOURCE.
+17296 +%macro VarClus2( indata=,
+17297 +                 outdata=,
+17298 +                 outstat =outstat,
+17299 +                 outrsquare=outrsquare,
+17300 +                 outtree = outtree,
+17301 +                 outclusstruct = outclusstruct,
+17302 +                 outcluscorr =outcluscorr,
+17303 +                 outcluscorrplot =outcluscorrplot,
+17304 +                 outclusrsquare =outclusrsquare,
+17305 +                 outstatplot = outstatplot,
+17306 +                 outcorr = outcorr,
+17307 +                 outcorrplot = outcorrplot,
+17308 +                 clusdata=,
+17309 +                 outnode=outnode,
+17310 +                 outlink=outlink,
+17311 +                 ngroup =1  );
+17312 +         %if (%sysfunc(exist(&indata)) or %sysfunc(exist(&indata, VIEW))) < 1 %then %do;
+17313 +              %let  EMEXCEPTIONSTRING = exception.server.IMPORT.NOTRAIN,1;
+17314 +              %goto endline;
+17315 +         %end;
+17317 +        %global numglobalcluster;
+17318 +        %let  numglobalcluster = &ngroup;
+17319 +        %let  gscorefile =  %bquote(&EM_NODEDIR)&EM_DSEP.gclusterscore.sas;
+17320 +        %do vci =1 %to &ngroup;
+17321 +           data tmp_clusdata;
+17322 +                set &clusdata;
+17323 +                if CLUSTER ne &vci then delete;
+17324 +           run;
+17325 +           %let outstatds = &outstat.&vci;
+17326 +           %let outrsquareds = &outrsquare.&vci;
+17327 +           %let outtreeds = &outtree.&vci;
+17328 +           %let outclusstuctds = &outclusstruct.&vci;
+17329 +           %let outcluscorrds = &outcluscorr.&vci;
+17330 +           %let outcluscorrplotds = &outcluscorrplot.&vci;
+17331 +           %let outclusrsquareds = &outclussquare.&vci;
+17332 +           %let outstatplotds = &outstatplot.&vci;
+17333 +           %let outcorrds = &outcorr.&vci;
+17334 +           %let outcorrplotds = &outcorrplot.&vci;
+17335 +           %let outnodeds = &outnode.&vci;
+17336 +           %let outlinkds = &outlink.&vci;
+17338 +           %EM_REGISTER(KEY=&outstatds, TYPE=DATA);
+17339 +           %EM_GETNAME(KEY=&outstatds, TYPE=DATA);
+17340 +           %let emuseroutstat = &EM_USER_&outstatds;
+17342 +           %EM_REGISTER(KEY=&outtreeds, TYPE=DATA);
+17343 +           %EM_GETNAME(KEY=&outtreeds, TYPE=DATA);
+17344 +           %let emuserouttree = &EM_USER_&outtreeds;
+17346 +           %EM_REGISTER(KEY=&outcluscorrds, TYPE=DATA);
+17347 +           %EM_GETNAME(KEY=&outcluscorrds, TYPE=DATA);
+17348 +           %let emuseroutcluscorr = &EM_USER_&outcluscorrds;
+17350 +           %EM_REGISTER(KEY=&outclusstuctds, TYPE=DATA);
+17351 +           %EM_GETNAME(KEY=&outclusstuctds, TYPE=DATA);
+17352 +           %let emuseroutclusstruct = &EM_USER_&outclusstuctds;
+17354 +           %EM_REGISTER(KEY=&outrsquareds, TYPE=DATA);
+17355 +           %EM_GETNAME(KEY=&outrsquareds, TYPE=DATA);
+17356 +           %let emuseroutrsquare = &EM_USER_&outrsquareds;
+17358 +           %EM_REGISTER(KEY=&outcluscorrplotds, TYPE=DATA);
+17359 +           %EM_GETNAME(KEY=&outcluscorrplotds, TYPE=DATA);
+17360 +           %let emuseroutcluscorrplot = &EM_USER_&outcluscorrplotds;
+17362 +           %EM_REGISTER(KEY=&outstatplotds, TYPE=DATA);
+17363 +           %EM_GETNAME(KEY=&outstatplotds, TYPE=DATA);
+17364 +           %let emuseroutstatplot = &EM_USER_&outstatplotds;
+17366 +           %EM_REGISTER(KEY=&outcorrds, TYPE=DATA);
+17367 +           %EM_GETNAME(KEY=&outcorrds, TYPE=DATA);
+17368 +           %let emuseroutcorr = &EM_USER_&outcorrds;
+17370 +           %EM_REGISTER(KEY=&outcorrplotds, TYPE=DATA);
+17371 +           %EM_GETNAME(KEY=&outcorrplotds, TYPE=DATA);
+17372 +           %let emuseroutcorrplot = &EM_USER_&outcorrplotds;
+17374 +           %EM_REGISTER(KEY=&outnodeds, TYPE=DATA);
+17375 +           %EM_GETNAME(KEY=&outnodeds, TYPE=DATA);
+17376 +           %let emuseroutnode = &EM_USER_&outnodeds;
+17378 +           %EM_REGISTER(KEY=&outlinkds, TYPE=DATA);
+17379 +           %EM_GETNAME(KEY=&outlinkds, TYPE=DATA);
+17380 +           %let emuseroutlink = &EM_USER_&outlinkds;
+17382 +           /*Add by ruzhan, May 28, 2013*/
+17383 +           ods graphics on;
+17384 +            %let odspath =;
+17385 +            data _null_;
+17386 +                path = pathname('WORK');
+17387 +                call symput('odspath', path);
+17388 +            run;
+17389 +            ods listing gpath="&odspath";
+17391 +           ods output DENDROGRAM=&emuserouttree;
+17393 +           proc varclus data=&indata outstat=&emuseroutstat
+17394 +            %if %upcase(&EM_PROPERTY_CLUSCOMP) eq CENTROID %then %do; centroid %end;
+17395 +            %if %upcase(&EM_PROPERTY_CLUSSOURCE) eq COV %then %do; cov %end;
+17396 +            %if %upcase(&EM_PROPERTY_CLUSHIERACHY) eq Y %then %do; hi %end;
+17397 +            %if (&EM_PROPERTY_MAXCLUS ne .)  and (%upcase(&EM_PROPERTY_MAXCLUS) ne DEFAULT) %then %do;
+17398 +                  maxc=&EM_PROPERTY_MAXCLUS
+17399 +           %end;
+17401 +            %if (%upcase(&EM_PROPERTY_CLUSCOMP) ne CENTROID) and
+17402 +                ( (&EM_PROPERTY_MAXEIGEN ne .)  and (%upcase(&EM_PROPERTY_MAXEIGEN) ne DEFAULT)) %then %do;
+17403 +            maxeigen = &EM_PROPERTY_MAXEIGEN
+17404 +            %end;
+17406 +           %if (&EM_PROPERTY_PROPORTION ne 0)  and (%upcase(&EM_PROPERTY_PROPORTION) ne DEFAULT) %then %do;
+17407 +                proportion = &EM_PROPERTY_PROPORTION
+17408 +           %end;
+17409 +           %if %upcase(&EM_PROPERTY_PRINTOPTION) eq SUMMARY %then %do;
+17410 +               summary
+17411 +           %end;
+17412 +           %if %upcase(&EM_PROPERTY_PRINTOPTION) eq SHORT %then %do;
+17413 +               short
+17414 +           %end;
+17415 +            %if %upcase(&EM_PROPERTY_PRINTOPTION) eq ALL %then %do;
+17416 +               corr trace simple
+17417 +           %end;
+17418 +           %if %upcase(&EM_PROPERTY_PRINTOPTION) eq NONE %then %do;
+17419 +               noprint
+17420 +           %end;
+17421 +            /*Comment out by ruzhan, May 28, 2013*/
+17422 +              /*outtree=&emuserouttree*/
+17423 +           ;
+17424 +           var
+17425 +           %let dsid=%sysfunc(open(work.tmp_clusdata));
+17426 +           %let vn_name =%sysfunc(varnum(&dsid, VARIABLE));
+17427 +                %do %while(^%sysfunc(fetch(&dsid)));
+17428 +                    %let _varname= %sysfunc(getvarc(&dsid, &vn_name));
+17429 +                    &_varname
+17430 +                %end;
+17431 +            %let dsid = %sysfunc(close(&dsid));
+17432 +           ;
+17433 +           %if %EM_FREQ ne %then %do;
+17434 +           Freq %EM_FREQ;
+17435 +           %end;
+17436 +           run;
+17437 +            ods graphics off;
+17438 +            %getNclusfromTrain(inoutstat=&emuseroutstat, nc=_nclus);
+17440 +            %let gid=&vci;
+17441 +            /*--- To make the main result table ----------------------*/
+17442 +            %MakeInterClusCorrData(indata=&emuseroutstat, globalclusid=&gid, outdata=&emuseroutcluscorr, ncluster=&_nclus, RSquare=Y);
+17443 +            %FindNextClosestClusByCluster(indata=&emuseroutcluscorr, outdata=_nextClusRSq, globalclusid=&gid, ncluster=&_nclus);
+17444 +            %MakeOwnRSquare(indata=&emuseroutstat, globalclusid=&gid, outdata=_ownRsq, ncluster=&_nclus);
+17445 +            %MakeClusStructCorrData(indata=&emuseroutstat, globalclusid=&gid, outdata=&emuseroutclusstruct , ncluster=&_nclus, Rsquare=Y);
+17446 +            %FindNextClosestClusByVar(indata=&emuseroutclusstruct, outdata=_nextVarRSq, globalclusid=&gid, ncluster=&_nclus);
+17447 +            %MakeVarClusResultTable(indata1=_ownRsq, indata2=_nextVarRsq, indata3=_nextClusRSq, outdata=&emuseroutrsquare, globalclusid=&gid, ncluster=&_nclus, selectedcomp=&EM_PROPERTY_EXPORTEDCOMP);
+17449 +            /* Inter Cluster Correlation Plot ------------------------*/
+17451 +            %MakeInterClusCorrData(indata=&emuseroutstat, globalclusid=&gid, outdata=&emuseroutcluscorrplot, ncluster=&_nclus, RSquare=N);
+17452 +            %MakePlotDataFromCorrTable(indata=&emuseroutcluscorrplot, outdata=&emuseroutcluscorrplot, globalclusid=&gid);
+17454 +           /* Create some other data sets for results ---------------*/
+17456 +           %MakeStatPlotData(statds=&emuseroutstat , outstatplotds=&emuseroutstatplot);
+17457 +           %MakeVarClusCorrData(statds=&emuseroutstat, corrds=&emuseroutcorr, corrplotds=&emuseroutcorrplot);
+17458 +           %MakeClusConstellData(indata=&emuseroutrsquare, outlink=&emuseroutlink, outnode=&emuseroutnode);
+17460 +           %CreateScoreCode2(indata=&emuseroutstat, ncluscomp=&_nclus, globalclusid=&gid, fileref=&EM_FILE_EMFLOWSCORECODE);
+17462 +           %CreateGClusterScoreCode(indata=&emuseroutstat,  globalclusid=&gid, fileref=&gscorefile);
+17464 +           %if &vci = 1 %then %do;
+17465 +           data &EM_USER_OUTRSQUARE;
+17466 +                set &emuseroutrsquare;
+17467 +           run;
+17468 +           %end;
+17469 +           %else %do;
+17470 +           data &EM_USER_OUTRSQUARE;
+17471 +                set &EM_USER_OUTRSQUARE &emuseroutrsquare;
+17472 +           run;
+17473 +           %end;
+17474 +           quit;
+17475 +       %end;
+17477 +       /*---- move this to Score action ------------
+17478 +       %MakeDeltaCode2(groupds=&EM_USER_OUTRSQUARE, DeltaCodeFile=&EM_FILE_CDELTA_TRAIN);
+17479 +       */
+17481 +       /* Make Score Gcluster component & correlation  */
+17482 +       %MakeGClusterCorrelation(Indata=&indata, ngcluster=&ngroup, gscorecode=&gscorefile, outrsquare=&EM_USER_OUTRSQUARE);
+17484 +       quit;
+17485 +       %endline:
+17486 +%mend VarClus2;
+17489 +%macro Train2;
+17491 +   %EM_GETNAME(key=OUTCORRPLOT, type=DATA) ;
+17492 +   %EM_GETNAME(key=OUTCORR, type=DATA) ;
+17493 +   %EM_GETNAME(key=OUTSTAT, type=DATA) ;
+17494 +   %EM_GETNAME(key=OUTGROUP, type=DATA) ;
+17495 +   %EM_GETNAME(key=OUTSTATPLOT, type=DATA) ;
+17496 +   %EM_GETNAME(key=OUTTREE, type=DATA) ;
+17497 +   %EM_GETNAME(key=OUTRSQUARE, type=DATA) ;
+17498 +   %EM_GETNAME(key=OUTCLUSSTRUCT, type=DATA) ;
+17499 +   %EM_GETNAME(key=OUTCLUSCORR, type=DATA) ;
+17500 +   %EM_GETNAME(key=OUTCLUSCORRPLOT, type=DATA) ;
+17501 +   %EM_GETNAME(key=OUTCLUSRSQUARE, type=DATA) ;
+17502 +   %EM_GETNAME(key=GOUTSTAT, type=DATA) ;
+17503 +   %EM_GETNAME(key=GOUTTREE, type=DATA) ;
+17504 +   %EM_GETNAME(key=GOUTCORR, type=DATA) ;
+17505 +   %EM_GETNAME(key=GOUTGROUP, type=DATA) ;
+17506 +   %EM_GETNAME(key=GOUTNODE, type=DATA) ;
+17507 +   %EM_GETNAME(key=GOUTLINK, type=DATA) ;
+17508 +   %EM_GETNAME(key=VARCLUSMETA, type=DATA) ;
+17512 +    /* Train */
+17514 +   /* moved to pretrain ------------
+17516 +   %if &EM_IMPORT_DATA eq %then %do;
+17517 +       %let  EMEXCEPTIONSTRING = exception.server.IMPORT.NOTRAIN,1;
+17518 +       %goto endtrain2;
+17519 +   %end;
+17521 +   %if  &EM_NUM_INTERVAL_INPUT < 2 %then %do;
+17522 +        %let  EMEXCEPTIONSTRING = exception.server.METADATA.USEATLEAST2INPUTREJECT;
+17523 +        %goto endtrain2;
+17524 +   %end;
+17525 +   +-------------------------------------------*/
+17527 +    %let _num_input_interval = %eval(&EM_NUM_INTERVAL_INPUT+&EM_NUM_INTERVAL_REJECTED);
+17530 +    %if &EM_PROPERTY_INCLUDECLASSVAR eq Y %then %do;
+17532 +        /*----- moved to pretrain ------------
+17534 +        %EM_GETNAME(key=OUTDUMMY, type=DATA);
+17535 +        %MakeDummyVariables( indata=&EM_IMPORT_DATA,
+17536 +                             outvar=&EM_USER_OUTDUMMY,
+17537 +                             outdata=_newtrainds,
+17538 +                             fileref=&EM_FILE_EMFLOWSCORECODE,
+17539 +                              ndummyvars=_ndummyvars
+17540 +                            );
+17542 +        %if &EM_PROPERTY_SUPPRESSSAMPWARN eq N %then %do;
+17543 +            %getNVarNObs(inds=_newtrainds, nvar=_nvar, nobs=_nobs);
+17544 +            %if &_nobs > &VARCLUS_MAXNUMOBS  %then %do;
+17545 +                %let  EMEXCEPTIONSTRING = exception.server.varclus.sample.warning
+17546 +                %goto endtrain;
+17547 +            %end;
+17548 +        %end;
+17550 +        +---------------------------------------*/
+17551 +        %if (%sysfunc(exist(_newtrainds)) or %sysfunc(exist(_newtrainds, VIEW))) < 1 %then %do;
+17552 +        /*when there is no class var and &EM_PROPERTY_INCLUDECLASSVAR eq Y
+17553 +          There is no _newtrainds */
+17554 +        %MakeCorrelation(    indata=&EM_IMPORT_DATA,
+17555 +                             outstat=&EM_USER_GOUTSTAT,
+17556 +                             corrmatrix=Y,
+17557 +                             outcorr=&EM_USER_GOUTCORR,
+17558 +                             includeclassvar=N,
+17559 +                             freq =%EM_FREQ
+17560 +                          );
+17561 +        %getInitialGClusterNumber(ninput=&_num_input_interval, ngc=_ngc);
+17563 +        %end;
+17564 +        %else %do;
+17565 +         %MakeCorrelation(   indata=_newtrainds,
+17566 +                             outstat=&EM_USER_GOUTSTAT,
+17567 +                             corrmatrix=Y,
+17568 +                             outcorr=&EM_USER_GOUTCORR,
+17569 +                             includeclassvar=Y,
+17570 +                             freq =%EM_FREQ
+17571 +                          );
+17572 +        %getInitialGClusterNumber(ninput=&_num_input_interval, ndummy=&_ndummyvars, ngc=_ngc);
+17574 +        %end;
+17576 +    %end;
+17577 +    %else %do;
+17579 +        /* moved to pretrain -------------------
+17581 +         %if &EM_PROPERTY_SUPPRESSSAMPWARN eq N %then %do;
+17582 +            %getNVarNObs(inds=&EM_IMPORT_DATA, nvar=_nvar, nobs=_nobs);
+17583 +            %if &_nobs > &VARCLUS_MAXNUMOBS  %then %do;
+17584 +                %let  EMEXCEPTIONSTRING = exception.server.varclus.sample.warning
+17585 +                %goto endtrain;
+17586 +            %end;
+17587 +        %end;
+17588 +         +------------------------------------------*/
+17590 +        %MakeCorrelation( indata=&EM_IMPORT_DATA,
+17591 +                          outstat=&EM_USER_GOUTSTAT,
+17592 +                          corrmatrix=Y,
+17593 +                          outcorr=&EM_USER_GOUTCORR,
+17594 +                          includeclassvar=N,
+17595 +                          freq =%EM_FREQ
+17596 +                          );
+17597 +        %getInitialGClusterNumber(ninput=&_num_input_interval, ngc=_ngc);
+17598 +    %end;
+17600 +   %UpdateOutStatCorrToDistance(indata=&EM_USER_GOUTSTAT, /* indata should be a outstat from proc varclus */
+17601 +                                rsquare = N
+17602 +                                );
+17603 +   %HierClusWithCorr( indata=&EM_USER_GOUTSTAT ,
+17604 +                      ncluster=&_ngc,
+17605 +                      method = Ward,
+17606 +                      outtree =&EM_USER_GOUTTREE,
+17607 +                      idvar = _VAR_,
+17608 +                      outdata=&EM_USER_GOUTGROUP,
+17609 +                      rescore = N,
+17610 +                      newncluster=_newnclus
+17611 +                        );
+17613 +   /* store the number of global cluster */
+17615 +   data &EM_USER_VARCLUSMETA;
+17616 +        set &EM_USER_VARCLUSMETA;
+17617 +        NGCluster = &_newnclus;
+17618 +   run;
+17620 +   %MakeGobalConstellData(indata=&EM_USER_GOUTGROUP, outlink=&EM_USER_GOUTLINK, outnode=&EM_USER_GOUTNODE);
+17622 +   %if &EM_PROPERTY_INCLUDECLASSVAR eq Y %then %do;
+17623 +        %if (%sysfunc(exist(_newtrainds)) or %sysfunc(exist(_newtrainds, VIEW))) < 1 %then %do;
+17624 +            %VarClus2(indata=&EM_IMPORT_DATA,
+17625 +                 clusdata=&EM_USER_GOUTGROUP,
+17626 +                 ngroup=&_newnclus);
+17627 +         %end;
+17628 +         %else %do;
+17629 +             %VarClus2(indata=_newtrainds,
+17630 +                 clusdata=&EM_USER_GOUTGROUP,
+17631 +                 ngroup=&_newnclus);
+17633 +         %end;
+17635 +   %end;
+17636 +   %else %do;
+17637 +       %VarClus2(indata=&EM_IMPORT_DATA,
+17638 +                 clusdata=&EM_USER_GOUTGROUP,
+17639 +                 ngroup=&_newnclus);
+17640 +   %end;
+17642 +   %em_checkerror();
+17643 +   %if &EMEXCEPTIONSTRING ne %then %do;
+17644 +       %put &em_codebar;
+17645 +       %put Error: Variable clustering failed.;
+17646 +       %put &em_codebar;
+17647 +       %goto endtrain2;
+17648 +   %end;
+17649 +   /*
+17650 +    %FindClusNum(statds=&EM_USER_OUTSTAT, groupds=&EM_USER_OUTGROUP, minvariation=&EM_PROPERTY_MINVARIATION);
+17651 +   */
+17652 +   %endtrain2:
+17653 +%mend Train2;
+NOTE: %INCLUDE (level 1) ending.
+NOTE: %INCLUDE (level 1) file TEMP is file SASHELP.EMUTIL.EM_COPYFILE.SOURCE.
+17655 +%macro em_copyfile(infref=, outfref=, append=N);
+17656 +
+17657 +   %if %sysfunc(fileref(&infref))=0 and %sysfunc(fileref(&outfref))<=0 %then %do;
+17658 +
+17659 +       %let omode =;
+17660 +       %if &append=Y %then
+17661 +           %let omode = MOD;
+17662 +       data _null_;
+17663 +          length line $20000;
+17664 +          file &outfref &omode lrecl=20000;
+17665 +          fid=fopen("&infref",'i',20000,'v');
+17666 +          if fid > 0  then do;
+17667 +             do while(^fread(fid));
+17668 +                rlen = frlen(fid);
+17669 +                rc= fget(fid,line,20000);
+17670 +                start = length(line)-length(left(line))+1;
+17671 +                line=strip(line);
+17672 +                put @start line;
+17673 +             end;
+17674 +             if fid > 0  then rc=fclose(fid);
+17675 +          end;
+17676 +       run;
+17677 +
+17678 +   %end;
+17679 +%mend em_copyfile;
+NOTE: %INCLUDE (level 1) ending.
+NOTE: Fileref TEMP has been deassigned.
+
+17680  %let SYSCC = 0;
+NOTE: PROCEDURE DISPLAY used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: Records processed = 32235   Memory used = 511K.
+NOTE: There were 32235 observations read from the data set EMWS4.PART_TRAIN.
+NOTE: The data set WORK._DMDBDAT has 32235 observations and 4 variables.
+NOTE: The data set WORK._CLASSOUT has 10 observations and 9 variables.
+NOTE: PROCEDURE DMDB used (Total process time):
+      real time           0.44 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: This is the PROC statement.
+NOTE: The training set WORK._DMDBDAT.DATA has 4 variable(s).
+NOTE: The PROC statement has finished with return code 0.
+NOTE: This is the INPUT statement.
+NOTE: 4 input variable(s) defined for ID=I1.
+NOTE: The INPUT statement has finished with return code 0.
+NOTE: This is the MAKE statement.
+
+NOTE: 4 input variable(s).
+NOTE: Number of cases=32235
+NOTE: Sum of frequencies=32235
+NOTE: Sum of weights=32235
+NOTE: VARDEF=DF      
+NOTE: Maximum number of categories=4
+NOTE: The total number of variables is 4 with dimensionality 10.
+NOTE: The data set EMWS4.VARCLUS_OUTDUMMY has 3 observations and 11 variables.
+NOTE: The MAKE statement has finished with return code 0.
+NOTE: This is the SCORE statement.
+NOTE: The data set WORK._NEWTRAINDS has 32235 observations and 109 variables.
+NOTE: The SCORE statement has finished with return code 0.
+NOTE: This is the CODE statement.
+NOTE: External file \\filer.uncc.edu\home\hkatrag1\Predictive Analytics_modified\Workspaces\EMWS4\VarClus\EMFLOWSCORE.sas opened.
+NOTE: The CODE statement has finished with return code 0.
+
+
+NOTE: PROCEDURE DMZIP used (Total process time):
+      real time           0.29 seconds
+      cpu time            0.06 seconds
+      
+
+
+NOTE: The file WORK._DMDBCAT (memtype=DATA) was not found, but appears on a DELETE statement.
+NOTE: Deleting WORK._DMDBDAT (memtype=DATA).
+NOTE: Deleting WORK._CLASSOUT (memtype=DATA).
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      1:94   
+NOTE: There were 32235 observations read from the data set WORK._NEWTRAINDS.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      1:153   
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+17681  %let SYSCC = 0;
+NOTE: PROCEDURE DISPLAY used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: The data set EMWS4.VARCLUS_VARCLUSMETA has 1 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.26 seconds
+      cpu time            0.04 seconds
+      
+
+
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: Clustering algorithm converged.
+NOTE: The data set EMWS4.VARCLUS_OUTTREE has 163 observations and 3 variables.
+NOTE: The data set EMWS4.VARCLUS_OUTSTAT has 1949 observations and 101 variables.
+NOTE: The PROCEDURE VARCLUS printed pages 2-7.
+NOTE: PROCEDURE VARCLUS used (Total process time):
+      real time           6.97 seconds
+      cpu time            0.92 seconds
+      
+
+
+NOTE: Deleting WORK._NEWTRAINDS (memtype=DATA).
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+17682  %let SYSCC = 0;
+NOTE: PROCEDURE DISPLAY used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      5:214   
+NOTE: There were 1949 observations read from the data set EMWS4.VARCLUS_OUTSTAT.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      7:15   
+NOTE: Character values have been converted to numeric values at the places given by: (Line):(Column).
+      7:9   
+NOTE: There were 1949 observations read from the data set EMWS4.VARCLUS_OUTSTAT.
+NOTE: The data set EMWS4.VARCLUS_OUTCLUSCORR has 33 observations and 99 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 33 observations read from the data set EMWS4.VARCLUS_OUTCLUSCORR.
+NOTE: The data set WORK.CORR_TMP has 33 observations and 99 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 33 observations read from the data set EMWS4.VARCLUS_OUTCLUSCORR.
+NOTE: The data set EMWS4.VARCLUS_OUTCLUSCORR has 33 observations and 34 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.04 seconds
+      
+
+
+NOTE: There were 33 observations read from the data set EMWS4.VARCLUS_OUTCLUSCORR.
+NOTE: The data set WORK.CORR_TMP has 33 observations and 34 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 33 observations read from the data set EMWS4.VARCLUS_OUTCLUSCORR.
+NOTE: The data set EMWS4.VARCLUS_OUTCLUSCORR has 33 observations and 34 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: Deleting WORK.CORR_TMP (memtype=DATA).
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 33 observations read from the data set EMWS4.VARCLUS_OUTCLUSCORR.
+NOTE: The data set WORK._TMPCLUSRSQ has 33 observations and 34 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 33 observations read from the data set WORK._TMPCLUSRSQ.
+NOTE: The data set WORK._TMPCLUSRSQ has 1089 observations and 4 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 1089 observations read from the data set WORK._TMPCLUSRSQ.
+NOTE: The data set WORK._TMPCLUSRSQ has 1089 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 1089 observations read from the data set WORK._TMPCLUSRSQ.
+NOTE: The data set WORK._TMPCLUSRSQ has 1056 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 1056 observations read from the data set WORK._TMPCLUSRSQ.
+NOTE: The data set WORK._NEXTCLUSRSQ has 33 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: Deleting WORK._TMPCLUSRSQ (memtype=DATA).
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      2:77   
+NOTE: Character values have been converted to numeric values at the places given by: (Line):(Column).
+      2:71   
+NOTE: There were 1949 observations read from the data set EMWS4.VARCLUS_OUTSTAT.
+NOTE: The data set WORK._TMPDS has 2 observations and 100 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 2 observations read from the data set WORK._TMPDS.
+NOTE: The data set WORK._OWNRSQ has 98 observations and 4 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      12:35   
+NOTE: Variable GCluster is uninitialized.
+NOTE: There were 98 observations read from the data set WORK._OWNRSQ.
+NOTE: The data set WORK._OWNRSQ has 98 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 98 observations read from the data set WORK._OWNRSQ.
+NOTE: The data set WORK._OWNRSQ has 98 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: Deleting WORK._TMPDS (memtype=DATA).
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      4:40   
+NOTE: Character values have been converted to numeric values at the places given by: (Line):(Column).
+      4:34   
+NOTE: Variable GCluster is uninitialized.
+NOTE: There were 1949 observations read from the data set EMWS4.VARCLUS_OUTSTAT.
+NOTE: The data set EMWS4.VARCLUS_OUTCLUSSTRUCT has 33 observations and 99 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 33 observations read from the data set EMWS4.VARCLUS_OUTCLUSSTRUCT.
+NOTE: The data set WORK.CORR_TMP has 33 observations and 99 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 33 observations read from the data set EMWS4.VARCLUS_OUTCLUSSTRUCT.
+NOTE: The data set EMWS4.VARCLUS_OUTCLUSSTRUCT has 33 observations and 99 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: Deleting WORK.CORR_TMP (memtype=DATA).
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 33 observations read from the data set EMWS4.VARCLUS_OUTCLUSSTRUCT.
+NOTE: The data set WORK._TMPCLUSRSQ has 33 observations and 99 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 33 observations read from the data set WORK._TMPCLUSRSQ.
+NOTE: The data set WORK._TMPCLUSRSQ has 3234 observations and 4 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 3234 observations read from the data set WORK._TMPCLUSRSQ.
+NOTE: The data set WORK._TMPCLUSRSQ has 3234 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 3234 observations read from the data set WORK._TMPCLUSRSQ.
+NOTE: The data set WORK._TMPCLUSRSQ has 3136 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 3136 observations read from the data set WORK._TMPCLUSRSQ.
+NOTE: The data set WORK._TMPCLUSRSQ has 3136 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 3136 observations read from the data set WORK._TMPCLUSRSQ.
+NOTE: The data set WORK._NEXTVARRSQ has 98 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: Deleting WORK._TMPCLUSRSQ (memtype=DATA).
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 98 observations read from the data set WORK._OWNRSQ.
+NOTE: The data set WORK._OWNRSQ has 98 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 98 observations read from the data set WORK._NEXTVARRSQ.
+NOTE: The data set WORK._NEXTVARRSQ has 98 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 98 observations read from the data set WORK._OWNRSQ.
+NOTE: There were 98 observations read from the data set WORK._NEXTVARRSQ.
+NOTE: The data set EMWS4.VARCLUS_OUTRSQUARE has 98 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 33 observations read from the data set WORK._NEXTCLUSRSQ.
+NOTE: The data set WORK._NEXTCLUSRSQ has 33 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 98 observations read from the data set EMWS4.VARCLUS_OUTRSQUARE.
+NOTE: The data set EMWS4.VARCLUS_OUTRSQUARE has 98 observations and 7 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 33 observations read from the data set WORK._NEXTCLUSRSQ.
+NOTE: The data set WORK._NEXTCLUSRSQ has 33 observations and 7 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 98 observations read from the data set EMWS4.VARCLUS_OUTRSQUARE.
+NOTE: There were 33 observations read from the data set WORK._NEXTCLUSRSQ.
+NOTE: The data set EMWS4.VARCLUS_OUTRSQUARE has 131 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 131 observations read from the data set EMWS4.VARCLUS_OUTRSQUARE.
+NOTE: The data set EMWS4.VARCLUS_OUTRSQUARE has 131 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      48932:90   
+NOTE: Character values have been converted to numeric values at the places given by: (Line):(Column).
+      48932:84   
+NOTE: There were 1949 observations read from the data set EMWS4.VARCLUS_OUTSTAT.
+NOTE: The data set EMWS4.VARCLUS_OUTCLUSCORRPLOT has 33 observations and 99 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 33 observations read from the data set EMWS4.VARCLUS_OUTCLUSCORRPLOT.
+NOTE: The data set WORK.CORR_TMP has 33 observations and 99 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 33 observations read from the data set EMWS4.VARCLUS_OUTCLUSCORRPLOT.
+NOTE: The data set EMWS4.VARCLUS_OUTCLUSCORRPLOT has 33 observations and 34 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.04 seconds
+      
+
+
+NOTE: Deleting WORK.CORR_TMP (memtype=DATA).
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 33 observations read from the data set EMWS4.VARCLUS_OUTCLUSCORRPLOT.
+NOTE: The data set EMWS4.VARCLUS_OUTCLUSCORRPLOT has 33 observations and 34 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.03 seconds
+      
+
+
+NOTE: There were 33 observations read from the data set EMWS4.VARCLUS_OUTCLUSCORRPLOT.
+NOTE: The data set EMWS4.VARCLUS_OUTCLUSCORRPLOT has 1089 observations and 3 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+      
+
+
+NOTE: There were 1089 observations read from the data set EMWS4.VARCLUS_OUTCLUSCORRPLOT.
+NOTE: The data set EMWS4.VARCLUS_OUTCLUSCORRPLOT has 1089 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 3 observations read from the data set EMWS4.VARCLUS_OUTSTAT.
+      WHERE _type_ in ('MEAN', 'N', 'STD');
+NOTE: The data set WORK.VARCLUS_TMP has 3 observations and 99 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 3 observations read from the data set WORK.VARCLUS_TMP.
+NOTE: The data set EMWS4.VARCLUS_OUTSTATPLOT has 98 observations and 5 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 98 observations read from the data set EMWS4.VARCLUS_OUTSTATPLOT.
+NOTE: The data set EMWS4.VARCLUS_OUTSTATPLOT has 98 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 98 observations read from the data set EMWS4.VARCLUS_OUTSTATPLOT.
+NOTE: The data set EMWS4.VARCLUS_OUTSTATPLOT has 98 observations and 6 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.03 seconds
+      
+
+
+NOTE: Deleting WORK.VARCLUS_TMP (memtype=DATA).
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 98 observations read from the data set EMWS4.VARCLUS_OUTSTAT.
+      WHERE _type_='CORR';
+NOTE: The data set EMWS4.VARCLUS_OUTCORR has 98 observations and 99 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 98 observations read from the data set EMWS4.VARCLUS_OUTCORR.
+NOTE: The data set EMWS4.VARCLUS_OUTCORR has 98 observations and 99 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.10 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 98 observations read from the data set EMWS4.VARCLUS_OUTCORR.
+NOTE: The data set EMWS4.VARCLUS_OUTCORRPLOT has 9604 observations and 4 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 9604 observations read from the data set EMWS4.VARCLUS_OUTCORRPLOT.
+NOTE: The data set EMWS4.VARCLUS_OUTCORRPLOT has 9604 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.04 seconds
+      
+
+
+NOTE: There were 9408 observations read from the data set EMWS4.VARCLUS_OUTCORRPLOT.
+      WHERE _LABEL_ not = ' ';
+NOTE: The data set WORK.VARCLUS_MATCH has 9408 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      7:246   
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 9408 observations read from the data set WORK.VARCLUS_MATCH.
+NOTE: The data set WORK.VARCLUS_MATCH has 9408 observations and 2 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 9604 observations read from the data set EMWS4.VARCLUS_OUTCORRPLOT.
+NOTE: The data set EMWS4.VARCLUS_OUTCORRPLOT has 9604 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.00 seconds
+      
+
+
+WARNING: Multiple lengths were specified for the BY variable _NAME_ by input data sets. This might cause unexpected results.
+NOTE: MERGE statement has more than one data set with repeats of BY values.
+NOTE: There were 9408 observations read from the data set WORK.VARCLUS_MATCH.
+NOTE: There were 9604 observations read from the data set EMWS4.VARCLUS_OUTCORRPLOT.
+NOTE: The data set EMWS4.VARCLUS_OUTCORRPLOT has 9604 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.35 seconds
+      cpu time            0.04 seconds
+      
+
+
+NOTE: There were 9604 observations read from the data set EMWS4.VARCLUS_OUTCORRPLOT.
+NOTE: The data set EMWS4.VARCLUS_OUTCORRPLOT has 9604 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.29 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: Deleting WORK.VARCLUS_MATCH (memtype=DATA).
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 131 observations read from the data set EMWS4.VARCLUS_OUTRSQUARE.
+NOTE: The data set EMWS4.VARCLUS_OUTLINK has 131 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.03 seconds
+      
+
+
+NOTE: There were 131 observations read from the data set EMWS4.VARCLUS_OUTRSQUARE.
+NOTE: The data set EMWS4.VARCLUS_OUTNODE has 131 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 1949 observations read from the data set EMWS4.VARCLUS_OUTSTAT.
+NOTE: The data set EMWS4.VARCLUS_OUTSTATSCORE has 35 observations and 99 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: The file _FILE_ is:
+      Filename=\\filer.uncc.edu\home\hkatrag1\Predictive Analytics_modified\Workspaces\EMWS4\VarClus\EMFLOWSCORE.sas,
+      RECFM=V,LRECL=32767,File Size (bytes)=2403,
+      Last Modified=12Dec2017:12:42:40,
+      Create Time=12Dec2017:12:42:40
+
+NOTE: 136 records were written to the file _FILE_.
+      The minimum record length was 1.
+      The maximum record length was 84.
+NOTE: DATA statement used (Total process time):
+      real time           0.88 seconds
+      cpu time            0.60 seconds
+      
+
+
+NOTE: The file _OUT is:
+      Filename=\\filer.uncc.edu\home\hkatrag1\Predictive Analytics_modified\Workspaces\EMWS4\VarClus\EMPUBLISHSCORE.sas,
+      RECFM=V,LRECL=20000,File Size (bytes)=0,
+      Last Modified=12Dec2017:12:42:52,
+      Create Time=12Dec2017:12:42:52
+
+NOTE: 249 records were written to the file _OUT.
+      The minimum record length was 1.
+      The maximum record length was 84.
+NOTE: DATA statement used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: Fileref _IN has been deassigned.
+NOTE: Fileref _OUT has been deassigned.
+17683  *------------------------------------------------------------*;
+17684  * End TRAIN: VarClus;
+17685  *------------------------------------------------------------*;
+17686  
+
+17687  *------------------------------------------------------------*;
+17688  * Close any missing semi colons;
+17689  *------------------------------------------------------------*;
+17690  ;
+17691  ;
+17692  ;
+17693  ;
+17694  quit;
+17695  *------------------------------------------------------------*;
+17696  * Close any unbalanced quotes;
+17697  *------------------------------------------------------------*;
+17698  /*; *"; *'; */
+17699  ;
+17700  run;
+17701  quit;
+17702  /* Reset EM Options */
+17703  options formchar="|----|+|---+=|-/\<>*";
+17704  options nocenter ls=256 ps=10000;
+17705  goptions reset=all device=GIF NODISPLAY;
+

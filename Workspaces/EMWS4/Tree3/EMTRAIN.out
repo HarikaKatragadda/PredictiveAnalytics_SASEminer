@@ -1,0 +1,43 @@
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Variable Summary
+
+            Measurement    Frequency
+Role           Level         Count
+
+ID           INTERVAL           1   
+ID           NOMINAL            1   
+INPUT        BINARY             2   
+INPUT        INTERVAL          88   
+INPUT        NOMINAL            2   
+REJECTED     INTERVAL           1   
+REJECTED     NOMINAL            3   
+TARGET       BINARY             1   
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Model Events
+
+                                   Number
+                    Measurement      of
+Target     Event       Level       Levels      Order            Label
+
+RESPOND      1        BINARY          2      Descending    response target
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Predicted and decision variables
+
+Type          Variable     Label
+
+TARGET       RESPOND       response target     
+PREDICTED    P_RESPOND1    Predicted: RESPOND=1
+RESIDUAL     R_RESPOND1    Residual: RESPOND=1 
+PREDICTED    P_RESPOND0    Predicted: RESPOND=0
+RESIDUAL     R_RESPOND0    Residual: RESPOND=0 
+FROM         F_RESPOND     From: RESPOND       
+INTO         I_RESPOND     Into: RESPOND       

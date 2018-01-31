@@ -1,0 +1,113 @@
+*------------------------------------------------------------*
+* Score Log
+Date:                November 28, 2017
+Time:                14:12:21
+*------------------------------------------------------------*
+11144  filename emflow "\\filer.uncc.edu\home\hkatrag1\Project_lab\Predictive Analytics\Workspaces\EMWS1\Varsel\EMFLOWSCORE.sas";
+11145  *------------------------------------------------------------*;
+11146  * Varsel: Scoring DATA data;
+11147  *------------------------------------------------------------*;
+11148  data EMWS1.Varsel_TRAIN
+11149  / view=EMWS1.Varsel_TRAIN
+11150  ;
+11151  set EMWS1.Ids2_DATA
+11152  ;
+11153  %inc emflow;
+11166  run;
+
+NOTE: DATA STEP view saved on file EMWS1.VARSEL_TRAIN.
+NOTE: A stored DATA STEP view cannot run under a different operating system.
+NOTE: View EMWS1.IDS2_DATA.VIEW used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.03 seconds
+      
+NOTE: DATA statement used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.04 seconds
+      
+
+11167  quit;
+11168  filename emflow;
+NOTE: Fileref EMFLOW has been deassigned.
+
+11169  options nosource;
+
+NOTE: There were 192 observations read from the data set EMWS1.VARSEL_OUTRSQUARE.
+NOTE: The data set EMWS1.VARSEL_R2DS has 103 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 103 observations read from the data set EMWS1.VARSEL_R2DS.
+NOTE: The data set EMWS1.VARSEL_R2DS has 103 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 7 observations read from the data set EMWS1.VARSEL_OUTEFFECT.
+NOTE: The data set EMWS1.VARSEL_EFFECTDS has 7 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 7 observations read from the data set EMWS1.VARSEL_EFFECTDS.
+NOTE: The data set EMWS1.VARSEL_EFFECTDS has 7 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+      
+
+
+NOTE: View EMWS1.VARSEL_TRAIN.VIEW used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.06 seconds
+      
+NOTE: View EMWS1.VARSEL_TRAIN.VIEW used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.06 seconds
+      
+12067  run;
+
+12068  data EMWS1.Varsel_CMETA_NONREJECTS EMWS1.Varsel_CMETA_REJECTS;
+12069  set EMWS1.Varsel_CMETA_TRAIN;
+12070  if ROLE ='REJECTED' then output EMWS1.Varsel_CMETA_REJECTS;
+12071  else output EMWS1.Varsel_CMETA_NONREJECTS;
+12072  run;
+
+NOTE: There were 99 observations read from the data set EMWS1.VARSEL_CMETA_TRAIN.
+NOTE: The data set EMWS1.VARSEL_CMETA_NONREJECTS has 11 observations and 20 variables.
+NOTE: The data set EMWS1.VARSEL_CMETA_REJECTS has 88 observations and 20 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.04 seconds
+      
+
+12073  data EMWS1.Varsel_CMETA_TRAIN;
+12074  set EMWS1.Varsel_CMETA_NONREJECTS;
+12075  run;
+
+NOTE: There were 11 observations read from the data set EMWS1.VARSEL_CMETA_NONREJECTS.
+NOTE: The data set EMWS1.VARSEL_CMETA_TRAIN has 11 observations and 20 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+      
+
+12076  data WORK._tmp_meta_;
+12077  set EMWS1.Varsel_CMETA_TRAIN;
+12078  if ROLE ^= 'INPUT' then delete;
+12079  run;
+
+NOTE: There were 11 observations read from the data set EMWS1.VARSEL_CMETA_TRAIN.
+NOTE: The data set WORK._TMP_META_ has 7 observations and 20 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+

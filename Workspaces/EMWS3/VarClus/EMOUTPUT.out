@@ -1,0 +1,153 @@
+*------------------------------------------------------------*
+User:                srajan4
+Date:                December 12, 2017
+Time:                10:51:28
+*------------------------------------------------------------*
+* Training Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Variable Summary
+ 
+            Measurement    Frequency
+Role           Level         Count
+ 
+ID           INTERVAL           2
+INPUT        BINARY             3
+INPUT        INTERVAL          54
+INPUT        NOMINAL           33
+REJECTED     INTERVAL           4
+REJECTED     NOMINAL            2
+TARGET       BINARY             1
+ 
+ 
+ 
+ 
+ 
+Oblique Principal Component Cluster Analysis
+ 
+Observations          32235    Proportion          0
+Variables                81    Maxeigen            0
+ 
+ 
+Clustering algorithm converged.
+ 
+ 
+                      Cluster Summary for 1 Cluster
+ 
+                        Cluster    Variation    Proportion        Second
+Cluster    Members    Variation    Explained     Explained    Eigenvalue
+------------------------------------------------------------------------
+      1         81           81     11.36336        0.1403        1.9969
+ 
+Total variation explained = 11.36336 Proportion = 0.1403
+ 
+No cluster meets the criterion for splitting.
+ 
+ 
+ 
+ 
+ 
+Oblique Principal Component Cluster Analysis
+ 
+Observations          32235    Proportion          0
+Variables               207    Maxeigen            0
+ 
+ 
+Clustering algorithm converged.
+ 
+ 
+                      Cluster Summary for 1 Cluster
+ 
+                        Cluster    Variation    Proportion        Second
+Cluster    Members    Variation    Explained     Explained    Eigenvalue
+------------------------------------------------------------------------
+      1        207          207     4.983806        0.0241        4.0539
+ 
+Total variation explained = 4.983806 Proportion = 0.0241
+ 
+No cluster meets the criterion for splitting.
+ 
+ 
+ 
+ 
+ 
+Oblique Principal Component Cluster Analysis
+ 
+Observations          32235    Proportion          0
+Variables                13    Maxeigen            0
+ 
+ 
+Clustering algorithm converged.
+ 
+ 
+                      Cluster Summary for 1 Cluster
+ 
+                        Cluster    Variation    Proportion        Second
+Cluster    Members    Variation    Explained     Explained    Eigenvalue
+------------------------------------------------------------------------
+      1         13           13     10.06568        0.7743        0.7903
+ 
+Total variation explained = 10.06568 Proportion = 0.7743
+ 
+No cluster meets the criterion for splitting.
+ 
+ 
+ 
+ 
+ 
+Oblique Principal Component Cluster Analysis
+ 
+Observations          32235    Proportion          0
+Variables                 4    Maxeigen            0
+ 
+ 
+Clustering algorithm converged.
+ 
+ 
+                      Cluster Summary for 1 Cluster
+ 
+                        Cluster    Variation    Proportion        Second
+Cluster    Members    Variation    Explained     Explained    Eigenvalue
+------------------------------------------------------------------------
+      1          4            4            4        1.0000       -0.0000
+ 
+Total variation explained = 4 Proportion = 1.0000
+ 
+No cluster meets the criterion for splitting.
+ 
+ 
+ 
+ 
+ 
+Oblique Principal Component Cluster Analysis
+ 
+Observations          32235    Proportion          0
+Variables                38    Maxeigen            0
+ 
+ 
+Clustering algorithm converged.
+ 
+ 
+                      Cluster Summary for 1 Cluster
+ 
+                        Cluster    Variation    Proportion        Second
+Cluster    Members    Variation    Explained     Explained    Eigenvalue
+------------------------------------------------------------------------
+      1         38           38     4.149752        0.1092        2.4255
+ 
+Total variation explained = 4.149752 Proportion = 0.1092
+ 
+No cluster meets the criterion for splitting.
+
+
+*------------------------------------------------------------*
+* Score Output
+*------------------------------------------------------------*
+
+
+*------------------------------------------------------------*
+* Report Output
+*------------------------------------------------------------*

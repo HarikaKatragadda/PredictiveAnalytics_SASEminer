@@ -1,0 +1,105 @@
+*------------------------------------------------------------*
+User:                srajan4
+Date:                December 12, 2017
+Time:                09:25:17
+*------------------------------------------------------------*
+* Training Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Variable Summary
+ 
+            Measurement    Frequency
+Role           Level         Count
+ 
+ID           INTERVAL           1
+INPUT        BINARY             3
+INPUT        INTERVAL          54
+INPUT        NOMINAL           33
+REJECTED     INTERVAL           3
+REJECTED     NOMINAL            2
+TARGET       BINARY             1
+TARGET       INTERVAL           1
+ 
+ 
+ 
+ 
+Partition Summary
+ 
+                                     Number of
+Type             Data Set          Observations
+ 
+DATA        EMWS2.Ids_DATA             48356
+TRAIN       EMWS2.Part_TRAIN           32235
+VALIDATE    EMWS2.Part_VALIDATE        16121
+
+
+*------------------------------------------------------------*
+* Score Output
+*------------------------------------------------------------*
+
+
+*------------------------------------------------------------*
+* Report Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Summary Statistics for Class Targets
+ 
+Data=DATA
+ 
+            Numeric    Formatted    Frequency
+Variable     Value       Value        Count      Percent         Label
+ 
+RESPOND        0           0          45617      94.3358    response target
+RESPOND        1           1           2739       5.6642    response target
+ 
+ 
+Data=TRAIN
+ 
+            Numeric    Formatted    Frequency
+Variable     Value       Value        Count      Percent         Label
+ 
+RESPOND        0           0          30410      94.3385    response target
+RESPOND        1           1           1825       5.6615    response target
+ 
+ 
+Data=VALIDATE
+ 
+            Numeric    Formatted    Frequency
+Variable     Value       Value        Count      Percent         Label
+ 
+RESPOND        0           0          15207      94.3304    response target
+RESPOND        1           1            914       5.6696    response target
+ 
+ 
+ 
+ 
+Summary Statistics for Interval Targets
+ 
+Data=DATA
+ 
+                                                        Number of                   Standard
+Variable        Maximum          Mean       Minimum    Observations    Missing     Deviation            Label
+ 
+ORDERSIZE       $510.72         $3.56         $0.00     $48,356.00        0           $20.35    dollar value of order
+ 
+ 
+Data=TRAIN
+ 
+                                                        Number of                   Standard
+Variable        Maximum          Mean       Minimum    Observations    Missing     Deviation            Label
+ 
+ORDERSIZE       $478.70         $3.53         $0.00     $32,235.00        0           $20.05    dollar value of order
+ 
+ 
+Data=VALIDATE
+ 
+                                                        Number of                   Standard
+Variable        Maximum          Mean       Minimum    Observations    Missing     Deviation            Label
+ 
+ORDERSIZE       $510.72         $3.60         $0.00     $16,121.00        0           $20.93    dollar value of order

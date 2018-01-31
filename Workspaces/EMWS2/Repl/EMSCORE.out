@@ -1,0 +1,11 @@
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Replacement Values for Class Variables
+
+                                   Character
+             Formatted            Unformatted    Numeric    Replacement
+Variable       Value      Type       Value        Value        Value       Label
+
+DemGender        U         C           U            .        _UNKNOWN_     Gender

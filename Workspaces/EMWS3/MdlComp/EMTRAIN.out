@@ -1,0 +1,118 @@
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Variable Summary
+
+          Measurement    Frequency
+ Role        Level         Count
+
+TARGET      BINARY           1    
+ 
+                                                                                               
+ 
+ 
+
+
+
+
+
+
+
+Fit Statistics
+Model Selection based on Valid: Misclassification Rate (_VMISC_)
+
+                                                      Train:                         Valid:
+                                       Valid:         Average         Train:         Average
+Selected   Model      Model      Misclassification    Squared   Misclassification    Squared
+ Model     Node    Description          Rate           Error           Rate           Error
+
+   Y       Tree2      Tree2           0.056262       0.051392        0.055995       0.051990
+           Tree       Tree1           0.056572       0.050832        0.055592       0.052362
+ 
+                                                                                               
+ 
+ 
+
+
+
+
+
+
+
+Fit Statistics Table
+Target: RESPOND
+
+Data Role=Train
+
+Statistics                                                           Tree2        Tree
+
+Train: Bin-Based Two-Way Kolmogorov-Smirnov Probability Cutoff        0.08        0.07
+Train: Kolmogorov-Smirnov Statistic                                   0.24        0.25
+Train: Average Squared Error                                          0.05        0.05
+Train: Roc Index                                                      0.65        0.66
+Train: Cumulative Percent Captured Response                          25.50       28.46
+Train: Percent Captured Response                                      9.10       10.74
+Selection Criterion: Valid: Misclassification Rate                    0.06        0.06
+Train: Total Degrees of Freedom                                   32235.00    32235.00
+Train: Divisor for ASE                                            64470.00    64470.00
+Train: Gain                                                         154.92      184.59
+Train: Gini Coefficient                                               0.30        0.32
+Train: Bin-Based Two-Way Kolmogorov-Smirnov Statistic                 0.24        0.25
+Train: Kolmogorov-Smirnov Probability Cutoff                          0.06        0.06
+Train: Cumulative Lift                                                2.55        2.85
+Train: Lift                                                           1.82        2.15
+Train: Maximum Absolute Error                                         0.96        0.97
+Train: Misclassification Rate                                         0.06        0.06
+Train: Sum of Frequencies                                         32235.00    32235.00
+Train: Root Average Squared Error                                     0.23        0.23
+Train: Cumulative Percent Response                                   14.43       16.11
+Train: Percent Response                                              10.31       12.16
+Train: Sum of Squared Errors                                       3313.26     3277.16
+
+
+Data Role=Valid
+
+Statistics                                                           Tree2        Tree
+
+Valid: Kolmogorov-Smirnov Statistic                                   0.22        0.21
+Valid: Average Squared Error                                          0.05        0.05
+Valid: Roc Index                                                      0.64        0.64
+Valid: Bin-Based Two-Way Kolmogorov-Smirnov Probability Cutoff        0.05        0.07
+Valid: Cumulative Percent Captured Response                          24.16       23.82
+Valid: Percent Captured Response                                      8.53       10.02
+Valid: Divisor for VASE                                           32242.00    32242.00
+Valid: Gain                                                         141.49      138.06
+Valid: Gini Coefficient                                               0.28        0.27
+Valid: Bin-Based Two-Way Kolmogorov-Smirnov Statistic                 0.22        0.21
+Valid: Kolmogorov-Smirnov Probability Cutoff                          0.04        0.06
+Valid: Cumulative Lift                                                2.41        2.38
+Valid: Lift                                                           1.71        2.00
+Valid: Maximum Absolute Error                                         0.96        0.97
+Valid: Misclassification Rate                                         0.06        0.06
+Valid: Sum of Frequencies                                         16121.00    16121.00
+Valid: Root Average Squared Error                                     0.23        0.23
+Valid: Cumulative Percent Response                                   13.69       13.50
+Valid: Percent Response                                               9.67       11.36
+Valid: Sum of Squared Errors                                       1676.25     1688.26
+ 
+                                                                                               
+ 
+ 
+
+
+
+
+
+
+
+Event Classification Table
+Model Selection based on Valid: Misclassification Rate (_VMISC_)
+
+Model     Model     Data                                  False     True      False     True
+Node   Description  Role      Target    Target Label    Negative  Negative  Positive  Positive
+
+Tree      Tree1     TRAIN     RESPOND  response target    1773      30391      19        52   
+Tree      Tree1     VALIDATE  RESPOND  response target     902      15197      10        12   
+Tree2     Tree2     TRAIN     RESPOND  response target    1804      30409       1        21   
+Tree2     Tree2     VALIDATE  RESPOND  response target     907      15207       .         7   

@@ -1,0 +1,43 @@
+*------------------------------------------------------------*
+User:                hkatrag1
+Date:                December 12, 2017
+Time:                11:44:58
+*------------------------------------------------------------*
+* Training Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Variable Summary
+ 
+            Measurement    Frequency
+Role           Level         Count
+ 
+INPUT        BINARY             2
+INPUT        INTERVAL          21
+INPUT        NOMINAL            3
+REJECTED     INTERVAL           1
+TARGET       BINARY             1
+ 
+ 
+ 
+Computed Transformations
+(maximum 500 observations printed)
+ 
+                                      Input
+Input Name                  Role      Level      Name                              Level       Formula
+ 
+GiftCntAll                  INPUT    INTERVAL    PCTL_GiftCntAll                  NOMINAL    Quantile(5)
+GiftTimeLast_REV            INPUT    INTERVAL    PCTL_GiftTimeLast_REV            NOMINAL    Quantile(5)
+Monetary_TotalGiftAmount    INPUT    INTERVAL    PCTL_Monetary_TotalGiftAmount    NOMINAL    Quantile(5)
+
+
+*------------------------------------------------------------*
+* Score Output
+*------------------------------------------------------------*
+
+
+*------------------------------------------------------------*
+* Report Output
+*------------------------------------------------------------*

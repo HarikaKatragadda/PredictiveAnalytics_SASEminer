@@ -1,0 +1,258 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1 
+Traverser: Traverser invoked.  MPCONNECT command is sas. 
+Traverser: Beginning flow traversal 
+*------------------------------------------------------------* 
+* 
+* Ids2 : Beginning Update 
+* datetime : 11DEC2017:23:08:13 
+* 
+*------------------------------------------------------------* 
+13876      %let _HPDMGRIDHOST=;
+13877      %let _HPDMGRIDINSTALLLOC=;
+13878      %let _HPDMGRIDDATASERVER=;
+13879      %hpdm_gridSetOPtions;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+*------------------------------------------------------------* 
+* 
+* Ids2 : End Update 
+* datetime : 11DEC2017:23:08:13 
+* 
+*------------------------------------------------------------* 
+Traverser: WaitingNode "REPL" 
+traverser_readyNode_note 
+*------------------------------------------------------------* 
+* 
+* Stat : Beginning Update 
+* datetime : 11DEC2017:23:08:14 
+* 
+*------------------------------------------------------------* 
+13900      %let _HPDMGRIDHOST=;
+13901      %let _HPDMGRIDINSTALLLOC=;
+13902      %let _HPDMGRIDDATASERVER=;
+13903      %hpdm_gridSetOPtions;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+*------------------------------------------------------------* 
+* 
+* Stat : End Update 
+* datetime : 11DEC2017:23:08:14 
+* 
+*------------------------------------------------------------* 
+traverser_readyNode_note 
+*------------------------------------------------------------* 
+* 
+* Repl : Beginning Update 
+* datetime : 11DEC2017:23:08:14 
+* 
+*------------------------------------------------------------* 
+PERFORMANCE  DETAILS
+14141      %let emexceptionString =;
+14142      %let EMEXCEPTIONSTRING=;
+14143      *------------------------------------------------------------*;
+14144      * UPDATE: Repl;
+14145      *------------------------------------------------------------*;
+14146      %let EM_ACTION = UPDATE;
+14147      %let syscc = 0;
+14148      filename x CATALOG 'SASHELP.EMUTIL.EM_VARMACRO.SOURCE';
+14149      %inc x;
+NOTE: %INCLUDE (level 1) file X is file SASHELP.EMUTIL.EM_VARMACRO.SOURCE.
+14151     +%macro em_varMacro(name=emMacro, metadata=, where=, key=NAME, nummacro=, maxvar=-1);
+14153     +   filename macFile catalog 'work.emutil.macro.source';
+14154     +   %let _METAOBS = 0;
+14155     +   %let _maxvar = &maxvar;
+14156     +   %if "&_maxvar" eq "" %then %let maxvar = -1;
+14158     +   %if (%sysfunc(exist(&metadata))<1 and %sysfunc(exist(&metadata, VIEW))<1)
+14159     +                   or (&metadata eq ) %then %do;
+14160     +       %put * No metadata data set defined;
+14161     +       %goto doend;
+14162     +   %end;
+14164     +   data _null_;
+14165     +      length _STRING_ $80;
+14166     +      retain _STRING_ '' maxvar 0;
+14167     +      set &metadata end=eof;
+14168     +      file macFile;
+14169     +      %if %nrbquote(&where) ne %then %do;
+14170     +          %let whereClause = where (%nrbquote(&where));
+14171     +          %unquote(&whereClause);
+14172     +      %end;
+14173     +      if _N_=1 then do;
+14174     +         string = "%"!!"macro &name;";
+14175     +         put string;
+14176     +      end;
+14177     +      maxvar +1;
+14178     +      if (length(_STRING_) + length(trim(&key))+ 4 < 80) then do;
+14179     +         _STRING_ = trim(_STRING_)!!' '!!trim(&key);
+14180     +         if eof
+14181     +            %if  %sysevalf(&_maxvar > 0) %then %do;
+14182     +                or maxvar >= &maxvar
+14183     +            %end;
+14184     +            then do;
+14185     +            put _STRING_;
+14186     +            string = "%"!!"mend &name;";
+14187     +            put string;
+14188     +            string = strip(put(_N_, best.));
+14189     +            call symput('_METAOBS', string);
+14190     +            %if (&nummacro ne ) %then %do;
+14191     +                put "%" "global &nummacro;";
+14192     +                put "%" "let &nummacro = " string ";";
+14193     +            %end;
+14194     +            stop;
+14195     +         end;
+14196     +      end;
+14197     +      else do;
+14198     +         put _STRING_;
+14199     +         _string_ = TRIM(&key);
+14200     +         if eof
+14201     +            %if  %sysevalf(&_maxvar > 0) %then %do;
+14202     +              or maxvar >= &maxvar
+14203     +           %end;
+14204     +            then do;
+14205     +            put _STRING_;
+14206     +            string = "%"!!"mend &name;";
+14207     +            put string;
+14208     +        end;
+14209     +      end;
+14210     +      if eof
+14211     +         %if  %sysevalf(&_maxvar > 0) %then %do;
+14212     +             or maxvar >= &maxvar
+14213     +         %end;
+14214     +         then do;
+14215     +         string = strip(put(_N_, best.));
+14216     +         call symput('_METAOBS', string);
+14217     +         %if (&nummacro ne ) %then %do;
+14218     +             put "%" "global &nummacro;";
+14219     +             put "%" "let &nummacro = " string ";";
+14220     +         %end;
+14221     +         stop;
+14222     +      end;
+14223     +   run;
+14225     +   %doend:
+14226     +   %if ^&_METAOBS %then %do;
+14227     +       data _null_;
+14228     +          file macFile;
+14229     +          put "%" "macro &name;";
+14230     +          put "%" "mend &name;";
+14231     +          %if (&nummacro ne ) %then %do;
+14232     +              put "%" "global &nummacro;";
+14233     +              put "%" "let &nummacro = 0;";
+14234     +          %end;
+14235     +      run;
+14236     +   %end;
+14237     +   %inc macFile;
+14238     +   filename macFile;
+14239     +%mend em_varMacro;
+NOTE: %INCLUDE (level 1) ending.
+14240      filename X;
+NOTE: Fileref X has been deassigned.
+14241       %macro main;
+14242      
+14243         filename temp catalog 'sashelp.emmdfy.Replace_macros.source';
+14244         %include temp;
+14245         filename temp;
+14246      
+14247         %if %upcase(&EM_ACTION) = CREATE %then %do;
+14248      
+14249             filename temp catalog 'sashelp.emmdfy.Replace_create.source';
+14250             %include temp;
+14251             filename temp;
+14252             %create;
+14253         %end;
+14254         %else
+14255         %if %upcase(&EM_ACTION) = TRAIN %then %do;
+14256      
+14257             filename temp catalog 'sashelp.emmdfy.Replace_train.source';
+14258             %include temp;
+14259             filename temp;
+14260             %train;
+14261         %end;
+14262         %else
+14263         %if %upcase(&EM_ACTION) = SCORE %then %do;
+14264      
+14265             filename temp catalog 'sashelp.emmdfy.Replace_score.source';
+14266             %include temp;
+14267             filename temp;
+14268             %score;
+14269         %end;
+14270         %if %upcase(&EM_ACTION) = REPORT %then %do;
+14271      
+14272             filename temp catalog 'sashelp.emmdfy.Replace_report.source';
+14273             %include temp;
+14274             filename temp;
+14275             %report;
+14276         %end;
+14277         %if %upcase(&EM_ACTION) = OPENOUTCLASSTABLE %then %do;
+14278             filename temp catalog 'sashelp.emmdfy.replace_makeoutclass.source';
+14279             %include temp;
+14280             filename temp;
+14281             %em_replace_openoutclass;
+14282         %end;
+14283         %if %upcase(&EM_ACTION) = CLOSEOUTCLASSTABLE %then %do;
+14284             filename temp catalog 'sashelp.emmdfy.replace_makeoutclass.source';
+14285             %include temp;
+14286             filename temp;
+14287             %em_replace_closeoutclass;
+14288         %end;
+14289      %mend main;
+14290      
+14291      %main;
+NOTE: %INCLUDE (level 1) file TEMP is file SASHELP.EMMDFY.REPLACE_MACROS.SOURCE.
+14292     +%macro SetProperties;
+14293     +   %em_checkmacro(name=EM_PROPERTY_UNKNOWNLEVEL,    global=Y, value=MODE);
+14294     +   %em_checkmacro(name=EM_PROPERTY_CALCMETHOD,      global=Y, value=NONE);
+14295     +   %em_checkmacro(name=EM_PROPERTY_PERCENTSCUTOFF,  global=Y, value=0.5);
+14296     +   %em_checkmacro(name=EM_PROPERTY_SPACINGSCUTOFF,  global=Y, value=9);
+14297     +   %em_checkMacro(name=EM_PROPERTY_MADSCUTOFF,      global=Y, value=9);
+14298     +   %em_checkMacro(name=EM_PROPERTY_STDDEVCUTOFF,    global=Y, value=3);
+14299     +   %em_checkmacro(name=EM_PROPERTY_REPLACEMETHOD,   global=Y, value=COMPUTED);
+14300     +   %em_checkmacro(name=EM_PROPERTY_HIDEVARIABLE,    global=Y, value=N);
+14301     +   %em_checkmacro(name=EM_PROPERTY_INTERVALMETHOD,  global=Y, value=NONE);
+14302     +   %em_checkmacro(name=EM_PROPERTY_REPORTCOUNT,     global=Y, value=Y);
+14303     +
+14304     +%mend SetProperties;
+14305     +
+NOTE: %INCLUDE (level 1) ending.
+NOTE: Fileref TEMP has been deassigned.
+14306      *------------------------------------------------------------*;
+14307      * End UPDATE: Repl;
+14308      *------------------------------------------------------------*;
+14309      
+
+14310      %em_delMacro;
+
+14312      %let _HPDMGRIDHOST=;
+14313      %let _HPDMGRIDINSTALLLOC=;
+14314      %let _HPDMGRIDDATASERVER=;
+14315      %hpdm_gridSetOPtions;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+*------------------------------------------------------------* 
+* 
+* Repl : End Update 
+* datetime : 11DEC2017:23:08:15 
+* 
+*------------------------------------------------------------* 
+Traverser: Run Completed 
+14316      proc printto;
+14317      run;
+

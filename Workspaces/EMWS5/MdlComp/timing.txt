@@ -1,0 +1,1 @@
+Start: 1828698206.1 Time: 9.0629999638 StartFmt: 12DEC2017:11:43:26 EndFmt: 12DEC2017:11:43:35 TimeFmt: 0 Hr. 0 Min. 9.06 Sec.

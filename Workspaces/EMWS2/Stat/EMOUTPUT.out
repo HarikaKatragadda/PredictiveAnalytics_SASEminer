@@ -1,0 +1,403 @@
+*------------------------------------------------------------*
+User:                hkatrag1
+Date:                December 11, 2017
+Time:                22:55:20
+*------------------------------------------------------------*
+* Training Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Variable Summary
+ 
+            Measurement    Frequency
+Role           Level         Count
+ 
+ID           NOMINAL            1
+INPUT        BINARY             2
+INPUT        INTERVAL          20
+INPUT        NOMINAL            3
+REJECTED     INTERVAL           1
+TARGET       BINARY             1
+ 
+ 
+ 
+Variable Levels Summary
+(maximum 500 observations printed)
+ 
+                      Frequency
+Variable    Role        Count
+ 
+ID          ID           9686
+TargetB     TARGET          2
+ 
+ 
+ 
+Class Variable Summary Statistics
+(maximum 500 observations printed)
+ 
+Data Role=TRAIN
+ 
+                                       Number
+Data                                     of                            Mode                  Mode2
+Role     Variable Name        Role     Levels    Missing    Mode    Percentage    Mode2    Percentage
+ 
+TRAIN    DemCluster          INPUT       54         0        40        4.46        24         4.14
+TRAIN    DemGender           INPUT        3         0        F        53.92        M         40.52
+TRAIN    DemHomeOwner        INPUT        2         0        H        55.51        U         44.49
+TRAIN    StatusCat96NK       INPUT        6         0        A        60.15        S         24.42
+TRAIN    StatusCatStarAll    INPUT        2         0        1        54.06        0         45.94
+TRAIN    TargetB             TARGET       2         0        0        50.00        1         50.00
+ 
+ 
+ 
+Distribution of Class Target and Segment Variables
+(maximum 500 observations printed)
+ 
+Data Role=TRAIN
+ 
+Data     Variable                        Frequency
+Role       Name       Role     Level         Count    Percent
+ 
+TRAIN    TargetB     TARGET      0            4843       50
+TRAIN    TargetB     TARGET      1            4843       50
+ 
+ 
+ 
+Interval Variable Summary Statistics
+(maximum 500 observations printed)
+ 
+Data Role=TRAIN
+ 
+                                        Standard          Non
+Variable           Role         Mean    Deviation     Missing     Missing     Minimum      Median     Maximum    Skewness    Kurtosis
+ 
+DemAge             INPUT    59.15084     16.5164         7279        2407           0          60          87    -0.38791    -0.47761
+DemMedHomeValue    INPUT    110986.3    98670.86         9686           0           0       76900      600000    2.378211    6.451365
+DemMedIncome       INPUT    40491.44    28707.49         9686           0           0       43100      200001    0.310025    0.636848
+DemPctVeterans     INPUT    30.60427    11.39499         9686           0           0          31          85    -0.20706     1.27441
+GiftAvg36          INPUT     14.8762    10.05701         9686           0           0        13.5         260    5.627792    77.09997
+GiftAvgAll         INPUT    12.48932    9.209297         9686           0         1.5       10.71         450    14.48649    561.7552
+GiftAvgCard36      INPUT    14.22443    10.02271         7906        1780        1.33        12.5         260    6.051455    87.12627
+GiftAvgLast        INPUT    16.01774     12.0418         9686           0           0          15         450    9.918893    246.0504
+GiftCnt36          INPUT    3.205451    2.133421         9686           0           0           3          16    1.288353    2.047415
+GiftCntAll         INPUT    10.50764    8.993401         9686           0           1           8          91    1.863109    6.047766
+GiftCntCard36      INPUT    1.856597    1.595419         9686           0           0           1           9    1.172452    1.494867
+GiftCntCardAll     INPUT     5.58249    4.736894         9686           0           0           4          41    1.331353    2.024864
+GiftTimeFirst      INPUT    71.10035    37.69198         9686           0          15          68         260    0.195399    -1.24787
+GiftTimeLast       INPUT    18.00217    4.073549         9686           0           4          18          27    -0.77805    2.469076
+PromCnt12          INPUT    12.98885    4.823458         9686           0           2          12          59    2.873723    11.99538
+PromCnt36          INPUT    29.34823    7.809743         9686           0           4          31          78    0.261958    2.174341
+PromCntAll         INPUT    48.48348    23.06148         9686           0           5          48         174    0.460765    0.216596
+PromCntCard12      INPUT    5.392009    1.323648         9686           0           0           6          17    0.684994    5.798685
+PromCntCard36      INPUT    11.95468    4.571568         9686           0           2          13          28     -0.4266    -0.98685
+PromCntCardAll     INPUT    19.00712    8.562193         9686           0           2          19          56    0.142856    -0.78032
+ 
+ 
+ 
+Class Variable Summary Statistics by Class Target
+(maximum 500 observations printed)
+ 
+Data Role=TRAIN Variable Name=DemCluster
+ 
+                       Number
+             Target      of                            Mode                  Mode2
+ Target      Level     Levels    Missing    Mode    Percentage    Mode2    Percentage
+ 
+TargetB        0         54         0        36        4.46        40         4.07
+TargetB        1         54         0        40        4.85        24         4.46
+_OVERALL_                54         0        40        4.46        24         4.14
+ 
+ 
+Data Role=TRAIN Variable Name=DemGender
+ 
+                       Number
+             Target      of                            Mode                  Mode2
+ Target      Level     Levels    Missing    Mode    Percentage    Mode2    Percentage
+ 
+TargetB        0          3         0        F        53.97         M        40.53
+TargetB        1          3         0        F        53.87         M        40.51
+_OVERALL_                 3         0        F        53.92         M        40.52
+ 
+ 
+Data Role=TRAIN Variable Name=DemHomeOwner
+ 
+                       Number
+             Target      of                            Mode                  Mode2
+ Target      Level     Levels    Missing    Mode    Percentage    Mode2    Percentage
+ 
+TargetB        0          2         0        H        55.11         U        44.89
+TargetB        1          2         0        H        55.92         U        44.08
+_OVERALL_                 2         0        H        55.51         U        44.49
+ 
+ 
+Data Role=TRAIN Variable Name=StatusCat96NK
+ 
+                       Number
+             Target      of                            Mode                  Mode2
+ Target      Level     Levels    Missing    Mode    Percentage    Mode2    Percentage
+ 
+TargetB        0          6         0        A        62.61         S        20.36
+TargetB        1          6         0        A        57.69         S        28.47
+_OVERALL_                 6         0        A        60.15         S        24.42
+ 
+ 
+Data Role=TRAIN Variable Name=StatusCatStarAll
+ 
+                       Number
+             Target      of                            Mode                  Mode2
+ Target      Level     Levels    Missing    Mode    Percentage    Mode2    Percentage
+ 
+TargetB        0          2         0        0        51.46         1        48.54
+TargetB        1          2         0        1        59.57         0        40.43
+_OVERALL_                 2         0        1        54.06         0        45.94
+ 
+ 
+ 
+Interval Variable Summary Statistics by Class Target
+(maximum 500 observations printed)
+ 
+Data Role=TRAIN Variable=DemAge
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role     Label
+ 
+TargetB        0             59        1243        3600           0          87    58.30444    17.04258     -0.35411    -0.51353    INPUT     Age
+TargetB        1             61        1164        3679           4          87    59.97907    15.94363     -0.40811    -0.46667    INPUT     Age
+_OVERALL_                    60        2407        7279           0          87    59.15084     16.5164     -0.38791    -0.47761    INPUT     Age
+ 
+ 
+Data Role=TRAIN Variable=DemMedHomeValue
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role              Label
+ 
+TargetB        0          73500           0        4843           0      600000    105602.5    93613.58      2.45447    7.028041    INPUT    Median Home Value Region
+TargetB        1          80900           0        4843           0      598200    116370.1    103210.5     2.298045    5.885745    INPUT    Median Home Value Region
+_OVERALL_                 76900           0        9686           0      600000    110986.3    98670.86     2.378211    6.451365    INPUT    Median Home Value Region
+ 
+ 
+Data Role=TRAIN Variable=DemMedIncome
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role            Label
+ 
+TargetB        0          42652           0        4843           0      200001    40105.67    28402.52     0.325951    0.743776    INPUT    Median Income Region
+TargetB        1          43514           0        4843           0      200001    40877.22    29007.07     0.293584    0.538385    INPUT    Median Income Region
+_OVERALL_                 43100           0        9686           0      200001    40491.44    28707.49     0.310025    0.636848    INPUT    Median Income Region
+ 
+ 
+Data Role=TRAIN Variable=DemPctVeterans
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role              Label
+ 
+TargetB        0             31           0        4843           0          85    30.46025    11.23111     -0.15288    1.374496    INPUT    Percent Veterans Region
+TargetB        1             31           0        4843           0          79     30.7483    11.55591      -0.2589    1.187646    INPUT    Percent Veterans Region
+_OVERALL_                    31           0        9686           0          85    30.60427    11.39499     -0.20706     1.27441    INPUT    Percent Veterans Region
+ 
+ 
+Data Role=TRAIN Variable=GiftAvg36
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role                 Label
+ 
+TargetB        0             15           0        4843           0         260    15.70192    10.37838      6.01661    90.40645    INPUT    Gift Amount Average 36 Months
+TargetB        1           12.5           0        4843           0         200    14.05048    9.655723     5.210988    60.13503    INPUT    Gift Amount Average 36 Months
+_OVERALL_                  13.5           0        9686           0         260     14.8762    10.05701     5.627792    77.09997    INPUT    Gift Amount Average 36 Months
+ 
+ 
+Data Role=TRAIN Variable=GiftAvgAll
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role                 Label
+ 
+TargetB        0           11.5           0        4843         1.5      138.75    13.14171     8.11222     4.245265    37.90653    INPUT    Gift Amount Average All Months
+TargetB        1             10           0        4843        2.26         450    11.83694    10.14792     19.56184    751.3873    INPUT    Gift Amount Average All Months
+_OVERALL_                 10.71           0        9686         1.5         450    12.48932    9.209297     14.48649    561.7552    INPUT    Gift Amount Average All Months
+ 
+ 
+Data Role=TRAIN Variable=GiftAvgCard36
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role                   Label
+ 
+TargetB        0          13.67        1048        3795        1.33         260    15.12638    10.67013     6.898896    104.5695    INPUT    Gift Amount Average Card 36 Months
+TargetB        1             11         732        4111        1.67         200    13.39181    9.309543     4.854903    56.60653    INPUT    Gift Amount Average Card 36 Months
+_OVERALL_                  12.5        1780        7906        1.33         260    14.22443    10.02271     6.051455    87.12627    INPUT    Gift Amount Average Card 36 Months
+ 
+ 
+Data Role=TRAIN Variable=GiftAvgLast
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role          Label
+ 
+TargetB        0             15           0        4843           0         150    16.86652    10.27729     3.504515    24.87354    INPUT    Gift Amount Last
+TargetB        1             15           0        4843           0         450    15.16896    13.52687     12.54206    303.4842    INPUT    Gift Amount Last
+_OVERALL_                    15           0        9686           0         450    16.01774     12.0418     9.918893    246.0504    INPUT    Gift Amount Last
+ 
+ 
+Data Role=TRAIN Variable=GiftCnt36
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role            Label
+ 
+TargetB        0              2           0        4843           0          16    2.911419    2.019167     1.525213    3.142291    INPUT    Gift Count 36 Months
+TargetB        1              3           0        4843           0          15    3.499484    2.203165      1.10218    1.388386    INPUT    Gift Count 36 Months
+_OVERALL_                     3           0        9686           0          16    3.205451    2.133421     1.288353    2.047415    INPUT    Gift Count 36 Months
+ 
+ 
+Data Role=TRAIN Variable=GiftCntAll
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role             Label
+ 
+TargetB        0              7           0        4843           1          80    9.530456    8.456296     1.899674    5.971934    INPUT    Gift Count All Months
+TargetB        1              9           0        4843           1          91    11.48482    9.400006     1.821759    5.994938    INPUT    Gift Count All Months
+_OVERALL_                     8           0        9686           1          91    10.50764    8.993401     1.863109    6.047766    INPUT    Gift Count All Months
+ 
+ 
+Data Role=TRAIN Variable=GiftCntCard36
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role               Label
+ 
+TargetB        0              1           0        4843           0           9    1.646913    1.496673     1.343118    2.263767    INPUT    Gift Count Card 36 Months
+TargetB        1              2           0        4843           0           9    2.066281    1.662307      1.02173    0.978268    INPUT    Gift Count Card 36 Months
+_OVERALL_                     1           0        9686           0           9    1.856597    1.595419     1.172452    1.494867    INPUT    Gift Count Card 36 Months
+ 
+ 
+Data Role=TRAIN Variable=GiftCntCardAll
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role               Label
+ 
+TargetB        0              4           0        4843           0          29    5.049143    4.513972     1.425585    2.191728    INPUT    Gift Count Card All Months
+TargetB        1              5           0        4843           0          41    6.115837    4.892441     1.249135    1.884976    INPUT    Gift Count Card All Months
+_OVERALL_                     4           0        9686           0          41     5.58249    4.736894     1.331353    2.024864    INPUT    Gift Count Card All Months
+ 
+ 
+Data Role=TRAIN Variable=GiftTimeFirst
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role             Label
+ 
+TargetB        0             64           0        4843          15         198    68.39067     37.6984     0.268439    -1.29473    INPUT    Time Since First Gift
+TargetB        1             75           0        4843          15         260    73.81004     37.4941      0.12666    -1.18404    INPUT    Time Since First Gift
+_OVERALL_                    68           0        9686          15         260    71.10035    37.69198     0.195399    -1.24787    INPUT    Time Since First Gift
+ 
+ 
+Data Role=TRAIN Variable=GiftTimeLast
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role            Label
+ 
+TargetB        0             18           0        4843           4          27    18.44084    3.829919     -0.53906    2.451314    INPUT    Time Since Last Gift
+TargetB        1             18           0        4843           4          27    17.56349     4.25885     -0.91094    2.265542    INPUT    Time Since Last Gift
+_OVERALL_                    18           0        9686           4          27    18.00217    4.073549     -0.77805    2.469076    INPUT    Time Since Last Gift
+ 
+ 
+Data Role=TRAIN Variable=PromCnt12
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role               Label
+ 
+TargetB        0             12           0        4843           3          46    12.75449    4.295928     2.860949    11.65938    INPUT    Promotion Count 12 Months
+TargetB        1             13           0        4843           2          59    13.22321    5.288803     2.782787    11.13975    INPUT    Promotion Count 12 Months
+_OVERALL_                    12           0        9686           2          59    12.98885    4.823458     2.873723    11.99538    INPUT    Promotion Count 12 Months
+ 
+ 
+Data Role=TRAIN Variable=PromCnt36
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role               Label
+ 
+TargetB        0             30           0        4843           7          65    28.81334    7.591861     0.045822    1.401082    INPUT    Promotion Count 36 Months
+TargetB        1             31           0        4843           4          78    29.88313    7.986744      0.43126    2.716972    INPUT    Promotion Count 36 Months
+_OVERALL_                    31           0        9686           4          78    29.34823    7.809743     0.261958    2.174341    INPUT    Promotion Count 36 Months
+ 
+ 
+Data Role=TRAIN Variable=PromCntAll
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role               Label
+ 
+TargetB        0             46           0        4843           6         147    46.69957    22.78749     0.444508    0.003662    INPUT    Promotion Count All Months
+TargetB        1             51           0        4843           5         174     50.2674     23.1978     0.476233    0.402571    INPUT    Promotion Count All Months
+_OVERALL_                    48           0        9686           5         174    48.48348    23.06148     0.460765    0.216596    INPUT    Promotion Count All Months
+ 
+ 
+Data Role=TRAIN Variable=PromCntCard12
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role                 Label
+ 
+TargetB        0              6           0        4843           1          13    5.331613    1.202317     0.225878    3.812854    INPUT    Promotion Count Card 12 Months
+TargetB        1              6           0        4843           0          17    5.452406    1.432336      0.91054     6.30997    INPUT    Promotion Count Card 12 Months
+_OVERALL_                     6           0        9686           0          17    5.392009    1.323648     0.684994    5.798685    INPUT    Promotion Count Card 12 Months
+ 
+ 
+Data Role=TRAIN Variable=PromCntCard36
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role                 Label
+ 
+TargetB        0             13           0        4843           2          24    11.50671    4.615951     -0.34047    -1.23742    INPUT    Promotion Count Card 36 Months
+TargetB        1             14           0        4843           2          28    12.40264    4.482672      -0.5154    -0.69154    INPUT    Promotion Count Card 36 Months
+_OVERALL_                    13           0        9686           2          28    11.95468    4.571568      -0.4266    -0.98685    INPUT    Promotion Count Card 36 Months
+ 
+ 
+Data Role=TRAIN Variable=PromCntCardAll
+ 
+             Target                                 Non                                        Standard
+ Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role                  Label
+ 
+TargetB        0             18           0        4843           2          56    18.37394     8.55125     0.190745    -0.78354    INPUT    Promotion Count Card All Months
+TargetB        1             20           0        4843           2          51    19.64031    8.527108     0.098237    -0.76588    INPUT    Promotion Count Card All Months
+_OVERALL_                    19           0        9686           2          56    19.00712    8.562193     0.142856    -0.78032    INPUT    Promotion Count Card All Months
+ 
+ 
+ 
+Chi-Square Statistics
+(maximum 500 observations printed)
+ 
+Data Role=TRAIN Target=TargetB
+ 
+Input               Chi-Square    Df      Prob
+ 
+GiftCnt36             170.3981     4    <.0001
+GiftCntCard36         166.5688     4    <.0001
+StatusCatStarAll      118.5407     1    <.0001
+GiftTimeLast          117.1276     4    <.0001
+StatusCat96NK         117.0430     5    <.0001
+PromCntCard36         102.0250     4    <.0001
+DemCluster             90.3768    53    0.0010
+GiftCntCardAll         80.7338     4    <.0001
+GiftAvgCard36          73.0738     5    <.0001
+PromCntAll             57.2904     4    <.0001
+PromCntCardAll         51.9544     4    <.0001
+PromCntCard12          49.9414     4    <.0001
+PromCnt12              48.7163     4    <.0001
+PromCnt36              47.5027     4    <.0001
+GiftCntAll             44.3542     4    <.0001
+GiftTimeFirst          38.2085     4    <.0001
+DemAge                 30.9619     5    <.0001
+DemMedHomeValue        25.6277     4    <.0001
+DemPctVeterans          5.6281     4    0.2287
+GiftAvgLast             5.0287     4    0.2844
+DemMedIncome            4.9187     4    0.2957
+GiftAvgAll              3.3337     3    0.3430
+GiftAvg36               1.6412     4    0.8014
+DemHomeOwner            0.6359     1    0.4252
+DemGender               0.0720     2    0.9647
+
+
+*------------------------------------------------------------*
+* Score Output
+*------------------------------------------------------------*
+
+
+*------------------------------------------------------------*
+* Report Output
+*------------------------------------------------------------*

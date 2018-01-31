@@ -1,0 +1,40 @@
+*------------------------------------------------------------*
+User:                srajan4
+Date:                December 12, 2017
+Time:                00:05:39
+*------------------------------------------------------------*
+* Training Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Variable Summary
+ 
+          Measurement    Frequency
+ Role        Level         Count
+ 
+INPUT      INTERVAL          86
+INPUT      NOMINAL            4
+TARGET     BINARY             1
+TARGET     INTERVAL           1
+
+
+*------------------------------------------------------------*
+* Score Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+Formula Transformations
+(maximum 500 observations printed)
+ 
+                               Measurement
+  Variable Name       Role        Level         Formula
+ 
+transformed_doll24    INPUT     INTERVAL      LOG(DOLL24)
+
+
+*------------------------------------------------------------*
+* Report Output
+*------------------------------------------------------------*

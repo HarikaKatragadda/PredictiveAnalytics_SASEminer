@@ -1,0 +1,328 @@
+*------------------------------------------------------------*
+User:                hkatrag1
+Date:                November 28, 2017
+Time:                14:12:22
+*------------------------------------------------------------*
+* Training Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Variable Summary
+ 
+            Measurement    Frequency
+Role           Level         Count
+ 
+INPUT        INTERVAL          89
+INPUT        NOMINAL            4
+REJECTED     NOMINAL            2
+TARGET       INTERVAL           2
+ 
+ 
+ 
+ 
+ 
+The DMINE Procedure
+ 
+           R-Squares for Target Variable: ORDERSIZE
+ 
+Effect                       DF        R-Square
+ 
+AOV16: DOLL24                15        0.045014
+Var:   DOLL24                 1        0.032896
+AOV16: DOLINDET              15        0.031141
+AOV16: DOLNETDT              14        0.029205
+Var:   DOLINDET               1        0.026688
+Var:   DOLNETDT               1        0.025936
+AOV16: CATALOGCNT            15        0.025293
+AOV16: UNITSIDD              13        0.024675
+Var:   UNITSIDD               1        0.023751
+AOV16: DOLLARQ19             14        0.019674
+AOV16: DOLLARQ22             10        0.016343
+AOV16: DEPT14                12        0.016161
+AOV16: FREQPRCH              11        0.016055
+Var:   FREQPRCH               1        0.015854
+AOV16: TOTORDQ22              6        0.015484
+AOV16: DOLLARQ20             14        0.015433
+Var:   CATALOGCNT             1        0.015175
+AOV16: TOTORDQ20              6        0.013887
+AOV16: DEPT22                11        0.013722
+AOV16: DEPT03                14        0.013496
+Var:   DEPT25                 1        0.013325
+AOV16: DEPT25                12        0.013189
+AOV16: ACTBUY                10        0.012971
+AOV16: TOTORDQ21              7        0.012778
+AOV16: DEPT17                11        0.012441
+Var:   DOLLARQ20              1        0.011821
+Var:   DEPT22                 1        0.011663
+AOV16: DEPT01                14        0.011246
+AOV16: DEPT13                 8        0.010922
+AOV16: DEPT06                15        0.010269
+Var:   DEPT03                 1        0.010166
+AOV16: DEPT08                13        0.010093
+Var:   DOLLARQ22              1        0.009836
+Var:   ACTBUY                 1        0.009825
+AOV16: DEPT02                14        0.009637
+AOV16: DEPT04                15        0.009382
+Var:   DEPT13                 1        0.008941
+Var:   TOTORDQ20              1        0.008865
+AOV16: DOLLARQ18             12        0.008680
+Var:   DEPT14                 1        0.008338
+AOV16: DOLLARQ16             15        0.007965
+Var:   TOTORDQ22              1        0.007951
+AOV16: DEPT23                13        0.007870
+AOV16: DEPT24                11        0.007494
+AOV16: TOTORDQ15              8        0.007326
+Var:   DEPT04                 1        0.007189
+AOV16: BUYPROP               15        0.007162
+Var:   DEPT01                 1        0.007146
+Var:   DOLLARQ19              1        0.006973
+AOV16: MONLAST               15        0.006765
+AOV16: DTBUYLST              15        0.006755
+AOV16: DEPT05                14        0.006755
+AOV16: DAYLAST               15        0.006740
+Var:   DEPT23                 1        0.006675
+AOV16: DOLLARQ11             14        0.006642
+AOV16: DOLLARQ10             14        0.006582
+AOV16: DOLLARQ15             14        0.006535
+Var:   DEPT02                 1        0.006338
+Var:   DOLLARQ18              1        0.006021
+AOV16: TOTORDQ19              5        0.005952
+AOV16: DEPT27                13        0.005927
+AOV16: DOLLARQ21             10        0.005629
+Var:   DOLLARQ16              1        0.005584
+Var:   DEPT17                 1        0.005185
+AOV16: DOLLARQ13             11        0.004974    R2 < MINR2
+Var:   TOTORDQ21              1        0.004966    R2 < MINR2
+AOV16: TOTORDQ18              5        0.004935    R2 < MINR2
+AOV16: TOTORDQ16              9        0.004886    R2 < MINR2
+Var:   DEPT08                 1        0.004807    R2 < MINR2
+AOV16: DOLLARQ17             10        0.004713    R2 < MINR2
+Var:   DEPT05                 1        0.004681    R2 < MINR2
+Var:   DOLLARQ21              1        0.004623    R2 < MINR2
+Var:   DEPT24                 1        0.004613    R2 < MINR2
+AOV16: TOTORDQ17              5        0.004537    R2 < MINR2
+Var:   TOTORDQ19              1        0.004354    R2 < MINR2
+AOV16: TOTORDQ04             10        0.004350    R2 < MINR2
+AOV16: DOLLARQ06             10        0.004253    R2 < MINR2
+Var:   DTBUYLST               1        0.004232    R2 < MINR2
+Var:   DAYLAST                1        0.004231    R2 < MINR2
+Var:   MONLAST                1        0.004230    R2 < MINR2
+AOV16: TOTORDQ10              6        0.004222    R2 < MINR2
+Var:   DOLLARQ12              1        0.004171    R2 < MINR2
+Var:   DOLLARQ10              1        0.004147    R2 < MINR2
+Var:   DEPT06                 1        0.004140    R2 < MINR2
+AOV16: DEPT19                13        0.004106    R2 < MINR2
+Var:   DOLLARQ15              1        0.004047    R2 < MINR2
+Var:   TOTORDQ16              1        0.004027    R2 < MINR2
+AOV16: DOLLARQ12             11        0.004016    R2 < MINR2
+Var:   DOLLARQ11              1        0.003973    R2 < MINR2
+AOV16: TOTORDQ12              7        0.003901    R2 < MINR2
+Var:   TOTORDQ18              1        0.003899    R2 < MINR2
+AOV16: DEPT16                14        0.003843    R2 < MINR2
+AOV16: DEPT12                13        0.003838    R2 < MINR2
+Var:   DOLLARQ17              1        0.003812    R2 < MINR2
+AOV16: DEPT10                 6        0.003704    R2 < MINR2
+AOV16: DEPT15                 8        0.003523    R2 < MINR2
+Var:   DEPT10                 1        0.003512    R2 < MINR2
+AOV16: TOTORDQ07              6        0.003448    R2 < MINR2
+Var:   BUYPROP                1        0.003428    R2 < MINR2
+Var:   TOTORDQ17              1        0.003250    R2 < MINR2
+AOV16: DOLNETDA              13        0.003055    R2 < MINR2
+Var:   TOTORDQ15              1        0.003042    R2 < MINR2
+AOV16: TOTORDQ06              6        0.003013    R2 < MINR2
+AOV16: DOLINDEA              13        0.002975    R2 < MINR2
+AOV16: DOLLARQ05             14        0.002966    R2 < MINR2
+Var:   DOLLARQ08              1        0.002960    R2 < MINR2
+Var:   TOTORDQ12              1        0.002955    R2 < MINR2
+AOV16: TOTORDQ02              6        0.002945    R2 < MINR2
+AOV16: TOTORDQ11              7        0.002939    R2 < MINR2
+AOV16: TOTORDQ08              5        0.002887    R2 < MINR2
+Var:   DEPT15                 1        0.002840    R2 < MINR2
+AOV16: DOLLARQ08             12        0.002837    R2 < MINR2
+Var:   DOLLARQ14              1        0.002787    R2 < MINR2
+Var:   DEPT27                 1        0.002708    R2 < MINR2
+Var:   DOLLARQ13              1        0.002674    R2 < MINR2
+Var:   DOLNETDA               1        0.002655    R2 < MINR2
+Var:   DOLINDEA               1        0.002589    R2 < MINR2
+Var:   TOTORDQ08              1        0.002514    R2 < MINR2
+Var:   DOLLARQ06              1        0.002440    R2 < MINR2
+AOV16: DOLLARQ02             11        0.002422    R2 < MINR2
+AOV16: TOTORDQ01              7        0.002407    R2 < MINR2
+Var:   TOTORDQ10              1        0.002382    R2 < MINR2
+Var:   DEPT16                 1        0.002369    R2 < MINR2
+AOV16: DEPT11                10        0.002353    R2 < MINR2
+AOV16: DOLLARQ07             12        0.002256    R2 < MINR2
+AOV16: DOLLARQ14             10        0.002195    R2 < MINR2
+Var:   DEPT26                 1        0.002193    R2 < MINR2
+Var:   DEPT12                 1        0.002170    R2 < MINR2
+AOV16: TOTORDQ14              6        0.002144    R2 < MINR2
+Var:   UNTLANPO               1        0.001989    R2 < MINR2
+Class: CCPAYM*METHPAYM        3        0.001977    R2 < MINR2
+Class: METHPAYM               3        0.001977    R2 < MINR2
+Class: METHPAYM*PCPAYM        3        0.001977    R2 < MINR2
+Class: BOTHPAYM*METHPAYM      3        0.001977    R2 < MINR2
+Group: BOTHPAYM*METHPAYM      3        0.001977    R2 < MINR2
+Group: CCPAYM*METHPAYM        3        0.001977    R2 < MINR2
+Group: METHPAYM*PCPAYM        3        0.001977    R2 < MINR2
+Var:   TOTORDQ11              1        0.001952    R2 < MINR2
+Var:   DEPT11                 1        0.001950    R2 < MINR2
+AOV16: DEPT09                13        0.001938    R2 < MINR2
+Var:   DOLLARQ07              1        0.001900    R2 < MINR2
+Var:   DOLLARQ05              1        0.001865    R2 < MINR2
+AOV16: DEPT26                 7        0.001836    R2 < MINR2
+AOV16: DEPT07                 8        0.001821    R2 < MINR2
+AOV16: TOTORDQ09              5        0.001787    R2 < MINR2
+AOV16: DOLLARQ09             13        0.001763    R2 < MINR2
+Var:   TOTORDQ14              1        0.001752    R2 < MINR2
+Var:   TOTORDQ01              1        0.001656    R2 < MINR2
+AOV16: DOLLARQ03              9        0.001605    R2 < MINR2
+AOV16: TOTORDQ13              6        0.001597    R2 < MINR2
+AOV16: DOLLARQ01             13        0.001588    R2 < MINR2
+Var:   DOLLARQ02              1        0.001582    R2 < MINR2
+Var:   TOTORDQ07              1        0.001579    R2 < MINR2
+Var:   TOTORDQ04              1        0.001493    R2 < MINR2
+AOV16: TOTORDQ05              5        0.001416    R2 < MINR2
+Var:   TOTORDQ09              1        0.001408    R2 < MINR2
+Class: BOTHPAYM*CCPAYM        2        0.001388    R2 < MINR2
+Var:   DOLLARQ03              1        0.001377    R2 < MINR2
+Var:   TOTORDQ06              1        0.001353    R2 < MINR2
+Var:   DEPT09                 1        0.001348    R2 < MINR2
+AOV16: DOLLARQ04             13        0.001309    R2 < MINR2
+Var:   TOTORDQ02              1        0.001296    R2 < MINR2
+AOV16: TOTORDQ03              5        0.001286    R2 < MINR2
+Var:   TOTORDQ13              1        0.001267    R2 < MINR2
+Var:   TOTORDQ05              1        0.001187    R2 < MINR2
+Var:   DOLLARQ01              1        0.001143    R2 < MINR2
+Class: BOTHPAYM*PCPAYM        2        0.001043    R2 < MINR2
+Class: BOTHPAYM               1        0.001043    R2 < MINR2
+Group: BOTHPAYM*PCPAYM        1        0.001043    R2 < MINR2
+Var:   TOTORDQ03              1        0.001041    R2 < MINR2
+Var:   DOLLARQ09              1        0.001036    R2 < MINR2
+Var:   DOLLARQ04              1        0.001031    R2 < MINR2
+AOV16: DEPT18                11        0.000899    R2 < MINR2
+Var:   DEPT07                 1        0.000897    R2 < MINR2
+AOV16: COUNTY                15        0.000770    R2 < MINR2
+Var:   DEPT19                 1        0.000737    R2 < MINR2
+AOV16: TENURE                15        0.000697    R2 < MINR2
+AOV16: DTBUYORG              15        0.000650    R2 < MINR2
+AOV16: UNTLANPO              10        0.000571    R2 < MINR2
+Var:   DEPT18                 1        0.000440    R2 < MINR2
+AOV16: UNITSLAP              11        0.000432    R2 < MINR2
+AOV16: DEPT20                 6        0.000376    R2 < MINR2
+Var:   DEPT20                 1        0.000296    R2 < MINR2
+Var:   DTBUYORG               1        0.000182    R2 < MINR2
+Var:   TENURE                 1        0.000182    R2 < MINR2
+AOV16: DEPT21                 6        0.000151    R2 < MINR2
+Class: CCPAYM*PCPAYM          2        0.000129    R2 < MINR2
+Class: PCPAYM                 1        0.000120    R2 < MINR2
+Var:   DEPT21                 1        0.000117    R2 < MINR2
+Var:   UNITSLAP               1     0.000072280    R2 < MINR2
+Var:   COUNTY                 1     0.000017588    R2 < MINR2
+Class: CCPAYM                 1     0.000012849    R2 < MINR2
+ 
+ 
+ 
+ 
+ 
+The DMINE Procedure
+ 
+                                   Effects Chosen for Target: ORDERSIZE
+ 
+                                                                                    Sum of      Error Mean
+Effect                       DF        R-Square         F Value    p-Value         Squares          Square
+ 
+Var:   DOLL24                 1        0.032896     1644.784511     <.0001          658552      400.387989
+Var:   DOLINDET               1        0.005161      259.431013     <.0001          103321      398.259467
+Var:   DEPT25                 1        0.001283       64.581020     <.0001           25686      397.736469
+Var:   DEPT03                 1        0.000886       44.655773     <.0001           17745      397.377687
+Var:   TOTORDQ22              1        0.000800       40.315054     <.0001           16007      397.054835
+Var:   TOTORDQ20              1        0.000634       32.008571     <.0001           12701      396.800353
+Var:   DEPT17                 1        0.000567       28.604478     <.0001           11344      396.573932
+ 
+ 
+ 
+ 
+ 
+The DMINE Procedure
+ 
+    The Final ANOVA Table for Target: ORDERSIZE
+ 
+                                              Sum of
+Effect            DF        R-Square         Squares
+ 
+Model              7        0.042228          845356
+Error          48348               .        19173556
+Total          48355               .        20018913
+ 
+ 
+ 
+ 
+ 
+The DMINE Procedure
+ 
+                         Effects Not Chosen for Target: ORDERSIZE
+ 
+                                                                                    Sum of
+Effect                       DF        R-Square         F Value    p-Value         Squares
+ 
+Var:   DOLNETDT               1     0.000015519        0.783413     0.3761      310.682469
+Var:   UNITSIDD               1        0.000115        5.783662     0.0162     2293.422837
+Var:   FREQPRCH               1        0.000386       19.497542     <.0001     7729.259653
+Var:   CATALOGCNT             1        0.000236       11.930691     0.0006     4730.331565
+Var:   DOLLARQ20              1     0.000026187        1.321938     0.2503      524.242835
+Var:   DEPT22                 1     0.000061018        3.080285     0.0793     1221.508279
+Var:   DOLLARQ22              1        0.000195        9.841161     0.0017     3902.034304
+Var:   ACTBUY                 1     0.000009227        0.465771     0.4949      184.714696
+Var:   DEPT13                 1     0.000000961        0.048493     0.8257       19.231510
+Var:   DEPT14                 1     0.000012576        0.634820     0.4256      251.754994
+Var:   DEPT04                 1        0.000283       14.272575     0.0002     5658.577850
+Var:   DEPT01                 1     0.000072439        3.656912     0.0558     1450.156237
+Var:   DOLLARQ19              1        0.000189        9.519464     0.0020     3774.506281
+Var:   DEPT23                 1     0.000033139        1.672856     0.1959      663.401808
+Var:   DEPT02                 1        0.000185        9.347615     0.0022     3706.380664
+Var:   DOLLARQ18              1     0.000005499        0.277598     0.5983      110.089896
+Var:   DOLLARQ16              1        0.000214       10.784695     0.0010     4276.063483
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+-------------------------------------------------------------------
+Summary of Variable Selection from Training
+-------------------------------------------------------------------
+ 
+ 
+Target Name : ORDERSIZE
+Target Level : INTERVAL
+Variable Selection Model : R-Square
+ 
+Total number of inputs : 93
+Total number of used inputs : 93
+Total number of unused inputs : 0
+Total number of rejected inputs : 86
+ 
+Maximum missing percentage : 50
+NOTE: There is no rejected variable by maximum missing percentage
+ 
+Maximum class level : 100
+NOTE:There is no rejected variable by maximum class level
+
+
+*------------------------------------------------------------*
+* Score Output
+*------------------------------------------------------------*
+
+
+*------------------------------------------------------------*
+* Report Output
+*------------------------------------------------------------*

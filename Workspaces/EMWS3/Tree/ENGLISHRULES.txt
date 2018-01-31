@@ -1,0 +1,348 @@
+*------------------------------------------------------------*
+ Node = 62
+*------------------------------------------------------------*
+if months since 1st < 1.5
+AND days since last < 46.5 or MISSING
+AND $ last 24 months < 121.2 or MISSING
+then 
+ Tree Node Identifier   = 62
+ Number of Observations = 22
+ Predicted: RESPOND=1 = 0.95
+ Predicted: RESPOND=0 = 0.05
+ 
+*------------------------------------------------------------*
+ Node = 63
+*------------------------------------------------------------*
+if months since 1st < 1.5
+AND days since last >= 46.5
+AND $ last 24 months < 121.2 or MISSING
+then 
+ Tree Node Identifier   = 63
+ Number of Observations = 9
+ Predicted: RESPOND=1 = 0.11
+ Predicted: RESPOND=0 = 0.89
+ 
+*------------------------------------------------------------*
+ Node = 65
+*------------------------------------------------------------*
+if tot orders 98Q2 >= 2
+AND % quarters w/buy >= 0.775
+AND $ last 24 months >= 121.2
+then 
+ Tree Node Identifier   = 65
+ Number of Observations = 23
+ Predicted: RESPOND=1 = 0.61
+ Predicted: RESPOND=0 = 0.39
+ 
+*------------------------------------------------------------*
+ Node = 67
+*------------------------------------------------------------*
+if tot orders 98Q2 < 2 or MISSING
+AND food >= 35
+AND $ last 24 months >= 121.2
+then 
+ Tree Node Identifier   = 67
+ Number of Observations = 62
+ Predicted: RESPOND=1 = 0.39
+ Predicted: RESPOND=0 = 0.61
+ 
+*------------------------------------------------------------*
+ Node = 71
+*------------------------------------------------------------*
+if tot orders 98Q2 >= 2
+AND mens hosiery >= 1.5
+AND % quarters w/buy < 0.775 or MISSING
+AND $ last 24 months >= 121.2
+then 
+ Tree Node Identifier   = 71
+ Number of Observations = 28
+ Predicted: RESPOND=1 = 0.32
+ Predicted: RESPOND=0 = 0.68
+ 
+*------------------------------------------------------------*
+ Node = 72
+*------------------------------------------------------------*
+if tot orders 98Q2 < 2 or MISSING
+AND months since 1st < 1.5
+AND food < 35 or MISSING
+AND $ last 24 months >= 121.2
+then 
+ Tree Node Identifier   = 72
+ Number of Observations = 9
+ Predicted: RESPOND=1 = 0.67
+ Predicted: RESPOND=0 = 0.33
+ 
+*------------------------------------------------------------*
+ Node = 77
+*------------------------------------------------------------*
+if months since 1st >= 1.5 or MISSING
+AND mens underwear >= 12.5
+AND days since last >= 683.5 or MISSING
+AND $ last 24 months < 121.2 or MISSING
+then 
+ Tree Node Identifier   = 77
+ Number of Observations = 8
+ Predicted: RESPOND=1 = 0.38
+ Predicted: RESPOND=0 = 0.63
+ 
+*------------------------------------------------------------*
+ Node = 85
+*------------------------------------------------------------*
+if months since 1st >= 1.5 or MISSING
+AND food >= 19.5
+AND days since last < 683.5
+AND $ last 24 months < 121.2 or MISSING
+then 
+ Tree Node Identifier   = 85
+ Number of Observations = 100
+ Predicted: RESPOND=1 = 0.21
+ Predicted: RESPOND=0 = 0.79
+ 
+*------------------------------------------------------------*
+ Node = 87
+*------------------------------------------------------------*
+if tot orders 95Q4 >= 2.5
+AND months since 1st >= 1.5 or MISSING
+AND mens underwear < 12.5 or MISSING
+AND days since last >= 683.5 or MISSING
+AND $ last 24 months < 121.2 or MISSING
+then 
+ Tree Node Identifier   = 87
+ Number of Observations = 11
+ Predicted: RESPOND=1 = 0.27
+ Predicted: RESPOND=0 = 0.73
+ 
+*------------------------------------------------------------*
+ Node = 88
+*------------------------------------------------------------*
+if tot orders 98Q2 >= 2
+AND mens hosiery < 1.5 or MISSING
+AND avg $ demand < 32.7983
+AND % quarters w/buy < 0.775 or MISSING
+AND $ last 24 months < 526.575 AND $ last 24 months >= 121.2 or MISSING
+then 
+ Tree Node Identifier   = 88
+ Number of Observations = 8
+ Predicted: RESPOND=1 = 0.38
+ Predicted: RESPOND=0 = 0.63
+ 
+*------------------------------------------------------------*
+ Node = 89
+*------------------------------------------------------------*
+if tot orders 98Q2 >= 2
+AND mens hosiery < 1.5 or MISSING
+AND avg $ demand >= 32.7983 or MISSING
+AND % quarters w/buy < 0.775 or MISSING
+AND $ last 24 months < 526.575 AND $ last 24 months >= 121.2 or MISSING
+then 
+ Tree Node Identifier   = 89
+ Number of Observations = 83
+ Predicted: RESPOND=1 = 0.16
+ Predicted: RESPOND=0 = 0.84
+ 
+*------------------------------------------------------------*
+ Node = 90
+*------------------------------------------------------------*
+if total $ demand < 1930.24 or MISSING
+AND tot orders 98Q2 >= 2
+AND mens hosiery < 1.5 or MISSING
+AND % quarters w/buy < 0.775 or MISSING
+AND $ last 24 months >= 526.575
+then 
+ Tree Node Identifier   = 90
+ Number of Observations = 9
+ Predicted: RESPOND=1 = 0.78
+ Predicted: RESPOND=0 = 0.22
+ 
+*------------------------------------------------------------*
+ Node = 91
+*------------------------------------------------------------*
+if total $ demand >= 1930.24
+AND tot orders 98Q2 >= 2
+AND mens hosiery < 1.5 or MISSING
+AND % quarters w/buy < 0.775 or MISSING
+AND $ last 24 months >= 526.575
+then 
+ Tree Node Identifier   = 91
+ Number of Observations = 8
+ Predicted: RESPOND=1 = 0.50
+ Predicted: RESPOND=0 = 0.50
+ 
+*------------------------------------------------------------*
+ Node = 92
+*------------------------------------------------------------*
+if tot orders 98Q2 < 2 or MISSING
+AND tot $ 95Q2 < 129.3 or MISSING
+AND months since 1st >= 1.5 or MISSING
+AND food < 35 or MISSING
+AND avg $ demand < 67.6833 or MISSING
+AND $ last 24 months >= 121.2
+then 
+ Tree Node Identifier   = 92
+ Number of Observations = 1639
+ Predicted: RESPOND=1 = 0.14
+ Predicted: RESPOND=0 = 0.86
+ 
+*------------------------------------------------------------*
+ Node = 93
+*------------------------------------------------------------*
+if tot orders 98Q2 < 2 or MISSING
+AND tot $ 95Q2 >= 129.3
+AND months since 1st >= 1.5 or MISSING
+AND food < 35 or MISSING
+AND avg $ demand < 67.6833 or MISSING
+AND $ last 24 months >= 121.2
+then 
+ Tree Node Identifier   = 93
+ Number of Observations = 15
+ Predicted: RESPOND=1 = 0.47
+ Predicted: RESPOND=0 = 0.53
+ 
+*------------------------------------------------------------*
+ Node = 94
+*------------------------------------------------------------*
+if tot orders 98Q2 < 2 or MISSING
+AND tot $ 96Q1 < 201.55 or MISSING
+AND months since 1st >= 1.5 or MISSING
+AND food < 35 or MISSING
+AND avg $ demand >= 67.6833
+AND $ last 24 months >= 121.2
+then 
+ Tree Node Identifier   = 94
+ Number of Observations = 1634
+ Predicted: RESPOND=1 = 0.09
+ Predicted: RESPOND=0 = 0.91
+ 
+*------------------------------------------------------------*
+ Node = 95
+*------------------------------------------------------------*
+if tot orders 98Q2 < 2 or MISSING
+AND tot $ 96Q1 >= 201.55
+AND months since 1st >= 1.5 or MISSING
+AND food < 35 or MISSING
+AND avg $ demand >= 67.6833
+AND $ last 24 months >= 121.2
+then 
+ Tree Node Identifier   = 95
+ Number of Observations = 28
+ Predicted: RESPOND=1 = 0.32
+ Predicted: RESPOND=0 = 0.68
+ 
+*------------------------------------------------------------*
+ Node = 96
+*------------------------------------------------------------*
+if tot orders 95Q4 < 0.5 or MISSING
+AND tot $ 93Q2 < 113.625 or MISSING
+AND months since 1st >= 1.5 or MISSING
+AND food < 4.5 or MISSING
+AND days since last < 683.5
+AND $ last 24 months < 121.2 or MISSING
+then 
+ Tree Node Identifier   = 96
+ Number of Observations = 9066
+ Predicted: RESPOND=1 = 0.05
+ Predicted: RESPOND=0 = 0.95
+ 
+*------------------------------------------------------------*
+ Node = 97
+*------------------------------------------------------------*
+if tot orders 95Q4 < 0.5 or MISSING
+AND tot $ 93Q2 >= 113.625
+AND months since 1st >= 1.5 or MISSING
+AND food < 4.5 or MISSING
+AND days since last < 683.5
+AND $ last 24 months < 121.2 or MISSING
+then 
+ Tree Node Identifier   = 97
+ Number of Observations = 33
+ Predicted: RESPOND=1 = 0.18
+ Predicted: RESPOND=0 = 0.82
+ 
+*------------------------------------------------------------*
+ Node = 98
+*------------------------------------------------------------*
+if tot orders 95Q4 >= 0.5
+AND months since 1st >= 1.5 or MISSING
+AND mens footware < 4 or MISSING
+AND food < 4.5 or MISSING
+AND days since last < 683.5
+AND $ last 24 months < 121.2 or MISSING
+then 
+ Tree Node Identifier   = 98
+ Number of Observations = 788
+ Predicted: RESPOND=1 = 0.11
+ Predicted: RESPOND=0 = 0.89
+ 
+*------------------------------------------------------------*
+ Node = 99
+*------------------------------------------------------------*
+if tot orders 95Q4 >= 0.5
+AND months since 1st >= 1.5 or MISSING
+AND mens footware >= 4
+AND food < 4.5 or MISSING
+AND days since last < 683.5
+AND $ last 24 months < 121.2 or MISSING
+then 
+ Tree Node Identifier   = 99
+ Number of Observations = 11
+ Predicted: RESPOND=1 = 0.27
+ Predicted: RESPOND=0 = 0.73
+ 
+*------------------------------------------------------------*
+ Node = 100
+*------------------------------------------------------------*
+if womens underwear < 3.5 or MISSING
+AND months since 1st >= 1.5 or MISSING
+AND food < 19.5 AND food >= 4.5 or MISSING
+AND days since last < 683.5
+AND $ last 24 months < 121.2 or MISSING
+then 
+ Tree Node Identifier   = 100
+ Number of Observations = 1449
+ Predicted: RESPOND=1 = 0.09
+ Predicted: RESPOND=0 = 0.91
+ 
+*------------------------------------------------------------*
+ Node = 101
+*------------------------------------------------------------*
+if womens underwear >= 3.5
+AND months since 1st >= 1.5 or MISSING
+AND food < 19.5 AND food >= 4.5 or MISSING
+AND days since last < 683.5
+AND $ last 24 months < 121.2 or MISSING
+then 
+ Tree Node Identifier   = 101
+ Number of Observations = 205
+ Predicted: RESPOND=1 = 0.16
+ Predicted: RESPOND=0 = 0.84
+ 
+*------------------------------------------------------------*
+ Node = 102
+*------------------------------------------------------------*
+if womens sleepwear < 7.5 or MISSING
+AND tot orders 95Q4 < 2.5 or MISSING
+AND months since 1st >= 1.5 or MISSING
+AND mens underwear < 12.5 or MISSING
+AND days since last >= 683.5 or MISSING
+AND $ last 24 months < 121.2 or MISSING
+then 
+ Tree Node Identifier   = 102
+ Number of Observations = 16968
+ Predicted: RESPOND=1 = 0.03
+ Predicted: RESPOND=0 = 0.97
+ 
+*------------------------------------------------------------*
+ Node = 103
+*------------------------------------------------------------*
+if womens sleepwear >= 7.5
+AND tot orders 95Q4 < 2.5 or MISSING
+AND months since 1st >= 1.5 or MISSING
+AND mens underwear < 12.5 or MISSING
+AND days since last >= 683.5 or MISSING
+AND $ last 24 months < 121.2 or MISSING
+then 
+ Tree Node Identifier   = 103
+ Number of Observations = 19
+ Predicted: RESPOND=1 = 0.26
+ Predicted: RESPOND=0 = 0.74
+ 

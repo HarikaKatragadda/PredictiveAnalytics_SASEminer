@@ -1,0 +1,355 @@
+*------------------------------------------------------------*
+User:                hkatrag1
+Date:                November 28, 2017
+Time:                13:49:22
+*------------------------------------------------------------*
+* Training Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Variable Summary
+ 
+            Measurement    Frequency
+Role           Level         Count
+ 
+ID           NOMINAL            1
+INPUT        INTERVAL          89
+INPUT        NOMINAL            4
+REJECTED     NOMINAL            2
+TARGET       INTERVAL           2
+ 
+ 
+ 
+Variable Levels Summary
+(maximum 500 observations printed)
+ 
+                    Frequency
+Variable    Role      Count
+ 
+CUST_ID      ID       48356
+ 
+ 
+ 
+Class Variable Summary Statistics
+(maximum 500 observations printed)
+ 
+Data Role=TRAIN
+ 
+                              Number
+Data     Variable               of                            Mode                  Mode2
+Role       Name      Role     Levels    Missing    Mode    Percentage    Mode2    Percentage
+ 
+TRAIN    BOTHPAYM    INPUT       2         0        0        80.66        1         19.34
+TRAIN    CCPAYM      INPUT       2         0        0        58.43        1         41.57
+TRAIN    METHPAYM    INPUT       4         0        CC       41.57        CK        30.49
+TRAIN    PCPAYM      INPUT       2         0        0        69.51        1         30.49
+ 
+ 
+ 
+Interval Variable Summary Statistics
+(maximum 500 observations printed)
+ 
+Data Role=TRAIN
+ 
+                                    Standard          Non
+Variable       Role         Mean    Deviation     Missing     Missing     Minimum      Median     Maximum    Skewness    Kurtosis
+ 
+ACTBUY        INPUT     0.984159    1.161242        48356           0           0           1          10    1.899436    5.527354
+BUYPROP       INPUT      0.18858    0.256956        48356           0           0         0.1           1     1.86442    3.106454
+CATALOGCNT    INPUT      3.76582    3.133252        48356           0           1           3          27    1.594352     2.92797
+COUNTY        INPUT     426.4056    315.3986        48356           0          10         347         999    0.403585    -1.20487
+DAYLAST       INPUT     1179.722    1228.086        48356           0           0         752        8265    1.770741    3.311158
+DEPT01        INPUT     0.494789    1.793298        48356           0           0           0          59    7.434065    106.8617
+DEPT02        INPUT     0.292249    1.151603        48356           0           0           0          24    5.505485    45.43137
+DEPT03        INPUT     1.085718    2.827892        48356           0           0           0          60     4.95107    40.83597
+DEPT04        INPUT     0.688436    2.326605        48356           0           0           0          47    6.132325     59.2593
+DEPT05        INPUT     0.540595    1.517439        48356           0           0           0          28     3.83673    22.98721
+DEPT06        INPUT      0.84914    1.958575        48356           0           0           0          32    3.381463    19.39733
+DEPT07        INPUT     0.025664    0.313127        48356           0           0           0          11    14.09688    241.7251
+DEPT08        INPUT     0.319898    1.316979        48356           0           0           0          35    6.375009    64.80886
+DEPT09        INPUT     0.251696    1.224872        48356           0           0           0          34    7.740294    95.81647
+DEPT10        INPUT      0.39689    1.754188        48356           0           0           0         112    11.88101    411.7731
+DEPT11        INPUT     0.151667    0.755796        48356           0           0           0          29    6.816584    89.67079
+DEPT12        INPUT     0.214038    0.898219        48356           0           0           0          16    5.096993     34.9081
+DEPT13        INPUT     1.304616    2.569393        48356           0           0           0          94     4.15173    56.69595
+DEPT14        INPUT     0.835967    2.172124        48356           0           0           0          61    4.836208    46.48455
+DEPT15        INPUT     0.282819    1.204034        48356           0           0           0          53    7.737428    137.2973
+DEPT16        INPUT     0.226921    1.029329        48356           0           0           0          25    6.304397    61.63563
+DEPT17        INPUT     0.194123    0.950983        48356           0           0           0          34    7.418783    97.10272
+DEPT18        INPUT     0.132434     0.70056        48356           0           0           0          13    6.131811    46.69857
+DEPT19        INPUT     0.075296    0.598431        48356           0           0           0          20    10.66043    160.2932
+DEPT20        INPUT     0.030275    0.311755        48356           0           0           0           8    10.74462    123.2588
+DEPT21        INPUT     0.018736    0.249206        48356           0           0           0           9    14.27809    228.5627
+DEPT22        INPUT     2.125238    3.597468        48356           0           0           0         117    4.074707    46.21015
+DEPT23        INPUT     2.137046    3.816998        48356           0           0           0          89    3.938389    31.80009
+DEPT24        INPUT     0.632807    1.719595        48356           0           0           0          50    4.995056    57.01079
+DEPT25        INPUT     1.764228    4.789134        48356           0           0           0         186    8.725793     152.916
+DEPT26        INPUT     0.188539    0.891858        48356           0           0           0          55    10.19116    350.3848
+DEPT27        INPUT     0.586173    1.548859        48356           0           0           0          33    3.672149    23.44171
+DOLINDEA      INPUT     47.74947    37.75177        48356           0           1       37.78      768.85     3.75269    31.59222
+DOLINDET      INPUT     196.6703     314.091        48356           0           1       97.85     7978.98    6.095636    67.24921
+DOLL24        INPUT     45.69096    94.26046        48356           0           0           0      2433.5    5.890952    67.84144
+DOLLARQ01     INPUT     3.628769    19.70056        48356           0           0           0      760.95     10.7672    195.0808
+DOLLARQ02     INPUT     3.708681    20.59839        48356           0           0           0      836.45    10.49433    179.6861
+DOLLARQ03     INPUT     2.813645     16.6445        48356           0           0           0      854.85    11.84058     272.597
+DOLLARQ04     INPUT     4.685479    22.20171        48356           0           0           0       777.4     8.81361    131.5494
+DOLLARQ05     INPUT     4.348623    21.36355        48356           0           0           0      695.35    9.108768    135.1772
+DOLLARQ06     INPUT     3.780876    19.61969        48356           0           0           0      1043.8    11.25904    275.4938
+DOLLARQ07     INPUT      4.19732    22.14042        48356           0           0           0      1125.2    12.81589     327.863
+DOLLARQ08     INPUT     6.165348    27.59771        48356           0           0           0     1214.15    10.50193    221.3441
+DOLLARQ09     INPUT     4.236117    20.60429        48356           0           0           0       724.6    9.327963    143.0409
+DOLLARQ10     INPUT     3.649963    19.40428        48356           0           0           0      555.25    9.251186    124.3032
+DOLLARQ11     INPUT     4.002763     20.3574        48356           0           0           0       649.7    10.02275    160.0096
+DOLLARQ12     INPUT     6.404808     27.4868        48356           0           0           0        1109    9.658056     177.371
+DOLLARQ13     INPUT     5.427048    25.91223        48356           0           0           0     1407.01    14.02419    443.7675
+DOLLARQ14     INPUT     4.420128    22.82223        48356           0           0           0        1487    15.62889    584.6354
+DOLLARQ15     INPUT     4.918279    23.72771        48356           0           0           0       858.5    10.28301     183.382
+DOLLARQ16     INPUT     7.672898    30.10401        48356           0           0           0      713.45    7.703857    93.10502
+DOLLARQ17     INPUT     5.586222     25.6532        48356           0           0           0     1319.35     11.0741    264.7515
+DOLLARQ18     INPUT     4.971588    23.44341        48356           0           0           0       752.1     8.86678    127.5209
+DOLLARQ19     INPUT     4.451036    22.49695        48356           0           0           0      677.88    9.464529     137.274
+DOLLARQ20     INPUT      8.69922    32.16682        48356           0           0           0       908.5    7.543856    95.52023
+DOLLARQ21     INPUT     4.743096    23.94625        48356           0           0           0      1084.3    11.99587    283.7185
+DOLLARQ22     INPUT     4.914029     24.5188        48356           0           0           0     1128.75     10.4759    207.4614
+DOLNETDA      INPUT      45.3011     36.4094        48356           0           0        35.9       768.5    3.659262      30.395
+DOLNETDT      INPUT     187.8592    302.3536        48356           0           0       92.95     8028.98    6.149697    69.60593
+DTBUYLST      INPUT     16581.71    1228.028        48356           0        9497       17009       17762    -1.77089    3.312068
+DTBUYORG      INPUT     15225.56    1828.788        48356           0        9358       15618       17761    -0.61878    -0.42708
+FREQPRCH      INPUT     4.166991    5.290656        48356           0           1           2         150    4.590923    42.57681
+MONLAST       INPUT     38.67834    40.34461        48356           0           0          25         271     1.77074    3.309627
+TENURE        INPUT     83.25699    60.10494        48356           0           0          70         276      0.6187    -0.42776
+TOTORDQ01     INPUT     0.077777    0.313897        48356           0           0           0           7    5.218707    40.65253
+TOTORDQ02     INPUT     0.073435    0.302344        48356           0           0           0           8    5.160261    39.30277
+TOTORDQ03     INPUT     0.058793    0.260042        48356           0           0           0           7    5.243599    39.13779
+TOTORDQ04     INPUT     0.090495    0.337992        48356           0           0           0          16    6.843372    143.6122
+TOTORDQ05     INPUT     0.088407    0.326826        48356           0           0           0           5    4.349332     23.6723
+TOTORDQ06     INPUT     0.079142     0.30608        48356           0           0           0           9    4.870796    39.62242
+TOTORDQ07     INPUT     0.085077    0.319432        48356           0           0           0           8    4.826688    38.65863
+TOTORDQ08     INPUT     0.117193    0.430817        48356           0           0           0          42    24.77151    2027.439
+TOTORDQ09     INPUT     0.090041    0.323931        48356           0           0           0           5     4.19222    22.49128
+TOTORDQ10     INPUT     0.073889    0.295941        48356           0           0           0           6    4.748208    29.63758
+TOTORDQ11     INPUT      0.08365     0.31311        48356           0           0           0           7    4.532181    29.76623
+TOTORDQ12     INPUT       0.1259    0.403211        48356           0           0           0          21    6.706015    174.8138
+TOTORDQ13     INPUT     0.109604    0.355616        48356           0           0           0           6    3.759706    18.18345
+TOTORDQ14     INPUT     0.089399    0.320935        48356           0           0           0           6    4.200985    23.76373
+TOTORDQ15     INPUT     0.098623    0.348258        48356           0           0           0          14     5.31424    76.35668
+TOTORDQ16     INPUT     0.146538    0.429586        48356           0           0           0          11     4.27591    37.83939
+TOTORDQ17     INPUT     0.110369    0.361466        48356           0           0           0           5    3.817627    18.09198
+TOTORDQ18     INPUT     0.094962    0.332624        48356           0           0           0           5     4.05434     20.6283
+TOTORDQ19     INPUT     0.083133    0.307215        48356           0           0           0           5    4.222505    22.38698
+TOTORDQ20     INPUT     0.159815    0.460877        48356           0           0           0          27    9.418567     362.597
+TOTORDQ21     INPUT     0.091798    0.327788        48356           0           0           0           9      4.4856    33.56975
+TOTORDQ22     INPUT     0.088055    0.315034        48356           0           0           0           6    4.150825    22.88131
+UNITSIDD      INPUT     10.92435    17.15485        48356           0           1           5         432    6.052984     69.5553
+UNITSLAP      INPUT     22.04998    20.43467        48356           0           1      16.875       768.5    6.986767    113.7625
+UNTLANPO      INPUT     2.668783    2.317183        48356           0           1           2         121    7.880936    217.4007
+ORDERSIZE     TARGET    3.555451    20.34696        48356           0           0           0      510.72    9.691806     131.486
+RESPOND       TARGET    0.056642     0.23116        48356           0           0           0           1    3.836088     12.7161
+ 
+ 
+ 
+Correlation Statistics
+(maximum 500 observations printed)
+ 
+Data Role=TRAIN Type=PEARSON Target=ORDERSIZE
+ 
+Input         Correlation
+ 
+RESPOND          0.71313
+DOLL24           0.18137
+DOLINDET         0.16337
+DOLNETDT         0.16105
+UNITSIDD         0.15411
+FREQPRCH         0.12591
+CATALOGCNT       0.12319
+DEPT25           0.11543
+DOLLARQ20        0.10873
+DEPT22           0.10799
+DEPT03           0.10082
+DOLLARQ22        0.09917
+ACTBUY           0.09912
+DEPT13           0.09456
+TOTORDQ20        0.09415
+DEPT14           0.09131
+TOTORDQ22        0.08917
+DEPT04           0.08479
+DEPT01           0.08453
+DOLLARQ19        0.08350
+DEPT23           0.08170
+DEPT02           0.07961
+DOLLARQ18        0.07760
+DOLLARQ16        0.07473
+DEPT17           0.07200
+TOTORDQ21        0.07047
+DEPT08           0.06933
+DEPT05           0.06841
+DOLLARQ21        0.06799
+DEPT24           0.06792
+TOTORDQ19        0.06599
+DTBUYLST         0.06506
+DOLLARQ12        0.06459
+DOLLARQ10        0.06440
+DEPT06           0.06435
+DOLLARQ15        0.06362
+TOTORDQ16        0.06346
+DOLLARQ11        0.06303
+TOTORDQ18        0.06244
+DOLLARQ17        0.06174
+DEPT10           0.05926
+BUYPROP          0.05855
+TOTORDQ17        0.05701
+TOTORDQ15        0.05515
+DOLLARQ08        0.05441
+TOTORDQ12        0.05436
+DEPT15           0.05329
+DOLLARQ14        0.05279
+DEPT27           0.05204
+DOLLARQ13        0.05171
+DOLNETDA         0.05153
+DOLINDEA         0.05088
+TOTORDQ08        0.05014
+DOLLARQ06        0.04939
+TOTORDQ10        0.04881
+DEPT16           0.04868
+DEPT26           0.04683
+DEPT12           0.04658
+UNTLANPO         0.04460
+TOTORDQ11        0.04418
+DEPT11           0.04416
+DOLLARQ07        0.04359
+DOLLARQ05        0.04319
+TOTORDQ14        0.04186
+TOTORDQ01        0.04069
+DOLLARQ02        0.03978
+TOTORDQ07        0.03973
+TOTORDQ04        0.03864
+TOTORDQ09        0.03752
+DOLLARQ03        0.03710
+TOTORDQ06        0.03678
+DEPT09           0.03672
+TOTORDQ02        0.03599
+TOTORDQ13        0.03559
+TOTORDQ05        0.03445
+DOLLARQ01        0.03381
+TOTORDQ03        0.03226
+DOLLARQ09        0.03218
+DOLLARQ04        0.03211
+DEPT07           0.02995
+DEPT19           0.02715
+DEPT18           0.02097
+DEPT20           0.01721
+TENURE           0.01350
+DEPT21           0.01082
+COUNTY          -0.00419
+UNITSLAP        -0.00850
+DTBUYORG        -0.01350
+MONLAST         -0.06504
+DAYLAST         -0.06505
+ 
+ 
+Data Role=TRAIN Type=PEARSON Target=RESPOND
+ 
+Input         Correlation
+ 
+ORDERSIZE        0.71313
+DOLL24           0.13381
+FREQPRCH         0.13005
+UNITSIDD         0.12333
+DOLINDET         0.11698
+DOLNETDT         0.11464
+ACTBUY           0.11444
+CATALOGCNT       0.11380
+DEPT25           0.11027
+TOTORDQ20        0.09769
+TOTORDQ22        0.08940
+DEPT03           0.08663
+DEPT22           0.08562
+DTBUYLST         0.08381
+DOLLARQ20        0.08049
+DEPT23           0.07556
+DEPT13           0.07527
+DEPT04           0.07457
+TOTORDQ16        0.07385
+BUYPROP          0.07352
+TOTORDQ18        0.07259
+TOTORDQ21        0.07112
+DOLLARQ22        0.07041
+DEPT14           0.06826
+TOTORDQ12        0.06482
+TOTORDQ17        0.06279
+DOLLARQ18        0.06255
+TOTORDQ19        0.06037
+DEPT24           0.06013
+DEPT02           0.05784
+DEPT01           0.05781
+DOLLARQ16        0.05582
+TOTORDQ08        0.05565
+DEPT05           0.05390
+DOLLARQ21        0.05292
+DEPT10           0.05151
+DEPT08           0.05148
+DOLLARQ19        0.05070
+DOLLARQ12        0.05067
+TOTORDQ15        0.05057
+DOLLARQ17        0.04926
+DEPT06           0.04907
+TOTORDQ10        0.04765
+TOTORDQ11        0.04682
+DOLLARQ08        0.04549
+TOTORDQ05        0.04458
+DOLLARQ15        0.04379
+TOTORDQ13        0.04272
+DEPT11           0.04174
+DOLLARQ14        0.04139
+DOLLARQ10        0.04137
+DEPT27           0.04121
+DOLLARQ13        0.04119
+DEPT12           0.04111
+TOTORDQ07        0.04060
+DEPT17           0.04057
+DOLLARQ11        0.03966
+TOTORDQ14        0.03962
+TOTORDQ01        0.03932
+TOTORDQ09        0.03822
+TOTORDQ02        0.03783
+DEPT16           0.03733
+TOTORDQ06        0.03514
+DEPT26           0.03447
+DEPT09           0.03430
+DOLLARQ02        0.03401
+DOLLARQ07        0.03400
+DEPT15           0.03339
+TOTORDQ04        0.03312
+DOLLARQ05        0.03275
+DOLLARQ06        0.02936
+DOLLARQ01        0.02825
+TOTORDQ03        0.02579
+DOLLARQ04        0.02465
+DOLLARQ09        0.02420
+DOLLARQ03        0.02221
+DEPT18           0.02213
+DEPT19           0.02134
+DEPT07           0.01906
+UNTLANPO         0.01865
+DEPT20           0.01609
+TENURE           0.01258
+DOLNETDA         0.00794
+DOLINDEA         0.00728
+DEPT21           0.00671
+COUNTY          -0.00424
+DTBUYORG        -0.01256
+UNITSLAP        -0.02772
+DAYLAST         -0.08380
+MONLAST         -0.08380
+
+
+*------------------------------------------------------------*
+* Score Output
+*------------------------------------------------------------*
+
+
+*------------------------------------------------------------*
+* Report Output
+*------------------------------------------------------------*

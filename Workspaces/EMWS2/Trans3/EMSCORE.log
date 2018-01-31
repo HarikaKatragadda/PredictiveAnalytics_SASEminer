@@ -1,0 +1,131 @@
+*------------------------------------------------------------*
+* Score Log
+Date:                December 12, 2017
+Time:                11:44:56
+*------------------------------------------------------------*
+11528  proc sort data=EMWS2.Trans3_RESULT out=WORK.Trans3RESULT NOTHREADS;
+11529  by INPUTNAME;
+11530  run;
+
+NOTE: There were 3 observations read from the data set EMWS2.TRANS3_RESULT.
+NOTE: The data set WORK.TRANS3RESULT has 3 observations and 11 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+11531  proc sort data=EMWS2.Trans3_VariableSet(KEEP= NAME FAMILY REPORT rename=(NAME=INPUTNAME)) out=WORK.Trans3VARSET NOTHREADS;
+11532  by INPUTNAME;
+11533  run;
+
+NOTE: There were 28 observations read from the data set EMWS2.TRANS3_VARIABLESET.
+NOTE: The data set WORK.TRANS3VARSET has 28 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+11534  data WORK.Trans3RESULT;
+11535  merge WORK.Trans3RESULT WORK.Trans3VARSET;
+11536  by INPUTNAME;
+11537  if NAME ne '' then output;
+11538  run;
+
+WARNING: Multiple lengths were specified for the BY variable INPUTNAME by input data sets. This might cause unexpected results.
+NOTE: There were 3 observations read from the data set WORK.TRANS3RESULT.
+NOTE: There were 28 observations read from the data set WORK.TRANS3VARSET.
+NOTE: The data set WORK.TRANS3RESULT has 3 observations and 13 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+11539  filename _code "\\filer.uncc.edu\home\hkatrag1\Predictive Analytics1\Workspaces\EMWS2\Trans3\TRAINDELTACODE.sas";
+11540  data _null_;
+11541  set WORK.Trans3RESULT;
+11542  length String $200;
+11543  file _code;
+11544  String = 'if NAME="'!!strip(name)!!'" then do;';
+11545  put / String;
+11546  if family ne '' then do;
+11547  String = '   FAMILY ="'!!strip(family)!!'";';
+11548  put String;
+11549  end;
+11550  select(formula);
+11551  when('Interaction') put '   FAMILY  ="INTERACTION";';
+11552  when('') put '   COMMENT = "' method 'transformation of ' INPUTVAR '";';
+11553  otherwise put '   COMMENT = "' formula '";';
+11554  end;
+11555  String = '   ROLE ="'!!strip(role)!!'";';
+11556  put String;
+11557  if REPORT="" then REPORT = "N";
+11558  String = '   REPORT ="'!!strip(report)!!'";';
+11559  put String;
+11560  String = '   LEVEL  ="'!!strip(level)!!'";';
+11561  put String;
+11562  put 'end;';
+11563  if formula ne 'Interaction' and INPUTNAME ne '' then do;
+11564  String = 'if NAME="'!!strip(INPUTNAME)!!'" then delete;';
+11565  put String;
+11566  end;
+11567  run;
+
+NOTE: Variable method is uninitialized.
+NOTE: Variable INPUTVAR is uninitialized.
+NOTE: The file _CODE is:
+      Filename=\\filer.uncc.edu\home\hkatrag1\Predictive Analytics1\Workspaces\EMWS2\Trans3\TRAINDELTACODE.sas,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=12Dec2017:11:45:00,
+      Create Time=12Dec2017:11:36:19
+
+NOTE: 24 records were written to the file _CODE.
+      The minimum record length was 0.
+      The maximum record length was 48.
+NOTE: There were 3 observations read from the data set WORK.TRANS3RESULT.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+11568  filename _code;
+NOTE: Fileref _CODE has been deassigned.
+
+11569  filename emflow "\\filer.uncc.edu\home\hkatrag1\Predictive Analytics1\Workspaces\EMWS2\Trans3\EMFLOWSCORE.sas";
+11570  *------------------------------------------------------------*;
+11571  * Trans3: Scoring DATA data;
+11572  *------------------------------------------------------------*;
+11573  data EMWS2.Trans3_TRAIN
+11574  / view=EMWS2.Trans3_TRAIN
+11575  ;
+11576  set EMWS2.Trans2_TRAIN
+11577  ;
+11578  %inc emflow;
+11645  run;
+
+NOTE: DATA STEP view saved on file EMWS2.TRANS3_TRAIN.
+NOTE: A stored DATA STEP view cannot run under a different operating system.
+NOTE: View EMWS2.TRANS2_TRAIN.VIEW used (Total process time):
+      real time           0.10 seconds
+      cpu time            0.09 seconds
+      
+NOTE: DATA statement used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.10 seconds
+      
+
+11646  quit;
+11647  filename emflow;
+NOTE: Fileref EMFLOW has been deassigned.
+
+11648  *------------------------------------------------------------*;
+11649  * Trans3: Computing metadata for TRAIN data;
+11650  *------------------------------------------------------------*;
+
+NOTE: View EMWS2.TRANS3_TRAIN.VIEW used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.12 seconds
+      
+NOTE: View EMWS2.TRANS3_TRAIN.VIEW used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.14 seconds
+      

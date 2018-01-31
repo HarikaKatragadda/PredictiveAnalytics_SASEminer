@@ -1,0 +1,55 @@
+*------------------------------------------------------------*
+User:                hkatrag1
+Date:                December 11, 2017
+Time:                23:11:47
+*------------------------------------------------------------*
+* Training Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Variable Summary
+ 
+            Measurement    Frequency
+Role           Level         Count
+ 
+INPUT        BINARY             2
+INPUT        INTERVAL          20
+INPUT        NOMINAL            3
+REJECTED     NOMINAL            1
+TARGET       BINARY             1
+
+
+*------------------------------------------------------------*
+* Score Output
+*------------------------------------------------------------*
+
+
+*------------------------------------------------------------*
+* Report Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+Imputation Summary
+Number Of Observations
+ 
+                                                                                                                         Number of
+                 Impute                         Impute             Measurement                                             Missing
+Variable Name    Method    Imputed Variable      Value    Role        Level       Label                                  for TRAIN
+ 
+DemAge           MEDIAN    IMP_DemAge            60.0     INPUT     INTERVAL      Age                                         2407
+GiftAvgCard36    MEDIAN    IMP_GiftAvgCard36     12.5     INPUT     INTERVAL      Gift Amount Average Card 36 Months          1780
+ 
+ 
+ 
+ 
+Variable Distribution Training Data
+ 
+        Number of
+          Missing    Number of    Percent of
+Obs     for TRAIN    Variables     Variables
+ 
+ 1           2407        1            50
+ 2           1780        1            50

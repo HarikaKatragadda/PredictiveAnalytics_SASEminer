@@ -1,0 +1,59 @@
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Summary Statistics for Class Targets
+
+Data=DATA
+
+            Numeric    Formatted    Frequency
+Variable     Value       Value        Count      Percent         Label
+
+RESPOND        0           0          45617      94.3358    response target
+RESPOND        1           1           2739       5.6642    response target
+
+
+Data=TRAIN
+
+            Numeric    Formatted    Frequency
+Variable     Value       Value        Count      Percent         Label
+
+RESPOND        0           0          30410      94.3385    response target
+RESPOND        1           1           1825       5.6615    response target
+
+
+Data=VALIDATE
+
+            Numeric    Formatted    Frequency
+Variable     Value       Value        Count      Percent         Label
+
+RESPOND        0           0          15207      94.3304    response target
+RESPOND        1           1            914       5.6696    response target
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Summary Statistics for Interval Targets
+
+Data=DATA
+
+                                                        Number of                   Standard
+Variable        Maximum          Mean       Minimum    Observations    Missing     Deviation            Label
+
+ORDERSIZE       $510.72         $3.56         $0.00     $48,356.00        0           $20.35    dollar value of order
+
+
+Data=TRAIN
+
+                                                        Number of                   Standard
+Variable        Maximum          Mean       Minimum    Observations    Missing     Deviation            Label
+
+ORDERSIZE       $478.70         $3.53         $0.00     $32,235.00        0           $20.05    dollar value of order
+
+
+Data=VALIDATE
+
+                                                        Number of                   Standard
+Variable        Maximum          Mean       Minimum    Observations    Missing     Deviation            Label
+
+ORDERSIZE       $510.72         $3.60         $0.00     $16,121.00        0           $20.93    dollar value of order

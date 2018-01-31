@@ -1,0 +1,94 @@
+*------------------------------------------------------------*
+* Score Log
+Date:                December 11, 2017
+Time:                23:11:46
+*------------------------------------------------------------*
+NOTE: This SAS session is using a registry in WORK.  All changes will be lost at the end of this session.
+11168  data _null_;
+11169  set EMWS2.Impt_META end=eof;
+11170  length string $34;
+11171  retain missTotal;
+11172  file #LN00174;
+11173  if _n_=1 then misstotal = percentmiss;
+11174  missTotal = percentmiss+misstotal;
+11175  if IMP ne '' and METHOD ne 'NONE' then do;
+11176  string = '"'!!strip(NAME)!!'"';
+11177  put 'if NAME = ' string 'then delete;';
+11178  put 'else ';
+11179  string = '"'!!strip(IMP)!!'"';
+11180  put 'if NAME    = ' string ' then do;';
+11181  string = '"'!!strip(ROLE)!!'"';
+11182  put '   ROLE    = ' string ';';
+11183  string = '"'!!strip(FAMILY)!!'"';
+11184  put '   FAMILY  = ' string ';';
+11185  string = '"'!!strip(REPORT)!!'"';
+11186  put '   REPORT  = ' string ';';
+11187  string = '"'!!strip(LEVEL)!!'"';
+11188  put '   LEVEL   = ' string ';';
+11189  string = '"'!!strip(ORDER)!!'"';
+11190  put '   ORDER   = ' string ';';
+11191  put 'end;';
+11192  end;
+11193  if percentmiss>50 and ROLE ne 'TARGET' then do;
+11194  string = '"'!!strip(NAME)!!'"';
+11195  put 'if NAME = ' string ' then do;';
+11196  put '   ROLE ="REJECTED";';
+11197  put '   COMMENT = "Percent of missing exceeds 50%";';
+11198  put 'end;';
+11199  end;
+11200  run;
+
+NOTE: The file #LN00174 is:
+      Filename=\\filer.uncc.edu\home\hkatrag1\Project_lab\Predictive Analytics\Workspaces\EMWS2\Impt\CDELTA_TRAIN.sas,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=11Dec2017:23:11:46,
+      Create Time=11Dec2017:23:11:46
+
+NOTE: 18 records were written to the file #LN00174.
+      The minimum record length was 4.
+      The maximum record length was 42.
+NOTE: There were 26 observations read from the data set EMWS2.IMPT_META.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+11201  filename emflow "\\filer.uncc.edu\home\hkatrag1\Project_lab\Predictive Analytics\Workspaces\EMWS2\Impt\EMFLOWSCORE.sas";
+11202  *------------------------------------------------------------*;
+11203  * Impt: Scoring DATA data;
+11204  *------------------------------------------------------------*;
+11205  data EMWS2.Impt_TRAIN
+11206  / view=EMWS2.Impt_TRAIN
+11207  ;
+11208  set EMWS2.Repl_TRAIN
+11209  ;
+11210  %inc emflow;
+11221  run;
+
+NOTE: DATA STEP view saved on file EMWS2.IMPT_TRAIN.
+NOTE: A stored DATA STEP view cannot run under a different operating system.
+NOTE: View EMWS2.REPL_TRAIN.VIEW used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.07 seconds
+      
+NOTE: DATA statement used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.09 seconds
+      
+
+11222  quit;
+11223  filename emflow;
+NOTE: Fileref EMFLOW has been deassigned.
+
+11224  *------------------------------------------------------------*;
+11225  * Impt: Computing metadata for TRAIN data;
+11226  *------------------------------------------------------------*;
+
+NOTE: View EMWS2.IMPT_TRAIN.VIEW used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.12 seconds
+      
+NOTE: View EMWS2.IMPT_TRAIN.VIEW used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.12 seconds
+      

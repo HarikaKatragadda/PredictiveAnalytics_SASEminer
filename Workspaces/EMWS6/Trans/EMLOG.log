@@ -1,0 +1,1163 @@
+*------------------------------------------------------------*
+User:                srajan4
+Date:                December 12, 2017
+Time:                00:05:23
+Site:                70117250
+Platform:            X64_DSRV12
+Maintenance Release: 9.04.01M3P062415
+EM Version:          14.1
+* 
+*------------------------------------------------------------*
+* Training Log
+Date:                December 11, 2017
+Time:                23:58:21
+*------------------------------------------------------------*
+10867  proc freq data=EMWS1.Trans_VariableSet noprint;
+10868  table ROLE*LEVEL/out=WORK.TransMETA;
+10869  run;
+ 
+NOTE: There were 92 observations read from the data set EMWS1.TRANS_VARIABLESET.
+NOTE: The data set WORK.TRANSMETA has 4 observations and 4 variables.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.17 seconds
+      cpu time            0.03 seconds
+ 
+ 
+10870  proc print data=WORK.TransMETA label noobs;
+10871  var ROLE LEVEL COUNT;
+10872  label ROLE = "%sysfunc(sasmsg(sashelp.dmine, meta_role_vlabel, NOQUOTE))" LEVEL = "%sysfunc(sasmsg(sashelp.dmine, meta_level_vlabel, NOQUOTE))" COUNT = "%sysfunc(sasmsg(sashelp.dmine, rpt_count_vlabel, NOQUOTE))";
+10873  title9 ' ';
+10874  title10 "%sysfunc(sasmsg(sashelp.dmine, rpt_varSummary_title  , NOQUOTE))";
+10875  run;
+ 
+NOTE: There were 4 observations read from the data set WORK.TRANSMETA.
+NOTE: The PROCEDURE PRINT printed page 1.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+ 
+ 
+10876  title10;
+ 
+10877  data WORK.M12M36DX;
+10878  set WORK.M12M36DX;
+10879  if (METHOD='NONE' and ROLE ne 'FREQ') or (role = 'REJECTED' and METHOD = 'DEFAULT') then delete;
+10880  run;
+ 
+NOTE: There were 92 observations read from the data set WORK.M12M36DX.
+NOTE: The data set WORK.M12M36DX has 92 observations and 22 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+ 
+ 
+NOTE: There were 48356 observations read from the data set DATA.CATALOG2010.
+NOTE: View EMWS1.STAT_TRAIN.VIEW used (Total process time):
+      real time           2:00.26
+      cpu time            0.70 seconds
+ 
+NOTE: There were 48356 observations read from the data set EMWS1.IDS_DATA.
+10945  *------------------------------------------------------------*;
+10946  * Trans: Computing Summary Statistics;
+10947  *------------------------------------------------------------*;
+10948  data WORK.M0PDST5I;
+10949  set WORK.M0PDST5I;
+10950  if (role = 'REJECTED') then role = 'INPUT';
+10951  run;
+ 
+NOTE: There were 92 observations read from the data set WORK.M0PDST5I.
+NOTE: The data set WORK.M0PDST5I has 92 observations and 22 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+ 
+ 
+10952  *------------------------------------------------------------* ;
+10953  * EM: DMDBClass Macro ;
+10954  *------------------------------------------------------------* ;
+10955  %macro DMDBClass;
+10956      BOTHPAYM(ASC) CCPAYM(ASC) METHPAYM(ASC) PCPAYM(ASC) RESPOND(DESC)
+10957  %mend DMDBClass;
+10958  *------------------------------------------------------------* ;
+10959  * EM: DMDBVar Macro ;
+10960  *------------------------------------------------------------* ;
+10961  %macro DMDBVar;
+10962      ACTBUY BUYPROP CATALOGCNT DAYLAST DEPT01 DEPT02 DEPT03 DEPT04 DEPT05 DEPT06
+10963     DEPT07 DEPT08 DEPT09 DEPT10 DEPT11 DEPT12 DEPT13 DEPT14 DEPT15 DEPT16 DEPT17
+10964     DEPT18 DEPT19 DEPT20 DEPT21 DEPT22 DEPT23 DEPT24 DEPT25 DEPT26 DEPT27 DOLINDEA
+10965     DOLINDET DOLL24 DOLLARQ01 DOLLARQ02 DOLLARQ03 DOLLARQ04 DOLLARQ05 DOLLARQ06
+10966     DOLLARQ07 DOLLARQ08 DOLLARQ09 DOLLARQ10 DOLLARQ11 DOLLARQ12 DOLLARQ13 DOLLARQ14
+10967     DOLLARQ15 DOLLARQ16 DOLLARQ17 DOLLARQ18 DOLLARQ19 DOLLARQ20 DOLLARQ21 DOLLARQ22
+10968     DOLNETDA DOLNETDT FREQPRCH MONLAST ORDERSIZE TENURE TOTORDQ01 TOTORDQ02
+10969     TOTORDQ03 TOTORDQ04 TOTORDQ05 TOTORDQ06 TOTORDQ07 TOTORDQ08 TOTORDQ09 TOTORDQ10
+10970     TOTORDQ11 TOTORDQ12 TOTORDQ13 TOTORDQ14 TOTORDQ15 TOTORDQ16 TOTORDQ17 TOTORDQ18
+10971     TOTORDQ19 TOTORDQ20 TOTORDQ21 TOTORDQ22 UNITSIDD UNITSLAP UNTLANPO
+10972  %mend DMDBVar;
+10973  *------------------------------------------------------------*;
+10974  * EM: Create DMDB;
+10975  *------------------------------------------------------------*;
+10976  proc dmdb batch data=EMWS1.Stat_TRAIN
+10977  dmdbcat=WORK.EM_DMDB
+10978  classout=WORK.Transclassout
+10979  maxlevel = 513
+10980  ;
+10981  class %DMDBClass;
+10982  var %DMDBVar;
+10983  target
+10984  ORDERSIZE
+10985  RESPOND
+10986  ;
+10987  run;
+ 
+NOTE: Records processed = 48356   Memory used = 511K.
+NOTE: There were 48356 observations read from the data set DATA.CATALOG2010.
+NOTE: View EMWS1.STAT_TRAIN.VIEW used (Total process time):
+      real time           1:58.34
+      cpu time            0.67 seconds
+ 
+NOTE: There were 48356 observations read from the data set EMWS1.IDS_DATA.
+NOTE: There were 48356 observations read from the data set EMWS1.STAT_TRAIN.
+NOTE: The data set WORK.TRANSCLASSOUT has 12 observations and 9 variables.
+NOTE: PROCEDURE DMDB used (Total process time):
+      real time           1:58.56
+      cpu time            0.68 seconds
+ 
+ 
+10988  quit;
+10989  *--- end code ---*;
+ 
+10990  data WORK.TransINTERVALMETA;
+10991  set WORK.M12M36DX;
+10992  if LEVEL ne 'INTERVAL' then delete;
+10993  run;
+ 
+NOTE: There were 92 observations read from the data set WORK.M12M36DX.
+NOTE: The data set WORK.TRANSINTERVALMETA has 87 observations and 22 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+10994  *------------------------------------------------------------*;
+10995  * Trans: Determining Variables to Scale;
+10996  *------------------------------------------------------------*;
+10997  data WORK.M2W0J48X;
+10998  set WORK.M2W0J48X;
+10999  where (TYPE="N" and (METHOD in("MAX_NORM", "MAX_CORR", "EQUALIZE", "OP_MAX_NORM", "OP_EQUALIZE"))) or (ROLE eq "FREQ");
+11000  run;
+ 
+NOTE: There were 0 observations read from the data set WORK.M2W0J48X.
+      WHERE ((TYPE='N') and METHOD in ('EQUALIZE', 'MAX_CORR', 'MAX_NORM', 'OP_EQUALIZE', 'OP_MAX_NORM')) or (ROLE='FREQ');
+NOTE: The data set WORK.M2W0J48X has 0 observations and 22 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+NOTE: View EMWS1.STAT_TRAIN.VIEW used (Total process time):
+      real time           1.07 seconds
+      cpu time            0.21 seconds
+ 
+*------------------------------------------------------------*
+* Score Log
+Date:                December 12, 2017
+Time:                00:02:51
+*------------------------------------------------------------*
+11104  proc FCMP NOEXECUTE IMPUTEDDEPS OUTDEPS=WORK._CODEINPUT1;
+11105  transformed_doll24 = LOG(DOLL24);
+11106  run;
+ 
+NOTE: Dependency structure written to data set WORK._CODEINPUT1.
+NOTE: PROCEDURE FCMP used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11107  quit;
+ 
+11108  data WORK._CODEINPUT1;
+11109  length ROLE $32 LEVEL $8 REPORT $1;
+11110  retain _FormulaNum 1 ROLE "INPUT" REPORT "N" LEVEL "INTERVAL";
+11111  set WORK._CODEINPUT1(keep=RHS rename=(RHS=INPUTNAME));
+11112  run;
+ 
+NOTE: There were 1 observations read from the data set WORK._CODEINPUT1.
+NOTE: The data set WORK._CODEINPUT1 has 1 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11113  proc sort data=WORK._CODEINPUT1 NODUPKEY;
+11114  by INPUTNAME;
+11115  run;
+ 
+NOTE: There were 1 observations read from the data set WORK._CODEINPUT1.
+NOTE: 0 observations with duplicate key values were deleted.
+NOTE: The data set WORK._CODEINPUT1 has 1 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11116  proc append base=WORK.TRANS_FORMULAVARS data=WORK._CODEINPUT1;
+11117  run;
+ 
+NOTE: Appending WORK._CODEINPUT1 to WORK.TRANS_FORMULAVARS.
+NOTE: BASE data set does not exist. DATA file is being copied to BASE file.
+NOTE: There were 1 observations read from the data set WORK._CODEINPUT1.
+NOTE: The data set WORK.TRANS_FORMULAVARS has 1 observations and 5 variables.
+NOTE: PROCEDURE APPEND used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11118  data WORK.TRANS_FORMULAVARS;
+11119  length UNAME $32;
+11120  set WORK.TRANS_FORMULAVARS;
+11121  UNAME = upcase(INPUTNAME);
+11122  run;
+ 
+NOTE: There were 1 observations read from the data set WORK.TRANS_FORMULAVARS.
+NOTE: The data set WORK.TRANS_FORMULAVARS has 1 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11123  proc sort data=WORK.TRANS_FORMULAVARS;
+11124  by UNAME;
+11125  run;
+ 
+NOTE: There were 1 observations read from the data set WORK.TRANS_FORMULAVARS.
+NOTE: The data set WORK.TRANS_FORMULAVARS has 1 observations and 6 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11126  data _temp;
+11127  set EMWS1.Trans_VariableSet(keep=NAME LEVEL ROLE TYPE REPORT rename=(NAME=INPUTNAME LEVEL=INPUTLEVEL ROLE=INPUTROLE TYPE=INPUTTYPE REPORT=INPUTREPORT));
+11128  length UNAME $32;
+11129  UNAME = upcase(INPUTNAME);
+11130  run;
+ 
+NOTE: There were 92 observations read from the data set EMWS1.TRANS_VARIABLESET.
+NOTE: The data set WORK._TEMP has 92 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11131  proc sort data=_temp;
+11132  by UNAME;
+11133  run;
+ 
+NOTE: There were 92 observations read from the data set WORK._TEMP.
+NOTE: The data set WORK._TEMP has 92 observations and 6 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11134  data WORK.TRANS_FORMULAVARS;
+11135  merge WORK.TRANS_FORMULAVARS(in=_a) _temp(in=_b);
+11136  by UNAME;
+11137  if _a and _b then output;
+11138  run;
+ 
+NOTE: There were 1 observations read from the data set WORK.TRANS_FORMULAVARS.
+NOTE: There were 92 observations read from the data set WORK._TEMP.
+NOTE: The data set WORK.TRANS_FORMULAVARS has 1 observations and 10 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11139  proc sort data=WORK.TRANS_FORMULAVARS;
+11140  by _FormulaNum UNAME;
+11141  run;
+ 
+NOTE: There were 1 observations read from the data set WORK.TRANS_FORMULAVARS.
+NOTE: The data set WORK.TRANS_FORMULAVARS has 1 observations and 10 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11142  data WORK.TRANS_FORMULAVARS _target(keep=_FormulaNum);
+11143  length ROLE $32 REPORT $1;
+11144  set WORK.TRANS_FORMULAVARS;
+11145  by _FormulaNum;
+11146  if INPUTROLE = 'TARGET' then output _target;
+11147  if first._FormulaNum then do;
+11148  if ^last._FormulaNum then do;
+11149  INPUTNAME='';
+11150  INPUTROLE='';
+11151  INPUTTYPE='';
+11152  INPUTREPORT='';
+11153  end;
+11154  output WORK.TRANS_FORMULAVARS;
+11155  end;
+11156  run;
+ 
+NOTE: There were 1 observations read from the data set WORK.TRANS_FORMULAVARS.
+NOTE: The data set WORK.TRANS_FORMULAVARS has 1 observations and 10 variables.
+NOTE: The data set WORK._TARGET has 0 observations and 1 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11157  data _temp;
+11158  set EMWS1.Trans_FORMULA;
+11159  _FormulaNum = _N_;
+11160  run;
+ 
+NOTE: There were 1 observations read from the data set EMWS1.TRANS_FORMULA.
+NOTE: The data set WORK._TEMP has 1 observations and 18 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.20 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11161  data WORK.TRANS_CODEFORMULA;
+11162  length Name $32 Formula $300 Role $32 Level $10 REPORT $1;
+11163  label NAME = "%sysfunc(sasmsg(sashelp.dmine, meta_name_vlabel,  NOQUOTE))" FORMULA = "%sysfunc(sasmsg(sashelp.dmine, rpt_formula_vlabel,  NOQUOTE))" ROLE = "%sysfunc(sasmsg(sashelp.dmine, meta_role_vlabel,  NOQUOTE))" LEVEL =
+11164     "%sysfunc(sasmsg(sashelp.dmine, meta_level_vlabel,  NOQUOTE))" REPORT = "%sysfunc(sasmsg(sashelp.dmine, meta_report_vlabel,  NOQUOTE))" _targetFlag = "%sysfunc(sasmsg(sashelp.dmine, rpt_targetbased_vlabel,  NOQUOTE))" INPUTNAME =
+11165     "%sysfunc(sasmsg(sashelp.dmine, rpt_inputname_vlabel,  NOQUOTE))" INPUTLEVEL = "%sysfunc(sasmsg(sashelp.dmine, rpt_inputlevel_vlabel,  NOQUOTE))" INPUTROLE = "%sysfunc(sasmsg(sashelp.dmine, rpt_inputrole_vlabel,  NOQUOTE))" INPUTTYPE =
+11166     "%sysfunc(sasmsg(sashelp.dmine, rpt_inputtype_vlabel,  NOQUOTE))";
+11167  drop _FormulaNum UNAME;
+11168  _targetFlag = 0;
+11169  merge _temp(in=_a) WORK.TRANS_FORMULAVARS(in=_b) _target(in=_c);
+11170  by _FormulaNum;
+11171  _targetFlag = 0;
+11172  if _c then _targetFlag=1;
+11173  if INPUT ne '' then if _a and ^_b then delete;
+11174  if ROLE = '' then do;
+11175  if INPUTROLE = '' then ROLE='INPUT';
+11176  else ROLE = INPUTROLE;
+11177  end;
+11178  if REPORT = '' then do;
+11179  if INPUTREPORT = '' then REPORT='N';
+11180  else REPORT = INPUTREPORT;
+11181  end;
+11182  run;
+ 
+NOTE: Variable INPUT is uninitialized.
+NOTE: There were 1 observations read from the data set WORK._TEMP.
+NOTE: There were 1 observations read from the data set WORK.TRANS_FORMULAVARS.
+NOTE: There were 0 observations read from the data set WORK._TARGET.
+NOTE: The data set WORK.TRANS_CODEFORMULA has 1 observations and 24 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11183  filename _code "\\Client\C$\Users\sonik\Documents\6201 - MBAD - Monica\Project\Predictive Analytics1\Workspaces\EMWS1\Trans\FORMULAFLOWCODE.sas";
+11184  data _null_;
+11185  set WORK.TRANS_CODEFORMULA;
+11186  file _code;
+11187  if type eq 'C' and length > 0 then do;
+11188  put 'length ' name ' $' length ';';
+11189  end;
+11190  if format ne '' then do;
+11191  put 'format ' name format ';';
+11192  end;
+11193  length deqLabel $202;
+11194  if label ne '' then do;
+11195  deqlabel = tranwrd(label, '"', '""');
+11196  put 'label ' name '="' deqlabel '";';
+11197  end;
+11198  if name ne '' and formula ne '' then do;
+11199  put name '=' formula ';';
+11200  end;
+11201  run;
+ 
+NOTE: The file _CODE is:
+      (no system-specific pathname available),
+      (no system-specific file attributes available)
+ 
+NOTE: 1 record was written to the file _CODE.
+      The minimum record length was 33.
+      The maximum record length was 33.
+NOTE: There were 1 observations read from the data set WORK.TRANS_CODEFORMULA.
+NOTE: DATA statement used (Total process time):
+      real time           0.26 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11202  filename _code;
+NOTE: Fileref _CODE has been deassigned.
+ 
+11203  filename _code "\\Client\C$\Users\sonik\Documents\6201 - MBAD - Monica\Project\Predictive Analytics1\Workspaces\EMWS1\Trans\FORMULAPUBLISHCODE.sas";
+11204  data _null_;
+11205  set WORK.TRANS_CODEFORMULA;
+11206  file _code;
+11207  if _targetFlag eq 0 then do;
+11208  if type eq 'C' and length > 0 then do;
+11209  put 'length ' name ' $' length ';';
+11210  end;
+11211  if format ne '' then do;
+11212  put 'format ' name format ';';
+11213  end;
+11214  length deqLabel $202;
+11215  if label ne '' then do;
+11216  deqlabel = tranwrd(label, '"', '""');
+11217  put 'label ' name '="' deqlabel '";';
+11218  end;
+11219  if name ne '' and formula ne '' then do;
+11220  put name '=' formula ';';
+11221  end;
+11222  end;
+11223  run;
+ 
+NOTE: The file _CODE is:
+      (no system-specific pathname available),
+      (no system-specific file attributes available)
+ 
+NOTE: 1 record was written to the file _CODE.
+      The minimum record length was 33.
+      The maximum record length was 33.
+NOTE: There were 1 observations read from the data set WORK.TRANS_CODEFORMULA.
+NOTE: DATA statement used (Total process time):
+      real time           0.35 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11224  filename _code;
+NOTE: Fileref _CODE has been deassigned.
+ 
+11225  filename _code "\\Client\C$\Users\sonik\Documents\6201 - MBAD - Monica\Project\Predictive Analytics1\Workspaces\EMWS1\Trans\FORMULADELTACODE.sas";
+11226  data _null_;
+11227  set WORK.TRANS_CODEFORMULA;
+11228  file _code;
+11229  length String $200;
+11230  if ROLE eq '' then ROLE = 'REJECTED';
+11231  if REPORT eq '' then REPORT = 'N';
+11232  String = 'if NAME="'!!strip(name)!!'" then do;';
+11233  put / string;
+11234  String = '   ROLE ="'!!strip(role)!!'";';
+11235  put string;
+11236  String = '   REPORT ="'!!strip(report)!!'";';
+11237  put string;
+11238  if LEVEL ne '' then do;
+11239  String = '   LEVEL ="'!!strip(level)!!'";';
+11240  put string;
+11241  end;
+11242  put 'end;';
+11243  if INPUTNAME ne '' then do;
+11244  String = 'if NAME="'!!strip(INPUTNAME)!!'" then delete;';
+11245  put String;
+11246  end;
+11247  run;
+ 
+NOTE: The file _CODE is:
+      (no system-specific pathname available),
+      (no system-specific file attributes available)
+ 
+NOTE: 7 records were written to the file _CODE.
+      The minimum record length was 0.
+      The maximum record length was 37.
+NOTE: There were 1 observations read from the data set WORK.TRANS_CODEFORMULA.
+NOTE: DATA statement used (Total process time):
+      real time           0.28 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11248  filename _code;
+NOTE: Fileref _CODE has been deassigned.
+ 
+NOTE: This SAS session is using a registry in WORK.  All changes will be lost at the end of this session.
+11249  proc print data = EMWS1.Trans_FORMULA(obs=500) noobs label;
+11250  title9 "%sysfunc(sasmsg(sashelp.dmine, rpt_formulatransformations_title, NOQUOTE))";
+11251  title10 "%sysfunc(sasmsg(sashelp.dmine, rpt_maxObsPrinted_title, NOQUOTE))";
+11252  var Name ROLE LEVEL FORMULA;
+11253  run;
+ 
+NOTE: There were 1 observations read from the data set EMWS1.TRANS_FORMULA.
+NOTE: The PROCEDURE PRINT printed page 2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11254  title9;
+11255  title10;
+ 
+11256  filename emflow "\\Client\C$\Users\sonik\Documents\6201 - MBAD - Monica\Project\Predictive Analytics1\Workspaces\EMWS1\Trans\EMFLOWSCORE.sas";
+11257  *------------------------------------------------------------*;
+11258  * Trans: Scoring DATA data;
+11259  *------------------------------------------------------------*;
+11260  data EMWS1.Trans_TRAIN
+11261  / view=EMWS1.Trans_TRAIN
+11262  ;
+11263  set EMWS1.Stat_TRAIN
+11264  ;
+11265  %inc emflow;
+11270  run;
+ 
+NOTE: DATA STEP view saved on file EMWS1.TRANS_TRAIN.
+NOTE: A stored DATA STEP view cannot run under a different operating system.
+NOTE: View EMWS1.STAT_TRAIN.VIEW used (Total process time):
+      real time           2.34 seconds
+      cpu time            0.09 seconds
+ 
+NOTE: DATA statement used (Total process time):
+      real time           2.51 seconds
+      cpu time            0.12 seconds
+ 
+ 
+11271  quit;
+11272  filename emflow;
+NOTE: Fileref EMFLOW has been deassigned.
+ 
+11273  *------------------------------------------------------------*;
+11274  * Trans: Computing metadata for TRAIN data;
+11275  *------------------------------------------------------------*;
+ 
+NOTE: View EMWS1.TRANS_TRAIN.VIEW used (Total process time):
+      real time           1.15 seconds
+      cpu time            0.12 seconds
+ 
+NOTE: View EMWS1.TRANS_TRAIN.VIEW used (Total process time):
+      real time           1.23 seconds
+      cpu time            0.10 seconds
+ 
+*------------------------------------------------------------*
+* Report Log
+Date:                December 12, 2017
+Time:                00:03:09
+*------------------------------------------------------------*
+11646  *------------------------------------------------------------*;
+11647  * &msgString;
+11648  *------------------------------------------------------------*;
+11649  filename _flowref "\\Client\C$\Users\sonik\Documents\6201 - MBAD - Monica\Project\Predictive Analytics1\Workspaces\EMWS1\Trans\EMFLOWSCORE.sas";
+11650  proc FCMP NOEXECUTE IMPUTEDDEPS OUTDEPS=WORK.TRANS_SCOREINPUTS;
+11651  %INCLUDE _flowref;
+11656  run;
+ 
+NOTE: Dependency structure written to data set WORK.TRANS_SCOREINPUTS.
+NOTE: PROCEDURE FCMP used (Total process time):
+      real time           0.21 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11657  quit;
+11658  data WORK.TRANS_SCOREINPUTS;
+11659  set WORK.TRANS_SCOREINPUTS(keep=RHS rename=(RHS=NAME));
+11660  length UNAME $32;
+11661  UNAME = upcase(NAME);
+11662  run;
+ 
+NOTE: There were 1 observations read from the data set WORK.TRANS_SCOREINPUTS.
+NOTE: The data set WORK.TRANS_SCOREINPUTS has 1 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11663  proc sort data=WORK.TRANS_SCOREINPUTS NODUPKEY;
+11664  by UNAME;
+11665  run;
+ 
+NOTE: There were 1 observations read from the data set WORK.TRANS_SCOREINPUTS.
+NOTE: 0 observations with duplicate key values were deleted.
+NOTE: The data set WORK.TRANS_SCOREINPUTS has 1 observations and 2 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11666  filename _flowref;
+NOTE: Fileref _FLOWREF has been deassigned.
+11667  %let SYSCC = 0;
+11668  *------------------------------------------------------------*;
+11669  * transformcombinevariables;
+11670  *------------------------------------------------------------*;
+11671  data WORK.TRANS_OUTPUTVARS;
+11672  length Uname inputName $32 inputLevel $10 inputType $1 _MetaFlag 8;
+11673  set
+11674  EMWS1.Trans_FORMULA
+11675  ;
+11676  _MetaFlag=0;
+11677  uname = upcase(name);
+11678  run;
+ 
+NOTE: Variable inputName is uninitialized.
+NOTE: Variable inputLevel is uninitialized.
+NOTE: Variable inputType is uninitialized.
+NOTE: There were 1 observations read from the data set EMWS1.TRANS_FORMULA.
+NOTE: The data set WORK.TRANS_OUTPUTVARS has 1 observations and 22 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.18 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11679  data _temp;
+11680  length UNAME $32;
+11681  set EMWS1.Trans_CMeta_TRAIN(keep=NAME LEVEL ROLE TYPE CREATOR LABEL);
+11682  UNAME = upcase(name);
+11683  where upcase(CREATOR) = upcase("Trans");
+11684  run;
+ 
+NOTE: There were 1 observations read from the data set EMWS1.TRANS_CMETA_TRAIN.
+      WHERE UPCASE(CREATOR)='TRANS';
+NOTE: The data set WORK._TEMP has 1 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.21 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11685  proc sort data=_temp(drop=CREATOR);
+11686  by UNAME;
+11687  run;
+ 
+NOTE: There were 1 observations read from the data set WORK._TEMP.
+NOTE: The data set WORK._TEMP has 1 observations and 6 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11688  proc sort data=WORK.TRANS_OUTPUTVARS;
+11689  by UNAME;
+11690  run;
+ 
+NOTE: There were 1 observations read from the data set WORK.TRANS_OUTPUTVARS.
+NOTE: The data set WORK.TRANS_OUTPUTVARS has 1 observations and 22 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11691  data WORK.TRANS_OUTPUTVARS;
+11692  merge WORK.TRANS_OUTPUTVARS _temp;
+11693  by UNAME;
+11694  run;
+ 
+NOTE: There were 1 observations read from the data set WORK.TRANS_OUTPUTVARS.
+NOTE: There were 1 observations read from the data set WORK._TEMP.
+NOTE: The data set WORK.TRANS_OUTPUTVARS has 1 observations and 22 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11695  *------------------------------------------------------------*;
+11696  * Trans: Get Metadata for the Score Inputs Variables;
+11697  *------------------------------------------------------------*;
+11698  data _temp;
+11699  length UNAME $32;
+11700  set EMWS1.Trans_VariableSet(keep=NAME LEVEL TYPE LABEL);
+11701  UNAME = upcase(name);
+11702  run;
+ 
+NOTE: There were 92 observations read from the data set EMWS1.TRANS_VARIABLESET.
+NOTE: The data set WORK._TEMP has 92 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11703  proc sort data=_temp;
+11704  by UNAME;
+11705  run;
+ 
+NOTE: There were 92 observations read from the data set WORK._TEMP.
+NOTE: The data set WORK._TEMP has 92 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11706  data WORK.TRANS_SCOREINPUTS;
+11707  merge WORK.TRANS_SCOREINPUTS(in=_a) _temp(in=_b);
+11708  by UNAME;
+11709  if _a and _b then output;
+11710  run;
+ 
+NOTE: There were 1 observations read from the data set WORK.TRANS_SCOREINPUTS.
+NOTE: There were 92 observations read from the data set WORK._TEMP.
+NOTE: The data set WORK.TRANS_SCOREINPUTS has 1 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11711  *------------------------------------------------------------*;
+11712  * Trans: Computing Summary Statistics;
+11713  *------------------------------------------------------------*;
+11714  proc dmdb data=EMWS1.Trans_TRAIN classout=WORK.TRANS_CLASSSTATS varout=WORK.TRANS_VARSTATS;
+11715  ;
+11716  var
+11717  DOLL24
+11718  transformed_doll24
+11719  ;
+11720  run;
+ 
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00003 ACTBUY=2 BOTHPAYM=1 BUYPROP=10% CATALOGCNT=6 CCPAYM=0 DAYLAST=753 DOLINDEA=$50.23 DOLINDET=$552.55 DOLL24=$0.00 DOLNETDA=$50.23 DOLNETDT=$552.55 DTBUYLST=26JUL06 DTBUYORG=15DEC88 FREQPRCH=11 METHPAYM=XBOT MONLAST=25 ORDERSIZE=$35.80 PCPAYM=0
+RESPOND=1 STATE=MA COUNTY=10 ZIP=01027 TENURE=236 UNITSIDD=17 UNITSLAP=$32.50 UNTLANPO=1.5454545455 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=0 DEPT06=0 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=0 DEPT11=0 DEPT12=0 DEPT13=0 DEPT14=5 DEPT15=0 DEPT16=0 DEPT17=0
+DEPT18=0 DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=5 DEPT23=6 DEPT24=0 DEPT25=5 DEPT26=0 DEPT27=3 DOLLARQ01=$34.85 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$0.00 DOLLARQ10=$0.00
+DOLLARQ11=$0.00 DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$35.90 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=1 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0
+TOTORDQ06=0 TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=1 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=3
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00007 ACTBUY=0 BOTHPAYM=0 BUYPROP=0% CATALOGCNT=5 CCPAYM=0 DAYLAST=1312 DOLINDEA=$64.67 DOLINDET=$194.00 DOLL24=$0.00 DOLNETDA=$64.67 DOLNETDT=$194.00 DTBUYLST=14JAN05 DTBUYORG=20JUN99 FREQPRCH=3 METHPAYM=CK MONLAST=43 ORDERSIZE=$169.65 PCPAYM=1
+RESPOND=1 STATE=MA COUNTY=10 ZIP=01007 TENURE=110 UNITSIDD=16 UNITSLAP=$12.13 UNTLANPO=5.3333333333 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=0 DEPT06=0 DEPT07=0 DEPT08=3 DEPT09=0 DEPT10=0 DEPT11=0 DEPT12=0 DEPT13=0 DEPT14=0 DEPT15=0 DEPT16=0 DEPT17=0
+DEPT18=0 DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=6 DEPT23=5 DEPT24=0 DEPT25=0 DEPT26=5 DEPT27=7 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$33.90 DOLLARQ10=$0.00
+DOLLARQ11=$0.00 DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0
+TOTORDQ06=0 TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=1 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=7
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00008 ACTBUY=1 BOTHPAYM=1 BUYPROP=17% CATALOGCNT=1 CCPAYM=0 DAYLAST=1347 DOLINDEA=$13.33 DOLINDET=$26.65 DOLL24=$0.00 DOLNETDA=$13.33 DOLNETDT=$26.65 DTBUYLST=10DEC04 DTBUYORG=06FEB02 FREQPRCH=2 METHPAYM=XBOT MONLAST=44 ORDERSIZE=$19.95 PCPAYM=0
+RESPOND=1 STATE=MA COUNTY=10 ZIP=01056 TENURE=78 UNITSIDD=3 UNITSLAP=$8.88 UNTLANPO=1.5 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=0 DEPT06=0 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=0 DEPT11=0 DEPT12=0 DEPT13=0 DEPT14=0 DEPT15=0 DEPT16=0 DEPT17=0 DEPT18=0
+DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=0 DEPT23=0 DEPT24=0 DEPT25=6 DEPT26=0 DEPT27=0 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$16.70 DOLLARQ09=$0.00 DOLLARQ10=$0.00
+DOLLARQ11=$0.00 DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0
+TOTORDQ06=0 TOTORDQ07=0 TOTORDQ08=1 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=8
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00009 ACTBUY=1 BOTHPAYM=0 BUYPROP=17% CATALOGCNT=1 CCPAYM=0 DAYLAST=2100 DOLINDEA=$9.50 DOLINDET=$9.50 DOLL24=$0.00 DOLNETDA=$9.50 DOLNETDT=$9.50 DTBUYLST=17NOV02 DTBUYORG=17NOV02 FREQPRCH=1 METHPAYM=CK MONLAST=69 ORDERSIZE=$134.80 PCPAYM=1
+RESPOND=1 STATE=MA COUNTY=10 ZIP=01001 TENURE=69 UNITSIDD=1 UNITSLAP=$9.50 UNTLANPO=1 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=0 DEPT06=0 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=0 DEPT11=0 DEPT12=0 DEPT13=0 DEPT14=0 DEPT15=0 DEPT16=0 DEPT17=0 DEPT18=0 DEPT19=0
+DEPT20=0 DEPT21=0 DEPT22=0 DEPT23=3 DEPT24=0 DEPT25=0 DEPT26=0 DEPT27=0 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$0.00 DOLLARQ10=$0.00 DOLLARQ11=$0.00
+DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0 TOTORDQ06=0
+TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=9
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00010 ACTBUY=1 BOTHPAYM=1 BUYPROP=20% CATALOGCNT=1 CCPAYM=0 DAYLAST=1674 DOLINDEA=$59.95 DOLINDET=$119.90 DOLL24=$0.00 DOLNETDA=$29.98 DOLNETDT=$59.95 DTBUYLST=17JAN04 DTBUYORG=30NOV03 FREQPRCH=2 METHPAYM=XBOT MONLAST=55 ORDERSIZE=$18.80 PCPAYM=0
+RESPOND=1 STATE=MA COUNTY=10 ZIP=01060 TENURE=57 UNITSIDD=2 UNITSLAP=$59.95 UNTLANPO=1 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=0 DEPT06=0 DEPT07=0 DEPT08=5 DEPT09=0 DEPT10=0 DEPT11=0 DEPT12=0 DEPT13=0 DEPT14=0 DEPT15=0 DEPT16=0 DEPT17=0 DEPT18=0
+DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=0 DEPT23=0 DEPT24=0 DEPT25=0 DEPT26=0 DEPT27=0 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$59.95 DOLLARQ05=$59.95 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$0.00 DOLLARQ10=$0.00
+DOLLARQ11=$0.00 DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=1 TOTORDQ05=1
+TOTORDQ06=0 TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=10
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00013 ACTBUY=0 BOTHPAYM=0 BUYPROP=0% CATALOGCNT=6 CCPAYM=1 DAYLAST=782 DOLINDEA=$153.30 DOLINDET=$153.30 DOLL24=$0.00 DOLNETDA=$153.30 DOLNETDT=$153.30 DTBUYLST=27JUN06 DTBUYORG=27JUN06 FREQPRCH=1 METHPAYM=CC MONLAST=26 ORDERSIZE=$59.90 PCPAYM=0
+RESPOND=1 STATE=MA COUNTY=10 ZIP=01026 TENURE=26 UNITSIDD=10 UNITSLAP=$15.33 UNTLANPO=10 DEPT01=0 DEPT02=0 DEPT03=5 DEPT04=0 DEPT05=3 DEPT06=0 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=0 DEPT11=0 DEPT12=0 DEPT13=0 DEPT14=0 DEPT15=3 DEPT16=0 DEPT17=3 DEPT18=0
+DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=4 DEPT23=3 DEPT24=0 DEPT25=0 DEPT26=0 DEPT27=0 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$0.00 DOLLARQ10=$0.00 DOLLARQ11=$0.00
+DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$153.30 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0 TOTORDQ06=0
+TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=1 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=13
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00015 ACTBUY=1 BOTHPAYM=0 BUYPROP=10% CATALOGCNT=4 CCPAYM=0 DAYLAST=2217 DOLINDEA=$25.04 DOLINDET=$175.25 DOLL24=$0.00 DOLNETDA=$25.04 DOLNETDT=$175.25 DTBUYLST=23JUL02 DTBUYORG=28FEB98 FREQPRCH=7 METHPAYM=CK MONLAST=73 ORDERSIZE=$59.90 PCPAYM=1
+RESPOND=1 STATE=MA COUNTY=10 ZIP=01040 TENURE=126 UNITSIDD=9 UNITSLAP=$19.47 UNTLANPO=1.2857142857 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=0 DEPT06=3 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=0 DEPT11=0 DEPT12=0 DEPT13=3 DEPT14=0 DEPT15=0 DEPT16=0 DEPT17=0
+DEPT18=0 DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=0 DEPT23=5 DEPT24=0 DEPT25=0 DEPT26=0 DEPT27=0 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$0.00 DOLLARQ10=$0.00
+DOLLARQ11=$0.00 DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0
+TOTORDQ06=0 TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=15
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00017 ACTBUY=1 BOTHPAYM=0 BUYPROP=8% CATALOGCNT=6 CCPAYM=1 DAYLAST=1317 DOLINDEA=$33.27 DOLINDET=$99.80 DOLL24=$0.00 DOLNETDA=$33.27 DOLNETDT=$99.80 DTBUYLST=09JAN05 DTBUYORG=15AUG95 FREQPRCH=3 METHPAYM=CC MONLAST=43 ORDERSIZE=$0.00 PCPAYM=0
+RESPOND=0 STATE=MA COUNTY=10 ZIP=01002 TENURE=156 UNITSIDD=7 UNITSLAP=$14.26 UNTLANPO=2.3333333333 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=0 DEPT06=0 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=0 DEPT11=3 DEPT12=0 DEPT13=3 DEPT14=0 DEPT15=0 DEPT16=3 DEPT17=0
+DEPT18=0 DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=3 DEPT23=0 DEPT24=0 DEPT25=3 DEPT26=0 DEPT27=0 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$73.80 DOLLARQ10=$0.00
+DOLLARQ11=$0.00 DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0
+TOTORDQ06=0 TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=1 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=17
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00020 ACTBUY=0 BOTHPAYM=0 BUYPROP=0% CATALOGCNT=1 CCPAYM=0 DAYLAST=4424 DOLINDEA=$27.67 DOLINDET=$83.00 DOLL24=$0.00 DOLNETDA=$27.67 DOLNETDT=$83.00 DTBUYLST=08JUL96 DTBUYORG=28FEB95 FREQPRCH=3 METHPAYM=DK MONLAST=145 ORDERSIZE=$0.00 PCPAYM=0
+RESPOND=0 STATE=MA COUNTY=10 ZIP=01005 TENURE=162 UNITSIDD=3 UNITSLAP=$27.67 UNTLANPO=1 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=0 DEPT06=0 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=0 DEPT11=0 DEPT12=0 DEPT13=0 DEPT14=0 DEPT15=0 DEPT16=0 DEPT17=0 DEPT18=0
+DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=0 DEPT23=0 DEPT24=0 DEPT25=0 DEPT26=0 DEPT27=0 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$0.00 DOLLARQ10=$0.00 DOLLARQ11=$0.00
+DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0 TOTORDQ06=0
+TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=20
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00022 ACTBUY=0 BOTHPAYM=0 BUYPROP=0% CATALOGCNT=2 CCPAYM=1 DAYLAST=3287 DOLINDEA=$27.00 DOLINDET=$81.00 DOLL24=$0.00 DOLNETDA=$27.00 DOLNETDT=$81.00 DTBUYLST=18AUG99 DTBUYORG=15AUG96 FREQPRCH=3 METHPAYM=CC MONLAST=108 ORDERSIZE=$0.00 PCPAYM=0
+RESPOND=0 STATE=MA COUNTY=10 ZIP=01036 TENURE=144 UNITSIDD=6 UNITSLAP=$13.50 UNTLANPO=2 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=6 DEPT05=0 DEPT06=0 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=0 DEPT11=0 DEPT12=0 DEPT13=0 DEPT14=0 DEPT15=0 DEPT16=0 DEPT17=0 DEPT18=0
+DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=0 DEPT23=0 DEPT24=0 DEPT25=0 DEPT26=0 DEPT27=0 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$0.00 DOLLARQ10=$0.00 DOLLARQ11=$0.00
+DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0 TOTORDQ06=0
+TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=22
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00023 ACTBUY=0 BOTHPAYM=0 BUYPROP=0% CATALOGCNT=2 CCPAYM=0 DAYLAST=3112 DOLINDEA=$7.59 DOLINDET=$22.77 DOLL24=$0.00 DOLNETDA=$7.59 DOLNETDT=$22.77 DTBUYLST=09FEB00 DTBUYORG=28FEB90 FREQPRCH=3 METHPAYM=CK MONLAST=102 ORDERSIZE=$0.00 PCPAYM=1
+RESPOND=0 STATE=MA COUNTY=10 ZIP=01040 TENURE=222 UNITSIDD=3 UNITSLAP=$7.59 UNTLANPO=1 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=0 DEPT06=0 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=0 DEPT11=0 DEPT12=0 DEPT13=0 DEPT14=0 DEPT15=0 DEPT16=0 DEPT17=0 DEPT18=0
+DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=0 DEPT23=3 DEPT24=0 DEPT25=0 DEPT26=0 DEPT27=0 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$0.00 DOLLARQ10=$0.00 DOLLARQ11=$0.00
+DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0 TOTORDQ06=0
+TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=23
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00024 ACTBUY=1 BOTHPAYM=1 BUYPROP=8% CATALOGCNT=6 CCPAYM=0 DAYLAST=2051 DOLINDEA=$45.45 DOLINDET=$136.35 DOLL24=$0.00 DOLNETDA=$45.45 DOLNETDT=$136.35 DTBUYLST=05JAN03 DTBUYORG=20JAN96 FREQPRCH=3 METHPAYM=XBOT MONLAST=67 ORDERSIZE=$0.00 PCPAYM=0
+RESPOND=0 STATE=MA COUNTY=10 ZIP=01040 TENURE=151 UNITSIDD=6 UNITSLAP=$22.73 UNTLANPO=2 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=0 DEPT06=0 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=0 DEPT11=3 DEPT12=0 DEPT13=0 DEPT14=3 DEPT15=0 DEPT16=0 DEPT17=0 DEPT18=0
+DEPT19=0 DEPT20=3 DEPT21=0 DEPT22=0 DEPT23=3 DEPT24=3 DEPT25=0 DEPT26=0 DEPT27=0 DOLLARQ01=$31.90 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$0.00 DOLLARQ10=$0.00
+DOLLARQ11=$0.00 DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=1 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0
+TOTORDQ06=0 TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=24
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00025 ACTBUY=0 BOTHPAYM=0 BUYPROP=0% CATALOGCNT=8 CCPAYM=1 DAYLAST=929 DOLINDEA=$21.02 DOLINDET=$252.29 DOLL24=$0.00 DOLNETDA=$21.02 DOLNETDT=$252.29 DTBUYLST=01FEB06 DTBUYORG=15AUG91 FREQPRCH=12 METHPAYM=CC MONLAST=30 ORDERSIZE=$0.00 PCPAYM=0
+RESPOND=0 STATE=MA COUNTY=10 ZIP=01056 TENURE=204 UNITSIDD=20 UNITSLAP=$12.61 UNTLANPO=1.6666666667 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=0 DEPT06=0 DEPT07=0 DEPT08=3 DEPT09=0 DEPT10=0 DEPT11=0 DEPT12=0 DEPT13=3 DEPT14=0 DEPT15=3 DEPT16=0 DEPT17=0
+DEPT18=0 DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=5 DEPT23=4 DEPT24=6 DEPT25=6 DEPT26=0 DEPT27=0 DOLLARQ01=$0.00 DOLLARQ02=$31.65 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$32.95 DOLLARQ07=$23.95 DOLLARQ08=$0.00 DOLLARQ09=$0.00 DOLLARQ10=$0.00
+DOLLARQ11=$0.00 DOLLARQ12=$0.00 DOLLARQ13=$65.85 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=2 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0
+TOTORDQ06=1 TOTORDQ07=1 TOTORDQ08=0 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=2 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=25
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00027 ACTBUY=1 BOTHPAYM=0 BUYPROP=8% CATALOGCNT=8 CCPAYM=1 DAYLAST=1525 DOLINDEA=$55.47 DOLINDET=$1,275.75 DOLL24=$0.00 DOLNETDA=$54.38 DOLNETDT=$1,250.80 DTBUYLST=15JUN04 DTBUYORG=15AUG95 FREQPRCH=23 METHPAYM=CC MONLAST=50 ORDERSIZE=$0.00 PCPAYM=0
+RESPOND=0 STATE=MA COUNTY=10 ZIP=01060 TENURE=156 UNITSIDD=42 UNITSLAP=$30.38 UNTLANPO=1.8260869565 DEPT01=0 DEPT02=5 DEPT03=12 DEPT04=0 DEPT05=0 DEPT06=0 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=0 DEPT11=0 DEPT12=0 DEPT13=0 DEPT14=6 DEPT15=9 DEPT16=0 DEPT17=3
+DEPT18=0 DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=3 DEPT23=9 DEPT24=0 DEPT25=0 DEPT26=0 DEPT27=0 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$39.90 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$24.85 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$0.00 DOLLARQ10=$0.00
+DOLLARQ11=$0.00 DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=1 TOTORDQ04=0 TOTORDQ05=0
+TOTORDQ06=1 TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=27
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00028 ACTBUY=1 BOTHPAYM=0 BUYPROP=8% CATALOGCNT=2 CCPAYM=0 DAYLAST=1303 DOLINDEA=$72.30 DOLINDET=$216.90 DOLL24=$0.00 DOLNETDA=$72.30 DOLNETDT=$216.90 DTBUYLST=23JAN05 DTBUYORG=15DEC95 FREQPRCH=3 METHPAYM=CK MONLAST=43 ORDERSIZE=$0.00 PCPAYM=1
+RESPOND=0 STATE=MA COUNTY=10 ZIP=01060 TENURE=152 UNITSIDD=4 UNITSLAP=$54.23 UNTLANPO=1.3333333333 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=0 DEPT06=0 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=0 DEPT11=0 DEPT12=0 DEPT13=0 DEPT14=0 DEPT15=0 DEPT16=0 DEPT17=0
+DEPT18=0 DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=0 DEPT23=0 DEPT24=4 DEPT25=0 DEPT26=0 DEPT27=0 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$43.90 DOLLARQ10=$0.00
+DOLLARQ11=$0.00 DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0
+TOTORDQ06=0 TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=1 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=28
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00031 ACTBUY=0 BOTHPAYM=0 BUYPROP=0% CATALOGCNT=1 CCPAYM=0 DAYLAST=5520 DOLINDEA=$28.50 DOLINDET=$57.00 DOLL24=$0.00 DOLNETDA=$28.50 DOLNETDT=$57.00 DTBUYLST=08JUL93 DTBUYORG=28FEB93 FREQPRCH=2 METHPAYM=DK MONLAST=181 ORDERSIZE=$0.00 PCPAYM=0
+RESPOND=0 STATE=MA COUNTY=10 ZIP=01075 TENURE=186 UNITSIDD=2 UNITSLAP=$28.50 UNTLANPO=1 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=0 DEPT06=0 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=0 DEPT11=0 DEPT12=0 DEPT13=0 DEPT14=0 DEPT15=0 DEPT16=0 DEPT17=0 DEPT18=0
+DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=0 DEPT23=0 DEPT24=0 DEPT25=0 DEPT26=0 DEPT27=0 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$0.00 DOLLARQ10=$0.00 DOLLARQ11=$0.00
+DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0 TOTORDQ06=0
+TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=31
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00032 ACTBUY=2 BOTHPAYM=0 BUYPROP=13% CATALOGCNT=5 CCPAYM=0 DAYLAST=2904 DOLINDEA=$52.82 DOLINDET=$158.45 DOLL24=$0.00 DOLNETDA=$52.82 DOLNETDT=$158.45 DTBUYLST=05SEP00 DTBUYORG=10NOV93 FREQPRCH=3 METHPAYM=CK MONLAST=95 ORDERSIZE=$0.00 PCPAYM=1
+RESPOND=0 STATE=MA COUNTY=10 ZIP=01077 TENURE=177 UNITSIDD=8 UNITSLAP=$19.81 UNTLANPO=2.6666666667 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=0 DEPT06=3 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=0 DEPT11=0 DEPT12=3 DEPT13=0 DEPT14=0 DEPT15=0 DEPT16=0 DEPT17=0
+DEPT18=0 DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=3 DEPT23=0 DEPT24=0 DEPT25=4 DEPT26=0 DEPT27=0 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$0.00 DOLLARQ10=$0.00
+DOLLARQ11=$0.00 DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0
+TOTORDQ06=0 TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=32
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00036 ACTBUY=0 BOTHPAYM=0 BUYPROP=0% CATALOGCNT=1 CCPAYM=0 DAYLAST=5618 DOLINDEA=$23.50 DOLINDET=$47.00 DOLL24=$0.00 DOLNETDA=$23.50 DOLNETDT=$47.00 DTBUYLST=01APR93 DTBUYORG=15AUG88 FREQPRCH=2 METHPAYM=DK MONLAST=184 ORDERSIZE=$0.00 PCPAYM=0
+RESPOND=0 STATE=MA COUNTY=10 ZIP=01095 TENURE=240 UNITSIDD=2 UNITSLAP=$23.50 UNTLANPO=1 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=0 DEPT06=0 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=0 DEPT11=0 DEPT12=0 DEPT13=0 DEPT14=0 DEPT15=0 DEPT16=0 DEPT17=0 DEPT18=0
+DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=0 DEPT23=0 DEPT24=0 DEPT25=0 DEPT26=0 DEPT27=0 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$0.00 DOLLARQ10=$0.00 DOLLARQ11=$0.00
+DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0 TOTORDQ06=0
+TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=36
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+CUST_ID=00037 ACTBUY=1 BOTHPAYM=0 BUYPROP=7% CATALOGCNT=8 CCPAYM=0 DAYLAST=2094 DOLINDEA=$37.70 DOLINDET=$904.80 DOLL24=$0.00 DOLNETDA=$37.70 DOLNETDT=$904.80 DTBUYLST=23NOV02 DTBUYORG=28FEB93 FREQPRCH=24 METHPAYM=CK MONLAST=69 ORDERSIZE=$0.00 PCPAYM=1
+RESPOND=0 STATE=MA COUNTY=10 ZIP=01093 TENURE=186 UNITSIDD=32 UNITSLAP=$28.28 UNTLANPO=1.3333333333 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=5 DEPT06=3 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=0 DEPT11=3 DEPT12=0 DEPT13=0 DEPT14=3 DEPT15=0 DEPT16=0 DEPT17=0
+DEPT18=0 DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=11 DEPT23=0 DEPT24=0 DEPT25=3 DEPT26=0 DEPT27=3 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$0.00 DOLLARQ10=$0.00
+DOLLARQ11=$0.00 DOLLARQ12=$0.00 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0
+TOTORDQ06=0 TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=0 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=37
+NOTE: Invalid argument to function LOG(0) at line 30841 column 21.
+WARNING: Limit set by ERRORS= option reached.  Further errors of this type will not be printed.
+CUST_ID=00038 ACTBUY=3 BOTHPAYM=0 BUYPROP=23% CATALOGCNT=4 CCPAYM=0 DAYLAST=998 DOLINDEA=$15.71 DOLINDET=$62.85 DOLL24=$0.00 DOLNETDA=$15.71 DOLNETDT=$62.85 DTBUYLST=24NOV05 DTBUYORG=15DEC95 FREQPRCH=4 METHPAYM=CK MONLAST=33 ORDERSIZE=$0.00 PCPAYM=1
+RESPOND=0 STATE=MA COUNTY=10 ZIP=01010 TENURE=152 UNITSIDD=6 UNITSLAP=$10.48 UNTLANPO=1.5 DEPT01=0 DEPT02=0 DEPT03=0 DEPT04=0 DEPT05=0 DEPT06=0 DEPT07=0 DEPT08=0 DEPT09=0 DEPT10=3 DEPT11=0 DEPT12=0 DEPT13=0 DEPT14=0 DEPT15=0 DEPT16=0 DEPT17=0 DEPT18=0
+DEPT19=0 DEPT20=0 DEPT21=0 DEPT22=0 DEPT23=0 DEPT24=0 DEPT25=3 DEPT26=3 DEPT27=0 DOLLARQ01=$0.00 DOLLARQ02=$0.00 DOLLARQ03=$0.00 DOLLARQ04=$0.00 DOLLARQ05=$0.00 DOLLARQ06=$0.00 DOLLARQ07=$0.00 DOLLARQ08=$0.00 DOLLARQ09=$0.00 DOLLARQ10=$0.00 DOLLARQ11=$0.00
+DOLLARQ12=$34.90 DOLLARQ13=$0.00 DOLLARQ14=$0.00 DOLLARQ15=$0.00 DOLLARQ16=$0.00 DOLLARQ17=$0.00 DOLLARQ18=$0.00 DOLLARQ19=$0.00 DOLLARQ20=$0.00 DOLLARQ21=$0.00 DOLLARQ22=$0.00 TOTORDQ01=0 TOTORDQ02=0 TOTORDQ03=0 TOTORDQ04=0 TOTORDQ05=0 TOTORDQ06=0
+TOTORDQ07=0 TOTORDQ08=0 TOTORDQ09=0 TOTORDQ10=0 TOTORDQ11=0 TOTORDQ12=1 TOTORDQ13=0 TOTORDQ14=0 TOTORDQ15=0 TOTORDQ16=0 TOTORDQ17=0 TOTORDQ18=0 TOTORDQ19=0 TOTORDQ20=0 TOTORDQ21=0 TOTORDQ22=0 transformed_doll24=. _ERROR_=1 _N_=38
+NOTE: Records processed = 48356   Memory used = 511K.
+NOTE: There were 48356 observations read from the data set DATA.CATALOG2010.
+NOTE: There were 48356 observations read from the data set EMWS1.IDS_DATA.
+NOTE: Mathematical operations could not be performed at the following places. The results of the operations have been set to missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      24525 at 30841:21
+NOTE: View EMWS1.TRANS_TRAIN.VIEW used (Total process time):
+      real time           1:57.93
+      cpu time            0.79 seconds
+ 
+NOTE: There were 48356 observations read from the data set EMWS1.STAT_TRAIN.
+NOTE: There were 48356 observations read from the data set EMWS1.TRANS_TRAIN.
+NOTE: The data set WORK.TRANS_VARSTATS has 2 observations and 9 variables.
+NOTE: PROCEDURE DMDB used (Total process time):
+      real time           1:58.11
+      cpu time            0.84 seconds
+ 
+ 
+11721  *------------------------------------------------------------*;
+11722  * Trans: Combine Information and Statistics for Class Variables;
+11723  *------------------------------------------------------------*;
+11724  proc sort data=WORK.TRANS_OUTPUTVARS out=_temp;
+11725  by NAME;
+11726  run;
+ 
+NOTE: There were 1 observations read from the data set WORK.TRANS_OUTPUTVARS.
+NOTE: The data set WORK._TEMP has 1 observations and 22 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11727  proc sort data=WORK.TRANS_CLASSSTATS;
+11728  by NAME;
+11729  run;
+ 
+NOTE: Input data set is empty.
+NOTE: The data set WORK.TRANS_CLASSSTATS has 0 observations and 9 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11730  data WORK.TRANS_CLASSSTATS(keep=name nlevel nmiss);
+11731  retain nlevel nmiss;
+11732  set WORK.TRANS_CLASSSTATS;
+11733  by Name;
+11734  if first.Name then do;
+11735  nlevel= 0;
+11736  nmiss= 0;
+11737  end;
+11738  if (type='C' and CRAW='') or (type='N' and NRAW=.) then nmiss = FREQUENCY;
+11739  else nlevel + 1;
+11740  if last.name then output;
+11741  run;
+ 
+NOTE: There were 0 observations read from the data set WORK.TRANS_CLASSSTATS.
+NOTE: The data set WORK.TRANS_CLASSSTATS has 0 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11742  /*Merge Statistics for Class Output Vars */
+11743  data WORK.TRANS_CLASSSTATS;
+11744  length SOURCE $6 _METHOD_ $8 NAME $32 FORMULA $300;
+11745  merge WORK.TRANS_CLASSSTATS(in=_a) _temp(in=_b keep=NAME InputName Formula _MetaFlag LEVEL TYPE LABEL);
+11746  by NAME;
+11747  if _a and _b then do;
+11748  SOURCE='Output';
+11749  if _MetaFlag = 1 then _METHOD_="Meta";
+11750  else if Formula eq 'Interaction' then _METHOD_="Computed";
+11751  else if inputName eq '' then _METHOD_="Formula";
+11752  else _METHOD_="Computed";
+11753  if Formula = '' then Formula = "User Code";
+11754  end;
+11755  if _a then output;
+11756  drop inputName LEVEL TYPE _MetaFlag;
+11757  run;
+ 
+NOTE: There were 0 observations read from the data set WORK.TRANS_CLASSSTATS.
+NOTE: There were 1 observations read from the data set WORK._TEMP.
+NOTE: The data set WORK.TRANS_CLASSSTATS has 0 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11758  /*Merge Statistics for Class Input Vars */
+11759  proc sort data=WORK.TRANS_SCOREINPUTS(drop=TYPE LEVEL) out=_temp nodupkey;
+11760  by NAME;
+11761  run;
+ 
+NOTE: There were 1 observations read from the data set WORK.TRANS_SCOREINPUTS.
+NOTE: 0 observations with duplicate key values were deleted.
+NOTE: The data set WORK._TEMP has 1 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11762  data WORK.TRANS_CLASSSTATS;
+11763  merge WORK.TRANS_CLASSSTATS(in=_a) _temp(in=_b);
+11764  by NAME;
+11765  if _a and _b then do;
+11766  SOURCE='Input';
+11767  _METHOD_="Original";
+11768  end;
+11769  if _a then output;
+11770  run;
+ 
+NOTE: There were 0 observations read from the data set WORK.TRANS_CLASSSTATS.
+NOTE: There were 1 observations read from the data set WORK._TEMP.
+NOTE: The data set WORK.TRANS_CLASSSTATS has 0 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11771  *------------------------------------------------------------*;
+11772  * Trans: Combine Information and Statistics for Interval Variables;
+11773  *------------------------------------------------------------*;
+11774  proc sort data=WORK.TRANS_OUTPUTVARS out=_temp;
+11775  by NAME;
+11776  run;
+ 
+NOTE: There were 1 observations read from the data set WORK.TRANS_OUTPUTVARS.
+NOTE: The data set WORK._TEMP has 1 observations and 22 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11777  proc sort data=WORK.TRANS_VARSTATS;
+11778  by NAME;
+11779  run;
+ 
+NOTE: There were 2 observations read from the data set WORK.TRANS_VARSTATS.
+NOTE: The data set WORK.TRANS_VARSTATS has 2 observations and 9 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11780  *Merge Statistics for Output Vars;
+11781  data WORK.TRANS_VARSTATS;
+11782  length SOURCE $6 _METHOD_ $8 NAME $32 FORMULA $300;
+11783  merge WORK.TRANS_VARSTATS(in=_a) _temp(in=_b keep=NAME Formula InputName _MetaFlag LEVEL TYPE LABEL);
+11784  by NAME;
+11785  if _a and _b then do;
+11786  SOURCE='Output';
+11787  if _MetaFlag = 1 then _METHOD_="Meta";
+11788  else if Formula eq 'Interaction' then _METHOD_="Computed";
+11789  else if inputName eq '' then _METHOD_="Formula";
+11790  else _METHOD_="Computed";
+11791  if Formula = '' then Formula = "Mixture of variables";
+11792  end;
+11793  if _a then output;
+11794  drop inputName LEVEL TYPE _MetaFlag;
+11795  run;
+ 
+NOTE: There were 2 observations read from the data set WORK.TRANS_VARSTATS.
+NOTE: There were 1 observations read from the data set WORK._TEMP.
+NOTE: The data set WORK.TRANS_VARSTATS has 2 observations and 13 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11796  *Merge Statistics for Input Vars;
+11797  proc sort data=WORK.TRANS_SCOREINPUTS(drop=TYPE LEVEL) out=_temp nodupkey;
+11798  by NAME;
+11799  run;
+ 
+NOTE: There were 1 observations read from the data set WORK.TRANS_SCOREINPUTS.
+NOTE: 0 observations with duplicate key values were deleted.
+NOTE: The data set WORK._TEMP has 1 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11800  data WORK.TRANS_VARSTATS;
+11801  merge WORK.TRANS_VARSTATS(in=_a) _temp(in=_b);
+11802  by NAME;
+11803  if _a and _b then do;
+11804  SOURCE='Input';
+11805  _METHOD_="Original";
+11806  end;
+11807  if _a then output;
+11808  run;
+ 
+NOTE: There were 2 observations read from the data set WORK.TRANS_VARSTATS.
+NOTE: There were 1 observations read from the data set WORK._TEMP.
+NOTE: The data set WORK.TRANS_VARSTATS has 2 observations and 14 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11809  *------------------------------------------------------------*;
+11810  * Trans: Combine statistics for class and interval variables;
+11811  *------------------------------------------------------------*;
+11812  data EMWS1.Trans_STATISTICS;
+11813  length SOURCE $6 _METHOD_ $8 NAME $32 FORMULA $300;
+11814  label SOURCE = "%sysfunc(sasmsg(sashelp.dmine, rpt_source_vlabel,  NOQUOTE))" _METHOD_ = "%sysfunc(sasmsg(sashelp.dmine, rpt_method_vlabel,  NOQUOTE))" NAME = "%sysfunc(sasmsg(sashelp.dmine, meta_name_vlabel,  NOQUOTE))" FORMULA =
+11815     "%sysfunc(sasmsg(sashelp.dmine, rpt_formula_vlabel,   NOQUOTE))" NLEVEL = "%sysfunc(sasmsg(sashelp.dmine, rpt_numcat_vlabel,   NOQUOTE))" N = "%sysfunc(sasmsg(sashelp.dmine, rpt_nonmiss_vlabel, NOQUOTE))" NMISS =
+11816     "%sysfunc(sasmsg(sashelp.dmine, rpt_missing_vlabel, NOQUOTE))" MIN = "%sysfunc(sasmsg(sashelp.dmine, rpt_minimum_vlabel, NOQUOTE))" MAX = "%sysfunc(sasmsg(sashelp.dmine, rpt_maximum_vlabel, NOQUOTE))" MEAN =
+11817     "%sysfunc(sasmsg(sashelp.dmine, rpt_mean_vlabel,    NOQUOTE))" STD = "%sysfunc(sasmsg(sashelp.dmine, rpt_std_vlabel,     NOQUOTE))" SKEWNESS = "%sysfunc(sasmsg(sashelp.dmine, rpt_skewness_vlabel, NOQUOTE))" KURTOSIS =
+11818     "%sysfunc(sasmsg(sashelp.dmine, rpt_kurtosis_vlabel, NOQUOTE))" LABEL = "%sysfunc(sasmsg(sashelp.dmine, meta_label_vlabel, NOQUOTE))";
+11819  set
+11820  WORK.TRANS_CLASSSTATS
+11821  WORK.TRANS_VARSTATS
+11822  ;
+11823  drop UNAME;
+11824  run;
+ 
+NOTE: There were 0 observations read from the data set WORK.TRANS_CLASSSTATS.
+NOTE: There were 2 observations read from the data set WORK.TRANS_VARSTATS.
+NOTE: The data set EMWS1.TRANS_STATISTICS has 2 observations and 14 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.18 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11825  proc sort data=EMWS1.Trans_STATISTICS;
+11826  by SOURCE _METHOD_ NAME;
+11827  run;
+ 
+NOTE: There were 2 observations read from the data set EMWS1.TRANS_STATISTICS.
+NOTE: The data set EMWS1.TRANS_STATISTICS has 2 observations and 14 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           1.85 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11828  proc sort data = EMWS1.Trans_STATISTICS NOTHREADS;
+11829  by SOURCE NAME;
+11830  run;
+ 
+NOTE: There were 2 observations read from the data set EMWS1.TRANS_STATISTICS.
+NOTE: The data set EMWS1.TRANS_STATISTICS has 2 observations and 14 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           1.85 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11831  title9 ' ';
+11832  proc print data = EMWS1.Trans_STATISTICS(obs=500) noobs label;
+11833  title9 "%sysfunc(sasmsg(sashelp.dmine, rpt_intervalinputStats_title, NOQUOTE))";
+11834  title10 "%sysfunc(sasmsg(sashelp.dmine, rpt_maxObsPrinted_title, NOQUOTE))";
+11835  var Name NMISS MIN MAX MEAN STD SKEWNESS KURTOSIS;
+11836  where SOURCE eq 'INPUT' and mean ne .;
+11837  run;
+ 
+NOTE: No observations were selected from data set EMWS1.TRANS_STATISTICS.
+NOTE: There were 0 observations read from the data set EMWS1.TRANS_STATISTICS.
+      WHERE (SOURCE='INPUT') and (mean not = .);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.20 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11838  proc print data = EMWS1.Trans_STATISTICS(obs=500) noobs label;
+11839  title9 "%sysfunc(sasmsg(sashelp.dmine, rpt_intervaloutputStats_title, NOQUOTE))";
+11840  title10 "%sysfunc(sasmsg(sashelp.dmine, rpt_maxObsPrinted_title, NOQUOTE))";
+11841  var Name _METHOD_ NMISS MIN MAX MEAN STD SKEWNESS KURTOSIS;
+11842  where SOURCE eq 'OUTPUT' and mean ne .;
+11843  run;
+ 
+NOTE: No observations were selected from data set EMWS1.TRANS_STATISTICS.
+NOTE: There were 0 observations read from the data set EMWS1.TRANS_STATISTICS.
+      WHERE (SOURCE='OUTPUT') and (mean not = .);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.17 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11844  proc print data = EMWS1.Trans_STATISTICS(obs=500) noobs label;
+11845  title9 "%sysfunc(sasmsg(sashelp.dmine, rpt_classinputStats_title, NOQUOTE))";
+11846  title10 "%sysfunc(sasmsg(sashelp.dmine, rpt_maxObsPrinted_title, NOQUOTE))";
+11847  var Name NLEVEL NMISS;
+11848  where SOURCE eq 'INPUT' and nlevel ne .;
+11849  run;
+ 
+NOTE: No observations were selected from data set EMWS1.TRANS_STATISTICS.
+NOTE: There were 0 observations read from the data set EMWS1.TRANS_STATISTICS.
+      WHERE (SOURCE='INPUT') and (nlevel not = .);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.01 seconds
+ 
+ 
+11850  proc print data = EMWS1.Trans_STATISTICS(obs=500) noobs label;
+11851  title9 "%sysfunc(sasmsg(sashelp.dmine, rpt_classoutputStats_title, NOQUOTE))";
+11852  title10 "%sysfunc(sasmsg(sashelp.dmine, rpt_maxObsPrinted_title, NOQUOTE))";
+11853  var Name _METHOD_ NLEVEL NMISS;
+11854  where SOURCE eq 'OUTPUT' and nlevel ne .;
+11855  run;
+ 
+NOTE: No observations were selected from data set EMWS1.TRANS_STATISTICS.
+NOTE: There were 0 observations read from the data set EMWS1.TRANS_STATISTICS.
+      WHERE (SOURCE='OUTPUT') and (nlevel not = .);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.00 seconds
+ 
+ 
+11856  title9;
+11857  title10;
+ 
+11858  data EMWS1.Trans_EMSCOREVAR;
+11859  length Name $32 formula $300 file $200;
+11860  keep NAME Formula file;
+11861  set EMWS1.Trans_STATISTICS;
+11862  where SOURCE='Output';
+11863  select( _METHOD_);
+11864  when('Computed') do;
+11865  file="TRANSFORMCODE\"!!strip(NAME)!!'.sas';
+11866  formula = '';
+11867  end;
+11868  when('Formula') do;
+11869  if Formula eq 'Mixture of variables' then do;
+11870  file= "EDITORCODE.sas";
+11871  formula = '';
+11872  end;
+11873  if Formula = 'User Code' then do;
+11874  file= "EDITORCODE.sas";
+11875  formula = '';
+11876  end;
+11877  end;
+11878  otherwise;
+11879  end;
+11880  output;
+11881  run;
+ 
+NOTE: There were 1 observations read from the data set EMWS1.TRANS_STATISTICS.
+      WHERE SOURCE='Output';
+NOTE: The data set EMWS1.TRANS_EMSCOREVAR has 1 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.32 seconds
+      cpu time            0.04 seconds
+ 
+ 

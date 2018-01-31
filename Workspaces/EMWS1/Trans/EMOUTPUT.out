@@ -1,0 +1,40 @@
+*------------------------------------------------------------*
+User:                hkatrag1
+Date:                November 13, 2017
+Time:                14:30:50
+*------------------------------------------------------------*
+* Training Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Variable Summary
+ 
+            Measurement    Frequency
+Role           Level         Count
+ 
+INPUT        INTERVAL          90
+INPUT        NOMINAL            4
+REJECTED     NOMINAL            2
+TARGET       INTERVAL           1
+
+
+*------------------------------------------------------------*
+* Score Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+Formula Transformations
+(maximum 500 observations printed)
+ 
+Variable             Measurement
+  Name      Role        Level              Formula
+ 
+TRANS_0     INPUT     INTERVAL      DAYLAST_REV=-1*DAYLAST
+
+
+*------------------------------------------------------------*
+* Report Output
+*------------------------------------------------------------*
